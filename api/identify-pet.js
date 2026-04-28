@@ -1,15 +1,7 @@
-import "dotenv/config";
-import express from "express";
 import multer from "multer";
 import { GoogleGenAI } from "@google/genai";
 
-const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-
-const PORT = Number(process.env.PORT || 3000);
-const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const prompt = `Identify the aquatic pet in this image.
 
@@ -25,10 +17,28 @@ Use the most likely scientific name.
 If the animal is not a fish or turtle, write "Unknown".
 If unsure, write "Unknown" and explain briefly in notes.`;
 
-app.post("/api/identify-pet", upload.single("image"), async (req, res) => {
-  try {
-    const file = req.file;
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        reject(result);
+        return;
+      }
 
+      resolve(result);
+    });
+  });
+}
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  try {
+    await runMiddleware(req, res, upload.single("image"));
+
+    const file = req.file;
     if (!file) {
       return res.status(400).json({ error: "Please upload an image file." });
     }
@@ -39,15 +49,18 @@ app.post("/api/identify-pet", upload.single("image"), async (req, res) => {
         .json({ error: "The uploaded file must be an image." });
     }
 
-    if (!GEMINI_API_KEY) {
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    if (!geminiApiKey) {
       return res.status(500).json({
-        error: "Missing GEMINI_API_KEY. Add it to your .env file.",
+        error: "Missing GEMINI_API_KEY. Add it to your environment variables.",
       });
     }
 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+
     const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
+      model: geminiModel,
       contents: [
         {
           inlineData: {
@@ -62,19 +75,16 @@ app.post("/api/identify-pet", upload.single("image"), async (req, res) => {
       },
     });
 
-    return res.json({
+    return res.status(200).json({
       result: response.text,
       usage: response.usageMetadata ?? null,
     });
   } catch (error) {
-    console.error("Gemini identify-pet failed:", error);
+    console.error("Vercel identify-pet failed:", error);
+
     return res.status(500).json({
       error: "Failed to identify the pet image.",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Identify backend listening on http://localhost:${PORT}`);
-});
+}
