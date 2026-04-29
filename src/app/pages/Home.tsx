@@ -55,22 +55,22 @@ export function Home() {
   const [highRiskDeck, setHighRiskDeck] = useState<string[]>([]);
   const [highRiskCursor, setHighRiskCursor] = useState(0);
 
-  const miniPlayerRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showMiniPlayer, setShowMiniPlayer] = useState(true);
 
   const handleMiniPlayerFullscreen = () => {
-    const player = miniPlayerRef.current;
+    const video = videoRef.current;
 
-    if (!player) return;
+    if (!video) return;
 
-    if (player.requestFullscreen) {
-      player.requestFullscreen();
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
       return;
     }
 
-    if ("webkitRequestFullscreen" in player) {
+    if ("webkitRequestFullscreen" in video) {
       (
-        player as HTMLDivElement & {
+        video as HTMLVideoElement & {
           webkitRequestFullscreen: () => void;
         }
       ).webkitRequestFullscreen();
@@ -653,10 +653,7 @@ export function Home() {
 
       {/* Mini Player */}
       {showMiniPlayer && (
-        <div
-          ref={miniPlayerRef}
-          className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
-        >
+        <div className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700">
           <div className="relative aspect-video w-full bg-black">
             <button
               type="button"
@@ -679,7 +676,8 @@ export function Home() {
             </button>
 
             <video
-              className="h-full w-full object-cover"
+              ref={videoRef}
+              className="h-full w-full object-contain"
               src="/videos/pet-care-guide.mp4"
               controls
               autoPlay
