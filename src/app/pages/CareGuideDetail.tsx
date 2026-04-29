@@ -555,8 +555,8 @@ export function CareGuideDetail() {
                   <p className="text-rose-100 leading-relaxed text-sm">
                     If your pet shows severe symptoms (not eating 3+ days,
                     difficulty breathing, severe bloating, or inability to
-                    swim), seek veterinary care immediately. Many conditions are
-                    fatal if untreated.
+                    swim), please seek veterinary care immediately. Many
+                    conditions are fatal if untreated.
                   </p>
                 </div>
               </div>
