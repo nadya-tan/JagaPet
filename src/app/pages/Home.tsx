@@ -655,7 +655,7 @@ export function Home() {
       {showMiniPlayer && (
         <div
           ref={miniPlayerRef}
-          className="fixed bottom-6 right-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
+          className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
         >
           <div className="relative aspect-video w-full bg-black">
             <button
@@ -678,12 +678,13 @@ export function Home() {
               <X className="h-4 w-4" />
             </button>
 
-            <iframe
-              className="h-full w-full"
-              src="https://www.youtube.com/embed/oXsSpTwaeA4"
-              title="Responsible Pet Care Guide"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-              allowFullScreen
+            <video
+              className="h-full w-full object-cover"
+              src="/videos/pet-care-guide.mp4"
+              controls
+              autoPlay
+              muted
+              playsInline
             />
           </div>
         </div>
