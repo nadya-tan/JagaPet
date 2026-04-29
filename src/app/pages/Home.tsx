@@ -12,6 +12,8 @@ import {
   Banknote,
   RefreshCw,
   ScanHeart,
+  X,
+  Maximize2,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SearchAutocomplete } from "../components/SearchAutocomplete";
@@ -52,6 +54,28 @@ export function Home() {
 
   const [highRiskDeck, setHighRiskDeck] = useState<string[]>([]);
   const [highRiskCursor, setHighRiskCursor] = useState(0);
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [showMiniPlayer, setShowMiniPlayer] = useState(true);
+
+  const handleMiniPlayerFullscreen = () => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+      return;
+    }
+
+    if ("webkitRequestFullscreen" in video) {
+      (
+        video as HTMLVideoElement & {
+          webkitRequestFullscreen: () => void;
+        }
+      ).webkitRequestFullscreen();
+    }
+  };
 
   const handleIdentifyPhotoSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -626,6 +650,43 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Mini Player */}
+      {showMiniPlayer && (
+        <div className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700">
+          <div className="relative aspect-video w-full bg-black">
+            <button
+              type="button"
+              onClick={handleMiniPlayerFullscreen}
+              className="absolute left-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
+              aria-label="Open mini player in fullscreen"
+              title="Fullscreen"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowMiniPlayer(false)}
+              className="absolute right-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
+              aria-label="Close mini player"
+              title="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <video
+              ref={videoRef}
+              className="h-full w-full object-contain"
+              src="/videos/pet-care-guide.mp4"
+              controls
+              autoPlay
+              muted
+              playsInline
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
