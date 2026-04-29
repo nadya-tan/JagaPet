@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Navigate, Link } from "react-router";
 import {
   User,
@@ -91,17 +91,6 @@ const TASK_NAMES: Record<string, string> = {
   "temperature-check": "Temperature Check",
 };
 
-async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, options);
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(data?.error || "Request failed");
-  }
-
-  return data as T;
-}
-
 function formatFrequency(task: CareTask) {
   const unit = task.intervalUnit;
   const pluralUnit = task.interval === 1 ? unit : `${unit}s`;
@@ -134,15 +123,25 @@ function formatFrequency(task: CareTask) {
 }
 
 export function Profile() {
-  const { user, answers, logout, loading } = useUser();
+  const {
+    user,
+    answers,
+    logout,
+    loading,
+    speciesOptions,
+    userPets,
+    careTasks,
+    petsLoading,
+    petError,
+    loadPetData,
+    addUserPet,
+    removeUserPet,
+    completeCareTask,
+    clearPetError,
+  } = useUser();
 
   const [activeTab, setActiveTab] = useState<"profile" | "pets">("profile");
 
-  const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
-  const [userPets, setUserPets] = useState<UserPet[]>([]);
-  const [careTasks, setCareTasks] = useState<CareTask[]>([]);
-
-  const [petsLoading, setPetsLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
   const [showAddPet, setShowAddPet] = useState(false);
@@ -154,29 +153,19 @@ export function Profile() {
   useEffect(() => {
     if (!user || loading) return;
 
-    loadDatabaseData();
+    loadPetData();
   }, [user, loading]);
 
-  async function loadDatabaseData() {
-    try {
-      setPetsLoading(true);
-      setFormError("");
+  const tasksByPetListId = useMemo(() => {
+    return careTasks.reduce<Record<string, CareTask[]>>((groups, task) => {
+      if (!groups[task.petListId]) {
+        groups[task.petListId] = [];
+      }
 
-      const [species, petData] = await Promise.all([
-        fetchJson<SpeciesOption[]>("/api/species"),
-        fetchJson<{ pets: UserPet[]; tasks: CareTask[] }>("/api/user-pets"),
-      ]);
-
-      setSpeciesOptions(species);
-      setUserPets(petData.pets);
-      setCareTasks(petData.tasks);
-    } catch (error) {
-      console.error(error);
-      setFormError("Could not load your pet data.");
-    } finally {
-      setPetsLoading(false);
-    }
-  }
+      groups[task.petListId].push(task);
+      return groups;
+    }, {});
+  }, [careTasks]);
 
   if (loading) return <div className="p-8">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -196,24 +185,14 @@ export function Profile() {
     try {
       setSavingPet(true);
       setFormError("");
+      clearPetError();
 
-      const data = await fetchJson<{ pets: UserPet[]; tasks: CareTask[] }>(
-        "/api/user-pets",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            petId: selectedSpeciesId,
-            nickname: petNickname.trim(),
-            age: petAge.trim() ? Number(petAge) : null,
-          }),
-        },
+      await addUserPet(
+        selectedSpeciesId,
+        petNickname.trim(),
+        petAge.trim() ? Number(petAge) : null,
       );
 
-      setUserPets(data.pets);
-      setCareTasks(data.tasks);
       setSelectedSpeciesId("");
       setPetNickname("");
       setPetAge("");
@@ -231,42 +210,28 @@ export function Profile() {
   const handleRemovePet = async (petListId: string) => {
     try {
       setFormError("");
+      clearPetError();
 
-      await fetchJson<{ ok: boolean }>(
-        `/api/user-pets?petListId=${encodeURIComponent(petListId)}`,
-        {
-          method: "DELETE",
-        },
-      );
-
-      setUserPets((pets) => pets.filter((pet) => pet.petListId !== petListId));
-      setCareTasks((tasks) =>
-        tasks.filter((task) => task.petListId !== petListId),
-      );
+      await removeUserPet(petListId);
     } catch (error) {
       console.error(error);
-      setFormError("Could not remove pet.");
+      setFormError(
+        error instanceof Error ? error.message : "Could not remove pet.",
+      );
     }
   };
 
   const handleCompleteTask = async (taskId: string) => {
     try {
       setFormError("");
+      clearPetError();
 
-      const updatedTask = await fetchJson<CareTask>("/api/user-pet-tasks", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ taskId }),
-      });
-
-      setCareTasks((tasks) =>
-        tasks.map((task) => (task.id === taskId ? updatedTask : task)),
-      );
+      await completeCareTask(taskId);
     } catch (error) {
       console.error(error);
-      setFormError("Could not update task.");
+      setFormError(
+        error instanceof Error ? error.message : "Could not update task.",
+      );
     }
   };
 
@@ -278,6 +243,19 @@ export function Profile() {
     if (Number.isNaN(dateValue)) return null;
 
     return Math.floor((Date.now() - dateValue) / (1000 * 60 * 60 * 24));
+  };
+
+  const isCompletedToday = (dateString?: string | null) => {
+    if (!dateString) return false;
+
+    const completedDate = new Date(dateString);
+    const today = new Date();
+
+    return (
+      completedDate.getFullYear() === today.getFullYear() &&
+      completedDate.getMonth() === today.getMonth() &&
+      completedDate.getDate() === today.getDate()
+    );
   };
 
   return (
@@ -309,12 +287,11 @@ export function Profile() {
         </button>
       </div>
 
-      {formError && (
+      {(formError || petError) && (
         <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700">
-          {formError}
+          {formError || petError}
         </div>
       )}
-
       {activeTab === "profile" && (
         <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
           <h2 className="text-xl font-semibold mb-4">
@@ -482,9 +459,7 @@ export function Profile() {
           ) : (
             <div className="space-y-6">
               {userPets.map((pet) => {
-                const petTasks = careTasks.filter(
-                  (task) => task.petListId === pet.petListId,
-                );
+                const petTasks = tasksByPetListId[pet.petListId] || [];
 
                 return (
                   <div
@@ -500,7 +475,7 @@ export function Profile() {
                               : "/pet_image/pet_placeholder.png"
                           }
                           alt={pet.speciesName}
-                          className="w-24 h-24 rounded-xl object-cover shadow-md"
+                          className="w-24 h-24 rounded-xl object-fit shadow-md"
                         />
 
                         <div>
@@ -553,6 +528,9 @@ export function Profile() {
                             const daysSince = calculateDaysSince(
                               task.lastCompleted,
                             );
+                            const completedToday = isCompletedToday(
+                              task.lastCompleted,
+                            );
 
                             return (
                               <div
@@ -590,12 +568,13 @@ export function Profile() {
 
                                 {task.lastCompleted ? (
                                   <p className="text-sm text-emerald-700 font-semibold mb-3">
-                                    Last done:{" "}
-                                    {daysSince === 0
-                                      ? "Today"
-                                      : daysSince === null
-                                        ? "Recently"
-                                        : `${daysSince} days ago`}
+                                    {completedToday
+                                      ? "Completed today"
+                                      : `Last done: ${
+                                          daysSince === null
+                                            ? "Recently"
+                                            : `${daysSince} days ago`
+                                        }`}
                                   </p>
                                 ) : (
                                   <p className="text-sm text-amber-700 font-semibold mb-3">
@@ -605,9 +584,16 @@ export function Profile() {
 
                                 <button
                                   onClick={() => handleCompleteTask(task.id)}
-                                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all"
+                                  disabled={completedToday}
+                                  className={`w-full py-3 rounded-xl font-bold transition-all ${
+                                    completedToday
+                                      ? "bg-stone-300 text-stone-600 cursor-not-allowed"
+                                      : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                  }`}
                                 >
-                                  Mark as Done Today
+                                  {completedToday
+                                    ? "Done for Today"
+                                    : "Mark as Done Today"}
                                 </button>
                               </div>
                             );

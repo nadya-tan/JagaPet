@@ -20,6 +20,7 @@ export function MainLayout() {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Identify Pet", path: "/identify" },
+    { name: "Health Screening", path: "/health-screening" },
     { name: "Compatibility Quiz", path: "/quiz" },
     { name: "Need to Rehome?", path: "/safe-exit" },
     { name: "Profile", path: "/profile" },
@@ -164,7 +165,7 @@ export function MainLayout() {
               <li>
                 <Link
                   to="/safe-exit"
-                  className="hover:text-white transition text-rose-300 hover:text-rose-200 font-medium"
+                  className="hover:text-white transition text-rose-300 font-medium"
                 >
                   Safe Rehoming Options
                 </Link>

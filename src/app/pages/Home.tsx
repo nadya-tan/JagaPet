@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   AlertTriangle,
   ShieldCheck,
@@ -11,6 +11,7 @@ import {
   HandHeart,
   Banknote,
   RefreshCw,
+  ScanHeart,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SearchAutocomplete } from "../components/SearchAutocomplete";
@@ -24,7 +25,7 @@ import {
   getNativeBadgeClasses,
 } from "../utils/petDisplay";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
 
 function shuffleArray<T>(items: T[]) {
@@ -38,17 +39,39 @@ function shuffleArray<T>(items: T[]) {
 
 export function Home() {
   const { recommendations, loading, error } = usePetRecommendationPool();
+  const navigate = useNavigate();
   const {
     highRiskSpecies,
     loading: highRiskLoading,
     error: highRiskError,
   } = useHighRiskSpecies();
+  const identifyFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deck, setDeck] = useState<string[]>([]);
   const [cursor, setCursor] = useState(0);
 
   const [highRiskDeck, setHighRiskDeck] = useState<string[]>([]);
   const [highRiskCursor, setHighRiskCursor] = useState(0);
+
+  const handleIdentifyPhotoSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      return;
+    }
+
+    navigate("/identify", {
+      state: {
+        imageFile: file,
+      },
+    });
+
+    event.target.value = "";
+  };
 
   useEffect(() => {
     if (!recommendations.length) return;
@@ -185,7 +208,7 @@ export function Home() {
             className="bg-rose-600 text-white px-4 py-2 rounded-full inline-flex items-center gap-2 text-sm font-semibold mb-6 shadow-lg uppercase tracking-wider"
           >
             <AlertTriangle className="w-4 h-4" />
-            Never Release Non-Native Pets Into the Wild
+            Never Release Pets Into the Wild
           </motion.div>
 
           <motion.h1
@@ -214,14 +237,36 @@ export function Home() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-xl mx-auto shadow-2xl"
           >
-            <SearchAutocomplete />
+            <>
+              <input
+                ref={identifyFileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleIdentifyPhotoSelect}
+              />
+
+              <SearchAutocomplete
+                rightAction={
+                  <button
+                    type="button"
+                    onClick={() => identifyFileInputRef.current?.click()}
+                    className="rounded-full p-2 text-stone-500 hover:bg-stone-100 hover:text-emerald-700 transition"
+                    aria-label="Identify pet by photo"
+                    title="Identify pet by photo"
+                  >
+                    <Camera className="h-5 w-5" />
+                  </button>
+                }
+              />
+            </>
           </motion.div>
         </div>
       </section>
 
       {/* Quick Action Cards */}
       <section className="max-w-7xl mx-auto px-4 w-full mt-16 relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             to="/quiz"
             className="bg-white rounded-2xl p-6 shadow-xl border border-stone-100 hover:-translate-y-1 transition-all group overflow-hidden relative"
@@ -247,11 +292,31 @@ export function Home() {
             <div className="relative z-10">
               <Camera className="w-12 h-12 text-sky-600 mb-4 bg-sky-50 p-2 rounded-xl" />
               <h3 className="text-xl font-bold text-stone-800 mb-2">
-                Identify Your Pet
+                Identify a Pet
               </h3>
               <p className="text-stone-600">
-                Snap a photo to identify a species and get basic visible health
-                tips.
+                Snap a photo to identify a species and view its biodiversity
+                risk.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            to="/health-screening"
+            className="bg-white rounded-2xl p-6 shadow-xl border border-stone-100 hover:-translate-y-1 transition-all group overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+
+            <div className="relative z-10">
+              <ScanHeart className="w-12 h-12 text-amber-600 mb-4 bg-amber-50 p-2 rounded-xl" />
+
+              <h3 className="text-xl font-bold text-stone-800 mb-2">
+                Health Screening
+              </h3>
+
+              <p className="text-stone-600">
+                Upload a fish photo to screen for possible visible disease
+                signs.
               </p>
             </div>
           </Link>
@@ -331,7 +396,7 @@ export function Home() {
                             : "/pet_image/pet_placeholder.png"
                         }
                         alt={pet.pet_vernacular_name ?? "Pet image"}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-fit group-hover:scale-105 transition duration-500"
                       />
 
                       <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2">
@@ -468,7 +533,7 @@ export function Home() {
                             : "/pet_image/pet_placeholder.png"
                         }
                         alt={pet.pet_vernacular_name ?? "Pet image"}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-fit group-hover:scale-105 transition duration-500"
                       />
 
                       <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2">

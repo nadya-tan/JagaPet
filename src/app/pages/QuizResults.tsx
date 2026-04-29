@@ -522,7 +522,7 @@ export function QuizResults() {
                             : "/pet_image/pet_placeholder.png"
                         }
                         alt={pet.pet_vernacular_name ?? "Pet image"}
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-fit"
                       />
                       <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
                         Great Fit
@@ -611,7 +611,7 @@ export function QuizResults() {
                             : "/pet_image/pet_placeholder.png"
                         }
                         alt={pet.pet_vernacular_name ?? "Pet image"}
-                        className="w-full h-40 object-cover rounded-2xl shadow-sm"
+                        className="w-full h-40 object-fit rounded-2xl shadow-sm"
                       />
                       <h4 className="font-bold text-xl text-stone-900 mt-3">
                         {primaryCommonName ?? pet.pet_scientific_name}
@@ -674,7 +674,7 @@ export function QuizResults() {
                         : "/pet_image/pet_placeholder.png"
                     }
                     alt={pet.pet_vernacular_name ?? "Pet image"}
-                    className="w-full h-32 object-cover"
+                    className="w-full h-32 object-fit"
                   />
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">

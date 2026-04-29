@@ -3,12 +3,15 @@ import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import { CompareProvider } from "./context/CompareContext";
 import { UserProvider } from "./context/UserContext";
+import { HealthScreeningProvider } from "./context/HealthScreeningContext";
 
 export default function App() {
   return (
     <UserProvider>
       <CompareProvider>
-        <RouterProvider router={router} />
+        <HealthScreeningProvider>
+          <RouterProvider router={router} />
+        </HealthScreeningProvider>
       </CompareProvider>
     </UserProvider>
   );

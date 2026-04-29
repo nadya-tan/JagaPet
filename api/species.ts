@@ -11,7 +11,8 @@ export default async function handler(req: any, res: any) {
         pet_id,
         pet_vernacular_name,
         pet_scientific_name,
-        pet_image_ref
+        pet_image_ref,
+        pet_invasive_risk
       from public.pet
       order by lower(coalesce(pet_vernacular_name, pet_scientific_name))
     `;
@@ -19,11 +20,10 @@ export default async function handler(req: any, res: any) {
     const species = rows.map((row: any) => ({
       petId: row.pet_id,
       name:
-        row.pet_vernacular_name ||
-        row.pet_scientific_name ||
-        "Unknown species",
+        row.pet_vernacular_name || row.pet_scientific_name || "Unknown species",
       scientificName: row.pet_scientific_name,
       imageUrl: row.pet_image_ref,
+      biodiversityRisk: row.pet_invasive_risk || "Unknown",
     }));
 
     return res.status(200).json(species);

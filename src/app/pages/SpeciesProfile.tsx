@@ -312,7 +312,7 @@ export function SpeciesProfile() {
               : "/pet_image/pet_placeholder.png"
           }
           alt={pet.pet_vernacular_name ?? "Pet Image Placeholder"}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-fit"
         />
 
         <div className="absolute bottom-0 inset-x-0 z-20">

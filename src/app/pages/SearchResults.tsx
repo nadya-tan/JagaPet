@@ -165,7 +165,7 @@ export function SearchResults() {
                           alt={
                             pet.pet_vernacular_name ?? "Pet Image Placeholder"
                           }
-                          className="w-full h-full object-cover group-hover:scale1-105 transition duration-500"
+                          className="w-full h-full object-fit group-hover:scale1-105 transition duration-500"
                         />
                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                           {pet.pet_invasive_risk && (

@@ -10,6 +10,7 @@
   "dependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
+    "@google/genai": "^1.50.1",
     "@mui/icons-material": "7.3.5",
     "@mui/material": "7.3.5",
     "@neondatabase/serverless": "^1.0.2",
@@ -47,11 +48,15 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "date-fns": "3.6.0",
+    "dotenv": "^17.4.2",
     "embla-carousel-react": "8.6.0",
+    "express": "^5.2.1",
+    "formidable": "^3.5.4",
     "fuse.js": "^7.1.0",
     "input-otp": "1.4.2",
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
+    "multer": "^2.1.1",
     "next-themes": "0.4.6",
     "react-day-picker": "8.10.1",
     "react-dnd": "16.0.1",
@@ -70,8 +75,13 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
+    "@types/express": "^5.0.6",
+    "@types/formidable": "^3.5.1",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
     "@vitejs/plugin-react": "4.7.0",
     "tailwindcss": "4.1.12",
+    "typescript": "^6.0.3",
     "vite": "6.3.5"
   },
   "peerDependencies": {

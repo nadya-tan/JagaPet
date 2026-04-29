@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -10,6 +10,7 @@ interface SearchAutocompleteProps {
   placeholder?: string;
   className?: string;
   onSearch?: () => void;
+  rightAction?: ReactNode;
 }
 
 function normalizeRiskLevel(value: string | null | undefined) {
@@ -29,6 +30,7 @@ export function SearchAutocomplete({
   placeholder = "Search 'Red-Eared Slider', 'Pleco'...",
   className = "",
   onSearch,
+  rightAction,
 }: SearchAutocompleteProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -96,17 +98,27 @@ export function SearchAutocomplete({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => searchQuery.length >= 1 && setShowSuggestions(true)}
-          className="w-full bg-white/95 backdrop-blur py-5 pl-14 pr-32 text-lg text-stone-800 focus:outline-none focus:ring-4 focus:ring-emerald-400 transition-all rounded-full border-none"
+          className={`w-full bg-white/95 backdrop-blur py-5 pl-14 ${
+            rightAction ? "pr-56" : "pr-32"
+          } text-lg text-stone-800 focus:outline-none focus:ring-4 focus:ring-emerald-400 transition-all rounded-full border-none`}
         />
 
         {searchQuery && (
           <button
             type="button"
             onClick={clearSearch}
-            className="absolute right-32 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition p-2"
+            className={`absolute ${
+              rightAction ? "right-44" : "right-32"
+            } top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition p-2`}
           >
             <X className="w-5 h-5" />
           </button>
+        )}
+
+        {rightAction && (
+          <div className="absolute right-32 top-1/2 z-20 -translate-y-1/2">
+            {rightAction}
+          </div>
         )}
 
         <button

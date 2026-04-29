@@ -105,7 +105,7 @@ export function Compare() {
                       <img
                         src={imageSrc}
                         alt={primaryCommonName}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-fit"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent" />
 
