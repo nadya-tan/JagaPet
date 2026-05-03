@@ -1,6 +1,21 @@
 import { getSessionUser, sql } from "./_lib/auth.js";
 
+/* ===================== Helper: Map database task row ===================== */
 function mapTask(row: any) {
+  /*
+    Convert raw database task record into frontend-friendly format.
+
+    output fields:
+      - id: task identifier
+      - petListId: related pet instance
+      - type: task type (feeding, cleaning, etc.)
+      - done: completion status
+      - count: how many times per interval
+      - interval: interval value
+      - intervalUnit: day/week/month/year
+      - lastCompleted: timestamp of last completion
+  */
+
   return {
     id: row.pet_task_id,
     petListId: row.pet_list_id,
@@ -13,24 +28,39 @@ function mapTask(row: any) {
   };
 }
 
+/* ===================== Main API handler ===================== */
 export default async function handler(req: any, res: any) {
+  /*
+    API endpoint for marking a pet task as completed.
+
+    features:
+      - Requires authenticated session user
+      - Updates task as done
+      - Sets last completed timestamp
+  */
+
   try {
+    /* ===================== Step 1: Authentication ===================== */
     const sessionUser = await getSessionUser(req);
 
     if (!sessionUser) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    /* ===================== Step 2: Method validation ===================== */
+    // Only PATCH method allowed for updating task status
     if (req.method !== "PATCH") {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
+    /* ===================== Step 3: Validate input ===================== */
     const { taskId } = req.body || {};
 
     if (!taskId) {
       return res.status(400).json({ error: "Missing taskId" });
     }
 
+    /* ===================== Step 4: Update task in database ===================== */
     const rows = await sql`
       update public.pet_task t
       set
@@ -52,13 +82,18 @@ export default async function handler(req: any, res: any) {
         t.pet_task_interval_unit
     `;
 
+    /* ===================== Step 5: Handle not found ===================== */
     if (rows.length === 0) {
       return res.status(404).json({ error: "Task not found" });
     }
 
+    /* ===================== Step 6: Return updated task ===================== */
     return res.status(200).json(mapTask(rows[0]));
   } catch (error) {
+    // Log error for debugging
     console.error(error);
+
+    // Return generic server error
     return res.status(500).json({ error: "Internal server error" });
   }
 }

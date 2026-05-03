@@ -1,17 +1,34 @@
 import { neon } from "@neondatabase/serverless";
 
+/* ===================== Database connection ===================== */
+// Initialize Neon serverless SQL client using environment variable
 const sql = neon(process.env.DATABASE_URL!);
 
+/* ===================== Main API handler ===================== */
 export default async function handler(req: any, res: any) {
+  /*
+    API endpoint for pet search (autocomplete / fuzzy search).
+
+    features:
+      - Search by vernacular name
+      - Search by scientific name
+      - Search by genus or family
+      - Returns up to 50 matching results
+  */
+
   try {
+    // Extract query string from request
     const q = String(req.query.q || "").trim();
 
+    // If empty query, return empty result immediately
     if (!q) {
       return res.status(200).json([]);
     }
 
+    // Build SQL LIKE pattern for fuzzy search
     const pattern = `%${q}%`;
 
+    /* ===================== Database query ===================== */
     const rows = await sql`
       select
         pet_id,
@@ -49,9 +66,13 @@ export default async function handler(req: any, res: any) {
       limit 50
     `;
 
+    /* ===================== Return results ===================== */
     return res.status(200).json(rows);
   } catch (error) {
+    // Log error for debugging purposes
     console.error(error);
+
+    // Return generic failure response
     return res.status(500).json({ error: "Internal server error" });
   }
 }

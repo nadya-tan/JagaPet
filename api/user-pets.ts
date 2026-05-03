@@ -1,26 +1,43 @@
 import { randomUUID } from "crypto";
 import { getSessionUser, sql } from "./_lib/auth.js";
 
+/* ===================== Type definition: Task frequency ===================== */
 type FrequencySpec = {
   count: number;
   interval: number;
   unit: "day" | "week" | "month" | "year";
 };
 
+/* ===================== Helper function: Parse frequency text ===================== */
 function parseFrequency(
   rawText: unknown,
   fallback: FrequencySpec,
 ): FrequencySpec {
+  /*
+    Convert human-readable frequency text into structured frequency object.
+
+    input:
+      rawText - text like "twice a week", "3 times per day"
+      fallback - default frequency if parsing fails
+
+    output:
+      structured FrequencySpec object
+  */
+
+  // Normalize input text
   const text = String(rawText || "")
     .toLowerCase()
     .trim();
 
+  // Return fallback if empty
   if (!text) return fallback;
 
+  // Default values
   let count = 1;
   let interval = 1;
   let unit: FrequencySpec["unit"] = fallback.unit;
 
+  /* ===================== Detect "twice" patterns ===================== */
   if (
     text.includes("twice") ||
     text.includes("2x") ||
@@ -29,11 +46,13 @@ function parseFrequency(
     count = 2;
   }
 
+  /* ===================== Extract numeric count ===================== */
   const numberMatch = text.match(/(\d+)/);
   if (numberMatch && !text.includes("-")) {
     count = Number(numberMatch[1]);
   }
 
+  /* ===================== Detect time unit ===================== */
   if (text.includes("daily") || text.includes("day")) {
     unit = "day";
   } else if (text.includes("weekly") || text.includes("week")) {
@@ -44,6 +63,7 @@ function parseFrequency(
     unit = "year";
   }
 
+  /* ===================== Special case: bi-weekly ===================== */
   if (
     text.includes("bi-weekly") ||
     text.includes("biweekly") ||
@@ -57,7 +77,17 @@ function parseFrequency(
   return { count, interval, unit };
 }
 
+/* ===================== Helper function: Build default tasks ===================== */
 function buildDefaultTasks(careProfile: any) {
+  /*
+    Generate default pet care tasks based on care profile.
+
+    tasks include:
+      - feeding
+      - water change
+      - health check
+  */
+
   const feedingFreq = Number(careProfile?.pet_care_feeding_freq ?? 1);
   const waterChangeFreq = Number(careProfile?.pet_care_water_chg_freq ?? 7);
 
@@ -93,7 +123,12 @@ function buildDefaultTasks(careProfile: any) {
   ];
 }
 
+/* ===================== Helper function: Map pet record ===================== */
 function mapPet(row: any) {
+  /*
+    Convert database pet_list + pet join result into frontend format.
+  */
+
   return {
     petListId: row.pet_list_id,
     petId: row.pet_id,
@@ -106,7 +141,12 @@ function mapPet(row: any) {
   };
 }
 
+/* ===================== Helper function: Map task record ===================== */
 function mapTask(row: any) {
+  /*
+    Convert database task record into frontend format.
+  */
+
   return {
     id: row.pet_task_id,
     petListId: row.pet_list_id,
@@ -119,7 +159,13 @@ function mapTask(row: any) {
   };
 }
 
+/* ===================== Helper function: Get user pets + tasks ===================== */
 async function getUserPetsAndTasks(userId: string) {
+  /*
+    Fetch all pets and their tasks for a user.
+  */
+
+  /* ===================== Query pets ===================== */
   const petRows = await sql`
     select
       pl.pet_list_id,
@@ -135,6 +181,7 @@ async function getUserPetsAndTasks(userId: string) {
     where pl.user_id = ${userId}
   `;
 
+  /* ===================== Query tasks ===================== */
   const taskRows = await sql`
     select
       t.pet_task_id,
@@ -152,15 +199,31 @@ async function getUserPetsAndTasks(userId: string) {
     order by t.pet_task_created_at asc
   `;
 
+  // Return structured response
   return {
     pets: petRows.map(mapPet),
     tasks: taskRows.map(mapTask),
   };
 }
 
+/* ===================== Main API handler ===================== */
 export default async function handler(req: any, res: any) {
+  /*
+    API endpoint for user pet management system.
+
+    supports:
+      GET    -> fetch user pets + tasks
+      POST   -> add new pet + auto-generate tasks
+      DELETE -> remove pet + tasks
+
+    authentication:
+      required session user
+  */
+
   let step = "starting";
+
   try {
+    /* ===================== Step 1: Get session user ===================== */
     step = "getting session user";
     const sessionUser = await getSessionUser(req);
 
@@ -168,19 +231,25 @@ export default async function handler(req: any, res: any) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    /* ===================== GET: Fetch user pets ===================== */
     if (req.method === "GET") {
       const data = await getUserPetsAndTasks(sessionUser.user_id);
       return res.status(200).json(data);
     }
 
+    /* ===================== POST: Add new pet ===================== */
     if (req.method === "POST") {
       step = "validating request body";
+
+      // Extract input data
       const { petId, nickname, age } = req.body || {};
 
+      // Validate required fields
       if (!petId || !nickname || !String(nickname).trim()) {
         return res.status(400).json({ error: "Missing petId or nickname" });
       }
 
+      // Normalize age value
       const ageValue =
         age === undefined || age === null || age === "" ? null : Number(age);
 
@@ -188,6 +257,7 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ error: "Invalid age" });
       }
 
+      /* ===================== Verify pet species exists ===================== */
       step = "checking pet species";
       const petRows = await sql`
         select pet_id
@@ -200,6 +270,7 @@ export default async function handler(req: any, res: any) {
         return res.status(404).json({ error: "Pet species not found" });
       }
 
+      /* ===================== Insert into pet_list ===================== */
       const petListId = randomUUID();
 
       step = "inserting pet_list";
@@ -220,6 +291,7 @@ export default async function handler(req: any, res: any) {
         )
       `;
 
+      /* ===================== Load care profile ===================== */
       step = "reading pet_care_profile";
       let careProfile = null;
 
@@ -237,6 +309,7 @@ export default async function handler(req: any, res: any) {
 
         careProfile = careRows[0] ?? null;
       } catch (error: any) {
+        // Handle missing table gracefully
         if (error?.code === "42P01") {
           console.warn(
             "pet_care_profile table does not exist yet. Using fallback task frequencies.",
@@ -246,10 +319,13 @@ export default async function handler(req: any, res: any) {
         }
       }
 
+      /* ===================== Generate default tasks ===================== */
       const defaultTasks = buildDefaultTasks(careProfile);
 
+      /* ===================== Insert tasks ===================== */
       for (const task of defaultTasks) {
         step = `inserting pet_task: ${task.type}`;
+
         await sql`
           insert into public.pet_task (
             pet_task_id,
@@ -275,18 +351,23 @@ export default async function handler(req: any, res: any) {
           )
         `;
       }
+
+      /* ===================== Return updated data ===================== */
       step = "loading updated pets and tasks";
       const data = await getUserPetsAndTasks(sessionUser.user_id);
       return res.status(201).json(data);
     }
 
+    /* ===================== DELETE: Remove pet ===================== */
     if (req.method === "DELETE") {
       const petListId = String(req.query.petListId || "");
 
+      // Validate input
       if (!petListId) {
         return res.status(400).json({ error: "Missing petListId" });
       }
 
+      /* ===================== Check ownership ===================== */
       const ownerRows = await sql`
         select pet_list_id
         from public.pet_list
@@ -299,11 +380,13 @@ export default async function handler(req: any, res: any) {
         return res.status(404).json({ error: "Pet not found" });
       }
 
+      /* ===================== Delete tasks first ===================== */
       await sql`
         delete from public.pet_task
         where pet_list_id = ${petListId}
       `;
 
+      /* ===================== Delete pet ===================== */
       await sql`
         delete from public.pet_list
         where pet_list_id = ${petListId}
@@ -313,10 +396,13 @@ export default async function handler(req: any, res: any) {
       return res.status(200).json({ ok: true });
     }
 
+    /* ===================== Invalid method fallback ===================== */
     return res.status(405).json({ error: "Method not allowed" });
   } catch (error: any) {
+    // Log error with step tracking for debugging
     console.error("[/api/user-pets error]", { step, error });
 
+    // Return structured error response
     return res.status(500).json({
       error: `Failed while ${step}`,
       detail: error?.message,
