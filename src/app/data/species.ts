@@ -1,3 +1,4 @@
+//hardcoded data for species profiles. In a real app, this would likely come from an API or database, this hardcode data is mainly used when developing or testing the application.
 export interface Species {
   id: string;
   name: string;
