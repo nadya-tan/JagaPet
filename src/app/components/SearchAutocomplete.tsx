@@ -6,6 +6,9 @@ import { usePetSearch } from "../hooks/usePetSearch";
 import { displayText, getPetCommonNames } from "../utils/petDisplay";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
+/**
+ * Props for SearchAutocomplete component
+ */
 interface SearchAutocompleteProps {
   placeholder?: string;
   className?: string;
@@ -13,6 +16,15 @@ interface SearchAutocompleteProps {
   rightAction?: ReactNode;
 }
 
+/**
+ * Normalize invasive risk level text into standard categories
+ *
+ * input:
+ *   value - raw risk level string from API
+ *
+ * output:
+ *   standardized risk level: High | Medium | Low | Unknown
+ */
 function normalizeRiskLevel(value: string | null | undefined) {
   const text = (value ?? "").toLowerCase();
 
@@ -22,25 +34,59 @@ function normalizeRiskLevel(value: string | null | undefined) {
   return "Unknown";
 }
 
+/**
+ * Resolve pet image URL with fallback placeholder
+ *
+ * input:
+ *   imageRef - image reference string or null
+ *
+ * output:
+ *   valid image path string
+ */
 function getPetImageSrc(imageRef: string | null) {
   return imageRef ? `/pet_image/${imageRef}` : "/pet_image/pet_placeholder.png";
 }
 
+/**
+ * SearchAutocomplete component
+ *
+ * Features:
+ * - Debounced search input
+ * - Live API search suggestions
+ * - Clickable autocomplete dropdown
+ * - Outside click detection
+ * - Keyboard-friendly form submission
+ */
 export function SearchAutocomplete({
   placeholder = "Search 'Red-Eared Slider', 'Pleco'...",
   className = "",
   onSearch,
   rightAction,
 }: SearchAutocompleteProps) {
+  // User input state
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Controls visibility of suggestion dropdown
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // React Router navigation hook
   const navigate = useNavigate();
+
+  // Wrapper reference for outside click detection
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // Debounce search input to reduce API calls
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
+
+  // Fetch pet search results based on debounced query
   const { results, loading } = usePetSearch(debouncedQuery);
+
+  // Limit suggestions to top 6 results
   const suggestions = results.slice(0, 6);
 
+  /**
+   * Show/hide suggestions based on input length
+   */
   useEffect(() => {
     if (searchQuery.trim().length >= 1) {
       setShowSuggestions(true);
@@ -49,6 +95,9 @@ export function SearchAutocomplete({
     }
   }, [searchQuery]);
 
+  /**
+   * Close dropdown when clicking outside component
+   */
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -60,21 +109,30 @@ export function SearchAutocomplete({
     }
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
+  /**
+   * Handle search form submission
+   */
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!searchQuery.trim()) return;
 
+    // Navigate to search results page
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+
     setShowSuggestions(false);
     onSearch?.();
   };
 
+  /**
+   * Handle clicking a suggestion item
+   */
   const handleSuggestionClick = (petId: string) => {
     navigate(`/species/${petId}`);
     setSearchQuery("");
@@ -82,6 +140,9 @@ export function SearchAutocomplete({
     onSearch?.();
   };
 
+  /**
+   * Clear search input and close dropdown
+   */
   const clearSearch = () => {
     setSearchQuery("");
     setShowSuggestions(false);
@@ -90,8 +151,11 @@ export function SearchAutocomplete({
   return (
     <div ref={wrapperRef} className={`relative z-50 ${className}`}>
       <form onSubmit={handleSearch} className="relative">
+
+        {/* Search icon */}
         <Search className="absolute left-4 top-1/2 z-10 h-6 w-6 -translate-y-1/2 text-stone-400 pointer-events-none" />
 
+        {/* Search input field */}
         <input
           type="text"
           placeholder={placeholder}
@@ -103,6 +167,7 @@ export function SearchAutocomplete({
           } text-lg text-stone-800 focus:outline-none focus:ring-4 focus:ring-emerald-400 transition-all rounded-full border-none`}
         />
 
+        {/* Clear input button */}
         {searchQuery && (
           <button
             type="button"
@@ -115,12 +180,14 @@ export function SearchAutocomplete({
           </button>
         )}
 
+        {/* Optional right-side action (e.g. filter, button) */}
         {rightAction && (
           <div className="absolute right-32 top-1/2 z-20 -translate-y-1/2">
             {rightAction}
           </div>
         )}
 
+        {/* Submit search button */}
         <button
           type="submit"
           className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-full font-semibold transition shadow-md"
@@ -129,6 +196,7 @@ export function SearchAutocomplete({
         </button>
       </form>
 
+      {/* Suggestions dropdown */}
       <AnimatePresence>
         {showSuggestions &&
           searchQuery.trim().length > 0 &&
@@ -146,6 +214,8 @@ export function SearchAutocomplete({
               }}
             >
               <div className="py-2 max-h-[340px] overflow-y-auto">
+
+                {/* Render suggestion list */}
                 {suggestions.map((pet) => {
                   const { primaryCommonName } = getPetCommonNames(pet);
                   const riskLevel = normalizeRiskLevel(pet.pet_invasive_risk);
@@ -156,6 +226,7 @@ export function SearchAutocomplete({
                       onClick={() => handleSuggestionClick(pet.pet_id)}
                       className="w-full px-6 py-3 flex items-center gap-4 hover:bg-emerald-50 transition text-left group"
                     >
+                      {/* Pet image */}
                       <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-stone-100">
                         <img
                           src={getPetImageSrc(pet.pet_image_ref)}
@@ -164,6 +235,7 @@ export function SearchAutocomplete({
                         />
                       </div>
 
+                      {/* Pet name and scientific name */}
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-stone-900 truncate group-hover:text-emerald-700 transition">
                           {primaryCommonName}
@@ -173,6 +245,7 @@ export function SearchAutocomplete({
                         </div>
                       </div>
 
+                      {/* Risk level badge */}
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
@@ -193,6 +266,7 @@ export function SearchAutocomplete({
                 })}
               </div>
 
+              {/* Footer hint */}
               <div className="px-6 py-3 bg-stone-50 text-xs text-stone-500 border-t border-stone-200">
                 Press Enter to search or click a suggestion
               </div>
@@ -200,6 +274,7 @@ export function SearchAutocomplete({
           )}
       </AnimatePresence>
 
+      {/* No results state */}
       {showSuggestions &&
         searchQuery.trim().length > 0 &&
         !loading &&
