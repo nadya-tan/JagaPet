@@ -218,6 +218,16 @@ The live website is deployed through Vercel, allowing users to access the applic
 
 ---
 
+## Shell & Fin MY Platform Design
+
+This is a code bundle for Shell & Fin MY Platform Design. The design prototype is available at https://www.figma.com/design/mhKvUgPkGn5X1N4DgvQqQZ/JagaPet-Platform-Design.
+
+## Running the code
+
+Run `npm i` to install the dependencies.
+
+Run `npm run dev` to start the development server.
+
 ## Project Structure
 
 ```text
@@ -231,13 +241,4 @@ Webpage front-end code
 │   └── styles/       # Global and component-level styling files
 └── other             # Documentation, version control, and supporting files
 
-# Shell & Fin MY Platform Design
-
-This is a code bundle for Shell & Fin MY Platform Design. The design prototype is available at https://www.figma.com/design/mhKvUgPkGn5X1N4DgvQqQZ/JagaPet-Platform-Design.
-
-## Running the code
-
-Run `npm i` to install the dependencies.
-
-Run `npm run dev` to start the development server.
 ```
