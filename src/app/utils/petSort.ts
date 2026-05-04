@@ -1,6 +1,25 @@
 import { getPetDisplayName } from "../utils/petDisplay";
 import type { Pet, SortOption } from "../types/pet.types";
 
+/**
+ * ===================== Sorting Utility Functions =====================
+ * This module provides comparison and ranking logic for Pet sorting.
+ * It supports:
+ * - Numeric sorting with missing value handling
+ * - Categorical ranking (care level, invasive risk, native status)
+ * - Stable fallback sorting by name
+ */
+
+// ===================== Missing Value Safe Comparison =====================
+
+/**
+ * Compare numeric values while pushing missing values (negative) to the end
+ * Supports both ascending and descending order
+ *
+ * Convention:
+ * - Values < 0 are treated as missing
+ * - Missing values always rank lower priority (sorted last)
+ */
 export function compareWithMissingLast(
   aValue: number,
   bValue: number,
@@ -16,6 +35,12 @@ export function compareWithMissingLast(
   return direction === "asc" ? aValue - bValue : bValue - aValue;
 }
 
+// ===================== Ranking Converters =====================
+
+/**
+ * Convert invasive risk string into numeric rank
+ * Higher value = higher risk severity
+ */
 export function getInvasiveRiskRank(value: string | null | undefined) {
   switch ((value ?? "").toLowerCase()) {
     case "high":
@@ -25,10 +50,14 @@ export function getInvasiveRiskRank(value: string | null | undefined) {
     case "low":
       return 1;
     default:
-      return -1; // missing/unknown goes last
+      return -1; // unknown values always sorted last
   }
 }
 
+/**
+ * Convert care level string into numeric rank
+ * Higher value = more difficult care requirement
+ */
 export function getCareLevelRank(value: string | null | undefined) {
   switch ((value ?? "").toLowerCase()) {
     case "advanced":
@@ -42,6 +71,10 @@ export function getCareLevelRank(value: string | null | undefined) {
   }
 }
 
+/**
+ * Convert native status into numeric rank
+ * Used for ecological prioritization sorting
+ */
 export function getNativeStatusRank(value: string | null | undefined) {
   switch ((value ?? "").toLowerCase()) {
     case "invasive":
@@ -55,10 +88,22 @@ export function getNativeStatusRank(value: string | null | undefined) {
   }
 }
 
+// ===================== Name-Based Sorting =====================
+
+/**
+ * Compare pets alphabetically using normalized display name
+ * Uses localeCompare for consistent alphabetical sorting
+ */
 function compareByName(a: Pet, b: Pet) {
   return getPetDisplayName(a).localeCompare(getPetDisplayName(b));
 }
 
+// ===================== Ranked Field Comparator =====================
+
+/**
+ * Generic comparator for ranked categorical fields
+ * Falls back to alphabetical ordering if ranks are equal
+ */
 function compareRankedField(
   a: Pet,
   b: Pet,
@@ -68,28 +113,40 @@ function compareRankedField(
 ) {
   const result = compareWithMissingLast(aRank, bRank, direction);
   if (result !== 0) return result;
+
+  // Stable fallback to ensure deterministic ordering
   return compareByName(a, b);
 }
 
+// ===================== Main Sorting Function =====================
+
+/**
+ * Sort pet dataset based on selected SortOption
+ * Produces a new sorted array (does not mutate input)
+ */
 export function sortPets(results: Pet[], sortBy: SortOption): Pet[] {
   const items = [...results];
 
   items.sort((a, b) => {
     switch (sortBy) {
+      // ===================== Aquarium Popularity =====================
       case "aquarium": {
         const aRank = a.pet_aquarium === true ? 1 : 0;
         const bRank = b.pet_aquarium === true ? 1 : 0;
 
+        // Aquarium species first
         if (aRank !== bRank) return bRank - aRank;
         return compareByName(a, b);
       }
 
+      // ===================== Alphabetical Sorting =====================
       case "alphabet_asc":
         return compareByName(a, b);
 
       case "alphabet_desc":
         return compareByName(b, a);
 
+      // ===================== Invasive Risk Sorting =====================
       case "invasive_risk_desc": {
         return compareRankedField(
           a,
@@ -110,6 +167,7 @@ export function sortPets(results: Pet[], sortBy: SortOption): Pet[] {
         );
       }
 
+      // ===================== Care Level Sorting =====================
       case "care_level_desc":
         return compareRankedField(
           a,
@@ -129,6 +187,7 @@ export function sortPets(results: Pet[], sortBy: SortOption): Pet[] {
         );
       }
 
+      // ===================== Native Status Sorting =====================
       case "native_status_desc": {
         return compareRankedField(
           a,
@@ -149,25 +208,32 @@ export function sortPets(results: Pet[], sortBy: SortOption): Pet[] {
         );
       }
 
+      // ===================== Cost Sorting =====================
       case "cost_desc": {
         const aCost = a.pet_cost ?? -1;
         const bCost = b.pet_cost ?? -1;
+
         const result = compareWithMissingLast(aCost, bCost, "desc");
         if (result !== 0) return result;
+
         return compareByName(a, b);
       }
 
       case "cost_asc": {
         const aCost = a.pet_cost ?? -1;
         const bCost = b.pet_cost ?? -1;
+
         const result = compareWithMissingLast(aCost, bCost, "asc");
         if (result !== 0) return result;
+
         return compareByName(a, b);
       }
 
+      // ===================== Fallback =====================
       default:
         return 0;
     }
   });
+
   return items;
 }
