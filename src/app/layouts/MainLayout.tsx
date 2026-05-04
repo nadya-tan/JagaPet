@@ -208,16 +208,6 @@ export function MainLayout() {
                 Releasing non-native species into public waterways is illegal
                 under Malaysian law.
               </li>
-
-              {/* Developer Test Link */}
-              <li className="mt-4 pt-4 border-t border-emerald-700">
-                <Link
-                  to="/api-test-lab"
-                  className="hover:text-white transition text-xs opacity-60 hover:opacity-100"
-                >
-                  🔬 API Test Lab (Dev)
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
