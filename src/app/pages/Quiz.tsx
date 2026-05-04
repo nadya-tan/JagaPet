@@ -1,9 +1,17 @@
+// ===================== React + Routing + State Imports =====================
+// Import React state management hook
 import { useState } from "react";
+// Import navigation, linking, and routing utilities
 import { useNavigate, Link, useLocation, Navigate } from "react-router";
+// Import global user context (stores quiz answers and loading state)
 import { useUser, LifestyleAnswers } from "../context/UserContext";
+// Import UI icons used in buttons and hints
 import { ArrowRight, ArrowLeft, HelpCircle } from "lucide-react";
+// Import animation utilities for smooth transitions
 import { motion, AnimatePresence } from "motion/react";
 
+// ===================== Quiz Configuration Data =====================
+// Define all quiz questions, each with an id, title, and selectable options
 const questions = [
   {
     id: "age",
@@ -62,22 +70,33 @@ const questions = [
   },
 ];
 
+// ===================== Route State Type Definition =====================
+// Defines optional navigation state passed via React Router
 type QuizLocationState = {
   retake?: boolean;
 };
 
+// ===================== Main Quiz Component =====================
 export function Quiz() {
+  // Navigation hook for redirecting between pages
   const navigate = useNavigate();
+  // Access router location state (used for retake detection)
   const location = useLocation();
+  // Access global user context (answers + loading + setter)
   const { setAnswers, answers, loading } = useUser();
 
+  // Check whether user is retaking the quiz
   const isRetake = Boolean(
     (location.state as QuizLocationState | null)?.retake,
   );
 
+  // Track current question index (step in quiz flow)
   const [currentStep, setCurrentStep] = useState(0);
+  // Store user-selected answers locally before submission
   const [formData, setFormData] = useState<Partial<LifestyleAnswers>>({});
 
+  // ===================== Loading State Handling =====================
+  // Show loading screen while user data is being fetched
   if (loading) {
     return (
       <div className="bg-stone-50 min-h-screen flex items-center justify-center text-stone-600">
@@ -86,10 +105,14 @@ export function Quiz() {
     );
   }
 
+  // ===================== Redirect If Already Completed =====================
+  // If user already has answers and is not retaking, redirect to results page
   if (answers && !isRetake) {
     return <Navigate to="/quiz-results" replace />;
   }
 
+  // ===================== Answer Selection Handler =====================
+  // Store selected option for the current question
   const handleSelect = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -97,40 +120,58 @@ export function Quiz() {
     }));
   };
 
+  // ===================== Next Step Handler =====================
+  // Move to next question or submit quiz if at final step
   const handleNext = async () => {
     if (currentStep < questions.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
+      // Submit final answers to global context
       await setAnswers(formData as LifestyleAnswers);
+      // Redirect to results page
       navigate("/quiz-results", { replace: true });
     }
   };
 
+  // ===================== Back Navigation Handler =====================
+  // Move back one question if not at the beginning
   const handleBack = () => {
     if (currentStep > 0) setCurrentStep((prev) => prev - 1);
   };
 
+  // ===================== Validation + Progress Calculation =====================
+  // Check if current question has been answered
   const isCurrentAnswered =
     !!formData[questions[currentStep].id as keyof LifestyleAnswers];
+
+  // Calculate progress percentage for progress bar
   const progress = ((currentStep + 1) / questions.length) * 100;
 
+  // ===================== UI Rendering =====================
   return (
     <div className="bg-stone-50 min-h-screen flex flex-col font-sans text-stone-900 relative">
       <div className="max-w-3xl w-full mx-auto px-4 py-8 md:py-16 flex-1 flex flex-col">
+        {/* ===================== Header Section ===================== */}
         <div className="mb-12">
           <div className="flex justify-between items-end mb-4">
             <div>
+              {/* Quiz Title */}
               <h1 className="text-3xl font-extrabold text-stone-900">
                 Lifestyle Compatibility Screening
               </h1>
+              {/* Subtitle description */}
               <p className="text-stone-600 mt-2 text-lg">
                 Let's find the right aquatic pet for you.
               </p>
             </div>
+
+            {/* Step indicator */}
             <div className="text-emerald-600 font-bold text-lg">
               {currentStep + 1} / {questions.length}
             </div>
           </div>
+
+          {/* Progress bar container */}
           <div className="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
             <motion.div
               className="bg-emerald-500 h-full"
@@ -141,6 +182,7 @@ export function Quiz() {
           </div>
         </div>
 
+        {/* ===================== Question Section ===================== */}
         <div className="flex-1 flex flex-col justify-center">
           <AnimatePresence mode="wait">
             <motion.div
@@ -151,16 +193,20 @@ export function Quiz() {
               transition={{ duration: 0.3 }}
               className="w-full max-w-2xl mx-auto"
             >
+              {/* Current question title */}
               <h2 className="text-3xl md:text-4xl font-bold mb-8 text-stone-900 leading-tight">
                 {questions[currentStep].title}
               </h2>
 
+              {/* Options list */}
               <div className="space-y-4">
                 {questions[currentStep].options.map((option) => {
+                  // Check if option is currently selected
                   const isSelected =
                     formData[
                       questions[currentStep].id as keyof LifestyleAnswers
                     ] === option.value;
+
                   return (
                     <button
                       key={option.value}
@@ -180,7 +226,9 @@ export function Quiz() {
           </AnimatePresence>
         </div>
 
+        {/* ===================== Navigation Buttons ===================== */}
         <div className="mt-12 flex justify-between items-center pt-6 border-t border-stone-200">
+          {/* Back button */}
           <button
             onClick={handleBack}
             disabled={currentStep === 0}
@@ -192,6 +240,8 @@ export function Quiz() {
           >
             <ArrowLeft className="w-5 h-5" /> Back
           </button>
+
+          {/* Next / Submit button */}
           <button
             onClick={handleNext}
             disabled={!isCurrentAnswered}
@@ -206,6 +256,7 @@ export function Quiz() {
           </button>
         </div>
 
+        {/* ===================== Help / Alternate Flow Link ===================== */}
         <div className="mt-8 text-center">
           <Link
             to="/identify"

@@ -30,6 +30,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
 
+/**
+ * Utility function:
+ * Randomly shuffles an array using Fisher–Yates algorithm
+ */
 function shuffleArray<T>(items: T[]) {
   const copy = [...items];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -39,25 +43,48 @@ function shuffleArray<T>(items: T[]) {
   return copy;
 }
 
+/**
+ * Home page component
+ * - Displays pet recommendations
+ * - Displays high biodiversity risk species
+ * - Provides navigation and interactive features
+ */
 export function Home() {
-  const { recommendations, loading, error } = usePetRecommendationPool();
-  const navigate = useNavigate();
+  const { recommendations, loading, error } = usePetRecommendationPool(); // Fetch recommended pets from API/hook
+  const navigate = useNavigate(); // Navigation hook for routing
+
+  // Fetch high risk species list
   const {
     highRiskSpecies,
     loading: highRiskLoading,
     error: highRiskError,
   } = useHighRiskSpecies();
+
+  // Reference to hidden file input (used for image upload identification)
   const identifyFileInputRef = useRef<HTMLInputElement | null>(null);
 
+  /**
+   * Deck system:
+   * - deck: stores shuffled list of pet IDs
+   * - cursor: tracks current page position
+   */
   const [deck, setDeck] = useState<string[]>([]);
   const [cursor, setCursor] = useState(0);
 
+  // Same deck system for high-risk species
   const [highRiskDeck, setHighRiskDeck] = useState<string[]>([]);
   const [highRiskCursor, setHighRiskCursor] = useState(0);
 
+  // Video reference for mini player
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Controls visibility of mini video player
   const [showMiniPlayer, setShowMiniPlayer] = useState(true);
 
+  /**
+   * Open mini player in fullscreen mode
+   * Supports standard and webkit fullscreen APIs
+   */
   const handleMiniPlayerFullscreen = () => {
     const video = videoRef.current;
 
@@ -77,6 +104,10 @@ export function Home() {
     }
   };
 
+  /**
+   * Handle image upload for pet identification feature
+   * Validates file type and navigates to /identify page
+   */
   const handleIdentifyPhotoSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -84,19 +115,27 @@ export function Home() {
       return;
     }
 
+    // Only allow image files
     if (!file.type.startsWith("image/")) {
       return;
     }
 
+    // Navigate to identification page with uploaded file
     navigate("/identify", {
       state: {
         imageFile: file,
       },
     });
 
+    // Reset input value so same file can be selected again
     event.target.value = "";
   };
 
+  /**
+   * Initialize recommendation deck
+   * - Uses sessionStorage to persist state
+   * - Falls back to reshuffled deck if invalid
+   */
   useEffect(() => {
     if (!recommendations.length) return;
 
@@ -126,6 +165,10 @@ export function Home() {
     sessionStorage.setItem("home-recommendation-cursor", "0");
   }, [recommendations]);
 
+  /**
+   * Initialize high-risk species deck
+   * Same logic as recommendation deck but for invasive/high-risk pets
+   */
   useEffect(() => {
     if (!highRiskSpecies.length) return;
 
@@ -152,6 +195,9 @@ export function Home() {
     sessionStorage.setItem("home-high-risk-cursor", "0");
   }, [highRiskSpecies]);
 
+  /**
+   * Compute visible recommended pets based on current cursor
+   */
   const visibleRecommendations = useMemo(() => {
     const petMap = new Map(
       recommendations.map((pet) => [pet.pet_id, pet] as const),
@@ -163,6 +209,9 @@ export function Home() {
       .filter((pet): pet is RecommendedPet => pet !== undefined);
   }, [recommendations, deck, cursor]);
 
+  /**
+   * Compute visible high-risk species
+   */
   const visibleHighRiskSpecies = useMemo(() => {
     const petMap = new Map(
       highRiskSpecies.map((pet) => [pet.pet_id, pet] as const),
@@ -174,6 +223,10 @@ export function Home() {
       .filter((pet): pet is RecommendedPet => pet !== undefined);
   }, [highRiskSpecies, highRiskDeck, highRiskCursor]);
 
+  /**
+   * Move to next recommendation batch
+   * Reshuffles deck when reaching end
+   */
   function showNextRecommendations() {
     if (!deck.length) return;
 
@@ -195,6 +248,9 @@ export function Home() {
     sessionStorage.setItem("home-recommendation-cursor", String(nextCursor));
   }
 
+  /**
+   * Move to next high-risk species batch
+   */
   function showNextHighRiskSpecies() {
     if (!highRiskDeck.length) return;
 
@@ -500,6 +556,7 @@ export function Home() {
         </div>
       </section>
 
+      {/* High Biodiversity Risk Section */}
       <section className="max-w-7xl mx-auto px-4 w-full pt-12">
         <div className="flex items-center justify-between mb-8">
           <div>

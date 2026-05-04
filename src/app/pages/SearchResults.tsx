@@ -26,16 +26,59 @@ import { usePetSearch } from "../hooks/usePetSearch";
 import { useSortedPets } from "../hooks/useSortedPets";
 import { usePagination } from "../hooks/usePagination";
 
+/**
+ * SearchResults Component
+ * ========================
+ * This component is responsible for:
+ * 1. Reading search query parameters from URL
+ * 2. Fetching pet search results based on query
+ * 3. Sorting and paginating results
+ * 4. Rendering search UI, loading/error states, and result cards
+ */
 export function SearchResults() {
+  /**
+   * =====================
+   * URL & Navigation Setup
+   * =====================
+   */
+
+  // Extract query parameters from URL (?q=xxx)
   const [searchParams] = useSearchParams();
+
+  // Navigation handler (used for back/home navigation)
   const navigate = useNavigate();
+
+  // Extract search query string, fallback to empty string
   const query = searchParams.get("q") || "";
 
+  /**
+   * =====================
+   * Local State
+   * =====================
+   */
+
+  // Sorting mode for search results (default: aquarium/popularity)
   const [sortBy, setSortBy] = useState<SortOption>("aquarium");
 
+  /**
+   * =====================
+   * Data Fetching Layer
+   * =====================
+   */
+
+  // Custom hook: performs API/search logic for pets
   const { results, loading, error } = usePetSearch(query);
+
+  // Custom hook: sorts results based on selected sort method
   const sortedResults = useSortedPets(results, sortBy);
 
+  /**
+   * =====================
+   * Pagination Layer
+   * =====================
+   *
+   * Splits sorted results into pages and provides navigation helpers
+   */
   const {
     currentPage,
     totalPages,
@@ -48,8 +91,12 @@ export function SearchResults() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
       <div className="mx-auto max-w-6xl">
+        {/* =====================
+            Back Navigation Button
+            ===================== */}
         <button
           onClick={() => {
+            // If browser history exists, go back; otherwise go home
             if (window.history.length > 1) {
               navigate(-1);
             } else {
@@ -62,6 +109,9 @@ export function SearchResults() {
           Back
         </button>
 
+        {/* =====================
+            Search Header Section
+            ===================== */}
         <div className="mb-8 rounded-[2rem] bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 p-8 text-white shadow-xl">
           <div className="mb-3 flex items-center gap-3">
             <Search className="h-7 w-7" />
@@ -69,11 +119,16 @@ export function SearchResults() {
               Search Results
             </h1>
           </div>
+
+          {/* Display current query */}
           <p className="text-emerald-50">
             Searching for: <span className="font-semibold">"{query}"</span>
           </p>
         </div>
 
+        {/* =====================
+            Loading State
+            ===================== */}
         {loading ? (
           <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
             <p className="text-stone-600">Searching pets...</p>
@@ -87,7 +142,11 @@ export function SearchResults() {
             <p className="text-red-800">{error}</p>
           </div>
         ) : results.length > 0 ? (
+          /* =====================
+            Results Available State
+            ===================== */
           <>
+            {/* Results summary */}
             <div className="mb-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
               <div className="mb-2 flex items-center gap-2 text-emerald-700">
                 <Sparkles className="h-5 w-5" />
@@ -99,6 +158,9 @@ export function SearchResults() {
               </p>
             </div>
 
+            {/* =====================
+                Sorting Control
+                ===================== */}
             <div className="mb-6 flex items-center gap-3">
               <label
                 htmlFor="sort"
@@ -106,6 +168,8 @@ export function SearchResults() {
               >
                 Sort by:
               </label>
+
+              {/* Dropdown controlling sort mode */}
               <select
                 id="sort"
                 value={sortBy}
@@ -138,9 +202,15 @@ export function SearchResults() {
               </select>
             </div>
 
+            {/* =====================
+                Results Grid
+                ===================== */}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {paginatedItems.map((pet, index) => {
+                // Normalize danger level into consistent format
                 const danger = normalizeDangerBadge(pet.pet_danger);
+
+                // Extract display names (primary + alternative names)
                 const { primaryCommonName, otherCommonNames } =
                   getPetCommonNames(pet);
 
@@ -151,10 +221,14 @@ export function SearchResults() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
+                    {/* Card link to species detail page */}
                     <Link
                       to={`/species/${pet.pet_id}`}
                       className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border border-stone-100 transition-all flex flex-col group cursor-pointer h-full"
                     >
+                      {/* =====================
+                          Image Section
+                          ===================== */}
                       <div className="relative h-64 overflow-hidden">
                         <img
                           src={
@@ -167,7 +241,10 @@ export function SearchResults() {
                           }
                           className="w-full h-full object-fit group-hover:scale1-105 transition duration-500"
                         />
+
+                        {/* Badges overlay */}
                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                          {/* Biodiversity risk badge */}
                           {pet.pet_invasive_risk && (
                             <span
                               className={getDangerBadgeClasses(
@@ -178,6 +255,8 @@ export function SearchResults() {
                               {pet.pet_invasive_risk} Biodiversity Risk
                             </span>
                           )}
+
+                          {/* Care level badge */}
                           {pet.pet_care_level && (
                             <span
                               className={getCareBadgeClasses(
@@ -188,6 +267,8 @@ export function SearchResults() {
                               {pet.pet_care_level} Care
                             </span>
                           )}
+
+                          {/* Legal restriction badge */}
                           {pet.pet_banned && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
                               <Ban className="w-4 h-4" />
@@ -197,24 +278,37 @@ export function SearchResults() {
                         </div>
                       </div>
 
+                      {/* =====================
+                          Content Section
+                          ===================== */}
                       <div className="p-6 flex-1 flex flex-col">
+                        {/* Primary name */}
                         <h3 className="text-xl font-bold text-stone-900 mb-1 group-hover:text-emerald-700 transition">
                           {primaryCommonName}
                         </h3>
+
+                        {/* Scientific name */}
                         <p className="text-sm text-stone-500 italic mb-2 font-serif">
                           {pet.pet_scientific_name}
                         </p>
+
+                        {/* Alternative names */}
                         {otherCommonNames.length > 0 && (
                           <p className="text-sm text-stone-500 mb-3">
                             <span className="font-semibold">A.K.A:</span>{" "}
                             {otherCommonNames.join(", ")}
                           </p>
                         )}
+
+                        {/* Attribute badges */}
                         <div className="mb-4 flex flex-wrap gap-2">
+                          {/* Danger level */}
                           <span className={getDangerBadgeClasses(danger)}>
                             <Skull className="w-3 h-3" />
                             {danger} Danger
                           </span>
+
+                          {/* Native status */}
                           {pet.pet_is_native && (
                             <span
                               className={getNativeBadgeClasses(
@@ -225,6 +319,8 @@ export function SearchResults() {
                               {pet.pet_is_native}
                             </span>
                           )}
+
+                          {/* Popular/common indicator */}
                           {pet.pet_aquarium && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
                               <ScanEye className="w-3 h-3" />
@@ -232,12 +328,16 @@ export function SearchResults() {
                             </span>
                           )}
                         </div>
+
+                        {/* Description text */}
                         <p className="text-stone-600 text-sm mb-6 line-clamp-3">
                           {displayText(
                             pet.pet_comments,
                             "No description is available for this pet yet.",
                           )}
                         </p>
+
+                        {/* CTA */}
                         <div className="mt-auto flex items-center justify-between">
                           <div className="text-emerald-700 font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
                             View Profile & Care Guide →
@@ -250,8 +350,12 @@ export function SearchResults() {
               })}
             </div>
 
+            {/* =====================
+                Pagination Controls
+                ===================== */}
             {totalPages > 1 && (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                {/* Previous page */}
                 <button
                   onClick={goPrevious}
                   disabled={currentPage === 1}
@@ -260,6 +364,7 @@ export function SearchResults() {
                   Previous
                 </button>
 
+                {/* Page number buttons */}
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
                     <button
@@ -276,6 +381,7 @@ export function SearchResults() {
                   ),
                 )}
 
+                {/* Next page */}
                 <button
                   onClick={goNext}
                   disabled={currentPage === totalPages}
@@ -285,21 +391,32 @@ export function SearchResults() {
                 </button>
               </div>
             )}
+
+            {/* Page indicator */}
             <p className="mt-4 text-center text-base text-stone-600">
               Page {currentPage} of {totalPages}
             </p>
           </>
         ) : (
+          /* =====================
+            Empty State
+            ===================== */
           <div className="rounded-[2rem] border border-stone-200 bg-white p-10 text-center shadow-sm">
+            {/* Icon */}
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-stone-100">
               <AlertCircle className="h-7 w-7 text-stone-500" />
             </div>
+
+            {/* Title */}
             <h2 className="text-2xl font-bold text-stone-900">No pets found</h2>
+
+            {/* Description */}
             <p className="mx-auto mt-3 max-w-2xl text-stone-600">
               We could not find any pets matching "{query}". Try a scientific
               name, vernacular name, genus, or family.
             </p>
 
+            {/* Action buttons */}
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link
                 to="/"

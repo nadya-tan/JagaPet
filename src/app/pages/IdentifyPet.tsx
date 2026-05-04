@@ -10,6 +10,10 @@ import {
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 
+/**
+ * AI model identification result structure
+ * - Represents parsed output from backend model
+ */
 type IdentificationResult = {
   scientific_name: string;
   common_name: string;
@@ -17,11 +21,18 @@ type IdentificationResult = {
   notes: string;
 };
 
+/**
+ * API response structure from backend identification endpoint
+ */
 type IdentifyApiResponse = {
   result: string;
   usage: unknown;
 };
 
+/**
+ * Local species database structure
+ * - Used to match AI result with known species in system
+ */
 type LocalSpecies = {
   petId: string;
   name: string;
@@ -30,6 +41,12 @@ type LocalSpecies = {
   biodiversityRisk: string | null;
 };
 
+/**
+ * Normalize names for comparison:
+ * - lowercase
+ * - remove parentheses
+ * - remove special characters
+ */
 const normalizeName = (value: string | null | undefined) =>
   (value ?? "")
     .toLowerCase()
@@ -37,6 +54,11 @@ const normalizeName = (value: string | null | undefined) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
+/**
+ * Parse AI model JSON output safely
+ * - Removes markdown code fences if present
+ * - Ensures fallback values for missing fields
+ */
 const parseModelResult = (resultText: string): IdentificationResult => {
   const trimmed = resultText.trim();
   const withoutCodeFence = trimmed.replace(/^```json\s*|```$/gim, "").trim();
@@ -50,6 +72,10 @@ const parseModelResult = (resultText: string): IdentificationResult => {
   };
 };
 
+/**
+ * Match AI result to local species database
+ * - Uses fuzzy matching between scientific and common names
+ */
 const findLocalSpecies = (
   analysis: IdentificationResult,
   speciesList: LocalSpecies[],
@@ -74,20 +100,52 @@ const findLocalSpecies = (
   );
 };
 
+/**
+ * Main IdentifyPet page component
+ * - Upload image
+ * - Send to backend AI model
+ * - Display identification result
+ * - Match with local biodiversity database
+ */
 export function IdentifyPet() {
+  // UI state: drag & drop interaction
   const [dragActive, setDragActive] = useState(false);
+
+  // Selected image preview URL
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Original uploaded file name
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+  // Loading state during AI analysis
   const [isScanning, setIsScanning] = useState(false);
+
+  // AI result state
   const [result, setResult] = useState<IdentificationResult | null>(null);
+
+  // Error state
   const [error, setError] = useState<string | null>(null);
+
+  // File input reference (hidden input)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Prevent duplicate auto-identification
   const autoIdentifyStartedRef = useRef(false);
+
+  // Local species database
   const [speciesList, setSpeciesList] = useState<LocalSpecies[]>([]);
+
+  // Species loading error
   const [speciesError, setSpeciesError] = useState<string | null>(null);
+
+  // Router location state (used for passing image from another page)
   const location = useLocation();
   const initialImageFile = location.state?.imageFile as File | undefined;
 
+  /**
+   * Fetch local species database from backend
+   * Used for matching AI result with known species
+   */
   useEffect(() => {
     const fetchSpecies = async () => {
       try {
@@ -125,6 +183,9 @@ export function IdentifyPet() {
     fetchSpecies();
   }, []);
 
+  /**
+   * Cleanup object URL to prevent memory leaks
+   */
   useEffect(() => {
     return () => {
       if (selectedImage) {
@@ -133,6 +194,9 @@ export function IdentifyPet() {
     };
   }, [selectedImage]);
 
+  /**
+   * Handle drag events for upload area
+   */
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -144,6 +208,9 @@ export function IdentifyPet() {
     }
   };
 
+  /**
+   * Reset upload form state
+   */
   const resetForm = () => {
     if (selectedImage) {
       URL.revokeObjectURL(selectedImage);
@@ -160,6 +227,9 @@ export function IdentifyPet() {
     }
   };
 
+  /**
+   * Send image to backend AI identification service
+   */
   const handleBackendIdentify = async (file: File) => {
     setError(null);
     setResult(null);
@@ -198,26 +268,35 @@ export function IdentifyPet() {
     }
   };
 
+  /**
+   * Validate and process uploaded file
+   */
   const handleFile = async (file: File | null | undefined) => {
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
+    // Validate file type
     if (!file.type.startsWith("image/")) {
       setError("Please choose an image file such as JPG, PNG, or HEIC.");
       return;
     }
 
+    // Cleanup previous preview
     if (selectedImage) {
       URL.revokeObjectURL(selectedImage);
     }
 
+    // Create preview URL
     const objectUrl = URL.createObjectURL(file);
     setSelectedImage(objectUrl);
     setSelectedFileName(file.name);
+
+    // Send to backend for analysis
     await handleBackendIdentify(file);
   };
 
+  /**
+   * Handle drag-drop upload
+   */
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -226,27 +305,37 @@ export function IdentifyPet() {
     await handleFile(e.dataTransfer.files?.[0]);
   };
 
+  /**
+   * Handle file input selection
+   */
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     await handleFile(e.target.files?.[0]);
   };
 
+  /**
+   * Auto-run identification if image is passed from another page
+   */
   useEffect(() => {
-    if (!initialImageFile || autoIdentifyStartedRef.current) {
-      return;
-    }
+    if (!initialImageFile || autoIdentifyStartedRef.current) return;
 
     autoIdentifyStartedRef.current = true;
 
     handleFile(initialImageFile);
 
+    // Clean URL state to avoid re-trigger
     window.history.replaceState({}, document.title, window.location.pathname);
   }, [initialImageFile]);
 
+  /**
+   * Match AI result with local species database
+   */
   const matchedSpecies = result ? findLocalSpecies(result, speciesList) : null;
 
   return (
     <div className="bg-stone-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      {/* Page container */}
       <div className="max-w-3xl mx-auto">
+        {/* Header section */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
             Identify a Species
@@ -258,7 +347,9 @@ export function IdentifyPet() {
           </p>
         </div>
 
+        {/* Upload / Result container */}
         <div className="bg-white rounded-3xl shadow-xl border border-stone-100 overflow-hidden">
+          {/* Hidden file input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -267,7 +358,9 @@ export function IdentifyPet() {
             onChange={handleInputChange}
           />
 
+          {/* Animated UI states */}
           <AnimatePresence mode="wait">
+            {/* Upload state */}
             {!selectedImage && (
               <motion.div
                 key="upload"
@@ -284,6 +377,7 @@ export function IdentifyPet() {
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
+                {/* Drag & drop upload UI */}
                 <div className="mx-auto w-24 h-24 mb-6 bg-emerald-100 rounded-full flex items-center justify-center">
                   <UploadCloud className="w-12 h-12 text-emerald-600" />
                 </div>
@@ -311,6 +405,7 @@ export function IdentifyPet() {
               </motion.div>
             )}
 
+            {/* Scanning state */}
             {selectedImage && isScanning && (
               <motion.div
                 key="scanning"
@@ -319,6 +414,7 @@ export function IdentifyPet() {
                 exit={{ opacity: 0 }}
                 className="p-12 flex flex-col items-center justify-center min-h-[400px]"
               >
+                {/* Loading animation UI */}
                 <div className="relative w-64 h-64 mb-8 rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src={selectedImage}
@@ -337,6 +433,7 @@ export function IdentifyPet() {
               </motion.div>
             )}
 
+            {/* Result state */}
             {selectedImage && !isScanning && (result || error) && (
               <motion.div
                 key="result"
@@ -379,6 +476,7 @@ export function IdentifyPet() {
                       </div>
                     )}
 
+                    {/* AI result + species match UI */}
                     {result && (
                       <>
                         <div>
