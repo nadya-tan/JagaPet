@@ -12,6 +12,10 @@ import {
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 
+/**
+ * Mapping for quiz answer display labels
+ * Converts stored backend values into human-readable text
+ */
 const answerLabels: Record<string, Record<string, string>> = {
   age: {
     under_18: "Under 18",
@@ -46,6 +50,10 @@ const answerLabels: Record<string, Record<string, string>> = {
   },
 };
 
+/**
+ * Species option structure
+ * Used when adding a new pet
+ */
 interface SpeciesOption {
   petId: string;
   name: string;
@@ -53,6 +61,9 @@ interface SpeciesOption {
   imageUrl: string | null;
 }
 
+/**
+ * User-owned pet data structure
+ */
 interface UserPet {
   petListId: string;
   petId: string;
@@ -64,6 +75,9 @@ interface UserPet {
   imageUrl: string | null;
 }
 
+/**
+ * Care task structure for each pet
+ */
 interface CareTask {
   id: string;
   petListId: string;
@@ -75,6 +89,10 @@ interface CareTask {
   lastCompleted?: string | null;
 }
 
+/**
+ * Icon mapping for care task types
+ * Used to visually represent task categories
+ */
 const TASK_ICONS: Record<string, React.ReactNode> = {
   "water-change": <Droplets className="w-5 h-5" />,
   feeding: <Utensils className="w-5 h-5" />,
@@ -83,6 +101,9 @@ const TASK_ICONS: Record<string, React.ReactNode> = {
   "temperature-check": <Thermometer className="w-5 h-5" />,
 };
 
+/**
+ * Human-readable names for task types
+ */
 const TASK_NAMES: Record<string, string> = {
   "water-change": "25% Water Change",
   feeding: "Feeding",
@@ -91,25 +112,20 @@ const TASK_NAMES: Record<string, string> = {
   "temperature-check": "Temperature Check",
 };
 
+/**
+ * Format care task frequency into readable string
+ */
 function formatFrequency(task: CareTask) {
   const unit = task.intervalUnit;
   const pluralUnit = task.interval === 1 ? unit : `${unit}s`;
 
-  if (task.count === 1 && task.interval === 1 && unit === "day") {
-    return "daily";
-  }
-
-  if (task.count === 1 && task.interval === 1 && unit === "week") {
+  if (task.count === 1 && task.interval === 1 && unit === "day") return "daily";
+  if (task.count === 1 && task.interval === 1 && unit === "week")
     return "weekly";
-  }
-
-  if (task.count === 1 && task.interval === 1 && unit === "month") {
+  if (task.count === 1 && task.interval === 1 && unit === "month")
     return "monthly";
-  }
-
-  if (task.count === 1 && task.interval === 1 && unit === "year") {
+  if (task.count === 1 && task.interval === 1 && unit === "year")
     return "yearly";
-  }
 
   if (task.count > 1 && task.interval === 1) {
     return `${task.count} times per ${unit}`;
@@ -122,7 +138,14 @@ function formatFrequency(task: CareTask) {
   return `every ${task.interval} ${pluralUnit}`;
 }
 
+/**
+ * Profile page component
+ * - Displays quiz results
+ * - Manages user pets
+ * - Tracks care tasks
+ */
 export function Profile() {
+  // Global user context
   const {
     user,
     answers,
@@ -140,36 +163,57 @@ export function Profile() {
     clearPetError,
   } = useUser();
 
+  // Tab state: profile or pets view
   const [activeTab, setActiveTab] = useState<"profile" | "pets">("profile");
 
+  // Local UI error state
   const [formError, setFormError] = useState("");
 
+  // Add pet modal state
   const [showAddPet, setShowAddPet] = useState(false);
+
+  // New pet form fields
   const [selectedSpeciesId, setSelectedSpeciesId] = useState("");
   const [petNickname, setPetNickname] = useState("");
   const [petAge, setPetAge] = useState("");
+
+  // Loading state for pet creation
   const [savingPet, setSavingPet] = useState(false);
 
+  /**
+   * Load user pet data when user is available
+   */
   useEffect(() => {
     if (!user || loading) return;
-
     loadPetData();
   }, [user, loading]);
 
+  /**
+   * Group care tasks by petListId for easier rendering
+   */
   const tasksByPetListId = useMemo(() => {
     return careTasks.reduce<Record<string, CareTask[]>>((groups, task) => {
       if (!groups[task.petListId]) {
         groups[task.petListId] = [];
       }
-
       groups[task.petListId].push(task);
       return groups;
     }, {});
   }, [careTasks]);
 
+  /**
+   * Guard: loading state
+   */
   if (loading) return <div className="p-8">Loading...</div>;
+
+  /**
+   * Guard: unauthenticated redirect
+   */
   if (!user) return <Navigate to="/login" replace />;
 
+  /**
+   * Quiz answer rows for rendering profile tab
+   */
   const rows = [
     ["Age group", answers?.age, "age"],
     ["Free time", answers?.time, "time"],
@@ -179,6 +223,9 @@ export function Profile() {
     ["Experience", answers?.experience, "experience"],
   ];
 
+  /**
+   * Add new pet handler
+   */
   const handleAddPet = async () => {
     if (!selectedSpeciesId || !petNickname.trim()) return;
 
@@ -193,12 +240,12 @@ export function Profile() {
         petAge.trim() ? Number(petAge) : null,
       );
 
+      // Reset form
       setSelectedSpeciesId("");
       setPetNickname("");
       setPetAge("");
       setShowAddPet(false);
     } catch (error) {
-      console.error(error);
       setFormError(
         error instanceof Error ? error.message : "Could not add pet.",
       );
@@ -207,44 +254,51 @@ export function Profile() {
     }
   };
 
+  /**
+   * Remove pet handler
+   */
   const handleRemovePet = async (petListId: string) => {
     try {
       setFormError("");
       clearPetError();
-
       await removeUserPet(petListId);
     } catch (error) {
-      console.error(error);
       setFormError(
         error instanceof Error ? error.message : "Could not remove pet.",
       );
     }
   };
 
+  /**
+   * Mark care task as completed
+   */
   const handleCompleteTask = async (taskId: string) => {
     try {
       setFormError("");
       clearPetError();
-
       await completeCareTask(taskId);
     } catch (error) {
-      console.error(error);
       setFormError(
         error instanceof Error ? error.message : "Could not update task.",
       );
     }
   };
 
+  /**
+   * Calculate days since last completion
+   */
   const calculateDaysSince = (dateString?: string | null) => {
     if (!dateString) return null;
 
     const dateValue = new Date(dateString).getTime();
-
     if (Number.isNaN(dateValue)) return null;
 
     return Math.floor((Date.now() - dateValue) / (1000 * 60 * 60 * 24));
   };
 
+  /**
+   * Check if task was completed today
+   */
   const isCompletedToday = (dateString?: string | null) => {
     if (!dateString) return false;
 
@@ -260,9 +314,11 @@ export function Profile() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Profile header */}
       <h1 className="text-3xl font-bold mb-2">My Profile</h1>
       <p className="text-stone-600 mb-8">Signed in as @{user.username}</p>
 
+      {/* Tab switcher */}
       <div className="flex gap-2 mb-6 rounded-2xl bg-stone-100 p-1">
         <button
           onClick={() => setActiveTab("profile")}
@@ -292,6 +348,7 @@ export function Profile() {
           {formError || petError}
         </div>
       )}
+      {/* Profile tab */}
       {activeTab === "profile" && (
         <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
           <h2 className="text-xl font-semibold mb-4">
@@ -346,6 +403,7 @@ export function Profile() {
         </div>
       )}
 
+      {/* Pets tab */}
       {activeTab === "pets" && (
         <div className="bg-white rounded-3xl shadow-sm p-8 border border-stone-200">
           <div className="flex items-center justify-between mb-6">

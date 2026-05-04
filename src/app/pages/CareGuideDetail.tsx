@@ -24,12 +24,16 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { getPetCommonNames } from "../utils/petDisplay";
 
+/* ===================== Type Definitions ===================== */
+
+// Type for common illness information
 type CommonIllness = {
   name: string;
   symptoms: string;
   treatment: string;
 };
 
+// Type for full care guide data structure
 type CareGuide = {
   petId: string;
   name: string;
@@ -60,43 +64,66 @@ type CareGuide = {
   commonIllness: CommonIllness[];
 };
 
+/* ===================== Helper Function ===================== */
+
+// Generic function to fetch JSON data from API
 async function fetchJson<T>(url: string): Promise<T> {
+  // Send request
   const response = await fetch(url);
+
+  // Try parsing response as JSON
   const data = await response.json().catch(() => null);
 
+  // Throw error if request failed
   if (!response.ok) {
     throw new Error(data?.error || "Request failed");
   }
 
+  // Return typed response data
   return data as T;
 }
 
+/* ===================== Main Component ===================== */
+
 export function CareGuideDetail() {
+  // Hook for page navigation
   const navigate = useNavigate();
+
+  // Get pet id from URL parameters
   const { id } = useParams<{ id: string }>();
 
+  // State for care guide data
   const [careGuide, setCareGuide] = useState<CareGuide | null>(null);
+
+  // State for loading status
   const [loading, setLoading] = useState(true);
+
+  // State for error message
   const [error, setError] = useState("");
 
+  /* ===================== Load Data on Page Start ===================== */
   useEffect(() => {
     const petId = id;
 
+    // If no id exists, stop loading
     if (!petId) {
       setError("Missing pet id.");
       setLoading(false);
       return;
     }
 
+    // Async function to fetch care guide
     async function loadCareGuide(currentPetId: string) {
       try {
         setLoading(true);
         setError("");
 
+        // Request backend API
         const data = await fetchJson<CareGuide>(
           `/api/care-guide?petId=${encodeURIComponent(currentPetId)}`,
         );
 
+        // Save returned data
         setCareGuide(data);
       } catch (error) {
         console.error(error);
@@ -109,18 +136,24 @@ export function CareGuideDetail() {
     loadCareGuide(petId);
   }, [id]);
 
+  /* ===================== Loading Screen ===================== */
   if (loading) {
     return <div className="p-8">Loading care guide...</div>;
   }
 
+  /* ===================== Error Redirect ===================== */
   if (error || !careGuide) {
     return <Navigate to="/profile" replace />;
   }
+
+  /* ===================== Process Common Names ===================== */
 
   const commonNames = getPetCommonNames({
     pet_vernacular_name: careGuide.vernacularName,
     pet_scientific_name: careGuide.scientificName,
   } as any);
+
+  /* ===================== Accordion Component ===================== */
 
   interface AccordionSectionProps {
     title: string;
@@ -137,8 +170,10 @@ export function CareGuideDetail() {
     children,
     defaultOpen = false,
   }: AccordionSectionProps) {
+    // Open / close state of section
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
+    // Color style mapping
     const colorClasses: Record<string, string> = {
       emerald: "bg-emerald-500 border-emerald-200",
       blue: "bg-blue-500 border-blue-200",
@@ -150,6 +185,7 @@ export function CareGuideDetail() {
 
     return (
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-stone-200">
+        {/* Section header button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full ${colorClasses[color]} text-white p-5 flex items-center justify-between hover:opacity-90 transition-opacity`}
@@ -158,6 +194,8 @@ export function CareGuideDetail() {
             {icon}
             <h2 className="text-2xl font-bold">{title}</h2>
           </div>
+
+          {/* Toggle icon */}
           {isOpen ? (
             <ChevronUp className="w-6 h-6" />
           ) : (
@@ -165,6 +203,7 @@ export function CareGuideDetail() {
           )}
         </button>
 
+        {/* Animated expandable content */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -182,6 +221,8 @@ export function CareGuideDetail() {
     );
   }
 
+  /* ===================== Page UI ===================== */
+
   return (
     <div className="bg-gradient-to-br from-stone-100 to-stone-50 min-h-screen py-8 px-4 font-sans">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -189,6 +230,7 @@ export function CareGuideDetail() {
         <div className="bg-white rounded-2xl shadow-lg p-6 flex items-center justify-between">
           <button
             onClick={() => {
+              // Go back if browser history exists
               if (window.history.length > 1) {
                 navigate(-1);
               } else {
@@ -200,13 +242,17 @@ export function CareGuideDetail() {
             <ArrowLeft className="w-5 h-5" />
             Back
           </button>
+
+          {/* Pet title section */}
           <div className="text-right">
             <h1 className="text-3xl md:text-4xl font-extrabold text-stone-900">
               {commonNames.primaryCommonName}
             </h1>
+
             <p className="text-stone-600 italic text-sm">
               {careGuide.scientificName}
             </p>
+
             {careGuide.vernacularName && (
               <p className="text-emerald-700 font-semibold text-sm">
                 {commonNames.otherCommonNames.join(", ")}
@@ -215,7 +261,14 @@ export function CareGuideDetail() {
           </div>
         </div>
 
-        {/* Basic Information */}
+        {/* Basic Information 
+        Remaining sections below are rendered using AccordionSection:
+           - Basic Information
+           - Water Parameters
+           - Feeding & Maintenance
+           - Tank Setup & Requirements
+           - Health Monitoring
+           - Common Illnesses*/}
         <AccordionSection
           title="Basic Information"
           icon={<Fish className="w-7 h-7" />}
@@ -555,8 +608,8 @@ export function CareGuideDetail() {
                   <p className="text-rose-100 leading-relaxed text-sm">
                     If your pet shows severe symptoms (not eating 3+ days,
                     difficulty breathing, severe bloating, or inability to
-                    swim), seek veterinary care immediately. Many conditions are
-                    fatal if untreated.
+                    swim), please seek veterinary care immediately. Many
+                    conditions are fatal if untreated.
                   </p>
                 </div>
               </div>

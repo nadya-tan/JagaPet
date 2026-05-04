@@ -1,7 +1,13 @@
+// ===================== React Core + Routing Imports =====================
+// Import React hooks for lifecycle, memoization, and state management
 import React, { useEffect, useMemo, useState } from "react";
+// Import routing utilities for navigation and conditional redirects
 import { useLocation, Link, Navigate } from "react-router";
+// Import wishlist context for user-selected species tracking
 import { useWishlist } from "../context/WishlistContext";
+// Import user context containing quiz answers and authentication state
 import { LifestyleAnswers, useUser } from "../context/UserContext";
+// Import UI icons used for visual feedback and recommendation states
 import {
   CheckCircle2,
   AlertTriangle,
@@ -13,12 +19,19 @@ import {
   HelpCircle,
   RefreshCw,
 } from "lucide-react";
+// Import animation library for UI transitions and motion effects
 import { motion } from "motion/react";
+// Import custom hook for fetching quiz-based pet recommendations
 import { useQuizRecommendations } from "../hooks/useQuizRecommendations";
+// Import typed model for recommendation results
 import type { QuizRecommendationPet } from "../types/pet.types";
+// Import utility to display common names for pets
 import { getPetCommonNames } from "../utils/petDisplay";
+// Import loading spinner component from Material UI
 import CircularProgress from "@mui/material/CircularProgress";
 
+// ===================== Scoring Conversion Tables =====================
+// Convert user answers into numerical scales for comparison logic
 const levels = {
   budget: { low: 1, medium: 2, high: 3 },
   space: { small: 1, medium: 2, large: 3 },
@@ -27,6 +40,7 @@ const levels = {
   lifespan: { short: 1, medium: 2, long: 3 },
 };
 
+// Map ecological or invasion risk levels into numeric ranking
 const riskLevel: Record<string, number> = {
   Low: 1,
   Medium: 2,
@@ -34,6 +48,9 @@ const riskLevel: Record<string, number> = {
   Unknown: 4,
 };
 
+// ===================== Data Normalization Helpers =====================
+
+// Convert pet budget category into numeric level
 function getBudgetLevel(
   category: QuizRecommendationPet["pet_lifetime_budget_category"],
 ): 1 | 2 | 3 | null {
@@ -43,6 +60,7 @@ function getBudgetLevel(
   return null;
 }
 
+// Convert textual care difficulty into numeric experience requirement
 function getExperienceLevel(careLevel: string | null): 1 | 2 | 3 | null {
   if (!careLevel) return null;
 
@@ -61,11 +79,13 @@ function getExperienceLevel(careLevel: string | null): 1 | 2 | 3 | null {
   return null;
 }
 
+// Estimate time requirement using care level as proxy (temporary logic)
 function getTimeLevel(careLevel: string | null): 1 | 2 | 3 | null {
-  // temporary proxy until you have a real maintenance-frequency column
+  // temporary proxy until real maintenance-frequency data exists
   return getExperienceLevel(careLevel);
 }
 
+// Convert lifespan (years) into categorical level
 function getLifespanLevel(longevity: number | null): 1 | 2 | 3 | null {
   if (typeof longevity !== "number" || !Number.isFinite(longevity)) {
     return null;
@@ -76,6 +96,7 @@ function getLifespanLevel(longevity: number | null): 1 | 2 | 3 | null {
   return 3;
 }
 
+// Convert tank size / physical constraints into space requirement level
 function getSpaceLevel(
   tankSize: string | null,
   maxLength: number | null,
@@ -104,6 +125,7 @@ function getSpaceLevel(
     }
   }
 
+  // fallback: use max length if available
   if (typeof maxLength !== "number" || !Number.isFinite(maxLength)) {
     return null;
   }
@@ -113,6 +135,7 @@ function getSpaceLevel(
   return 3;
 }
 
+// Convert user-selected lifespan preference into numeric level
 function getUserLifespanLevel(value: string | undefined): 1 | 2 | 3 | null {
   if (!value) return null;
 
@@ -125,19 +148,23 @@ function getUserLifespanLevel(value: string | undefined): 1 | 2 | 3 | null {
   return null;
 }
 
+// ===================== Core Evaluation Engine =====================
+// Evaluate how well a pet matches a user's lifestyle answers
 const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
-  const reasons: string[] = [];
-  const fits: string[] = [];
+  const reasons: string[] = []; // mismatch explanations
+  const fits: string[] = []; // positive matching attributes
 
+  // Convert pet attributes into comparable numeric levels
   const petBudget = getBudgetLevel(pet.pet_lifetime_budget_category);
   const petSpace = getSpaceLevel(pet.pet_tank_size, pet.pet_max_length);
   const petTime = getTimeLevel(pet.pet_care_level);
   const petExperience = getExperienceLevel(pet.pet_care_level);
   const petLifespan = getLifespanLevel(pet.pet_longevity);
 
-  let score = 0;
-  let blockers = 0;
+  let score = 0; // overall compatibility score
+  let blockers = 0; // hard mismatches that disqualify suitability
 
+  // ===================== Budget Compatibility Check =====================
   if (petBudget !== null) {
     if (levels.budget[answers.budget] < petBudget) {
       reasons.push(
@@ -150,6 +177,7 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
     }
   }
 
+  // ===================== Space Requirement Check =====================
   if (petSpace !== null) {
     if (levels.space[answers.space] < petSpace) {
       reasons.push(
@@ -162,6 +190,7 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
     }
   }
 
+  // ===================== Time Commitment Check =====================
   if (petTime !== null) {
     if (levels.time[answers.time] < petTime) {
       reasons.push(
@@ -174,6 +203,7 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
     }
   }
 
+  // ===================== Experience Level Check =====================
   if (petExperience !== null) {
     if (levels.experience[answers.experience] < petExperience) {
       reasons.push(
@@ -186,7 +216,7 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
     }
   }
 
-  // lifespan is better as a preference signal, not a hard blocker
+  // ===================== Lifespan Preference Check (Soft Constraint) =====================
   const userLifespanLevel = getUserLifespanLevel(answers.lifespan);
 
   if (petLifespan !== null && userLifespanLevel !== null) {
@@ -200,12 +230,14 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
     }
   }
 
+  // ===================== Ecological Risk Warning =====================
   if (pet.pet_invasive_risk === "High") {
     reasons.push(
       "High ecological risk: This species needs especially responsible containment and must never be released.",
     );
   }
 
+  // Final suitability decision based on blockers
   const suitable = blockers === 0;
 
   return {
@@ -217,6 +249,8 @@ const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
   };
 };
 
+// ===================== Utility: Shuffle Function =====================
+// Randomize array order using Fisher-Yates shuffle
 function shuffleArray<T>(items: T[]) {
   const copy = [...items];
 
@@ -228,14 +262,17 @@ function shuffleArray<T>(items: T[]) {
   return copy;
 }
 
+// ===================== Pagination + Refresh Hook =====================
+// Handles paginated display and session-based persistence of results
 function useRefreshableResults<T extends { pet: { pet_id: string } }>(
   items: T[],
   storageKey: string,
   pageSize = 6,
 ) {
-  const [deck, setDeck] = useState<string[]>([]);
-  const [cursor, setCursor] = useState(0);
+  const [deck, setDeck] = useState<string[]>([]); // shuffled ID list
+  const [cursor, setCursor] = useState(0); // pagination index
 
+  // Initialize or restore deck from session storage
   useEffect(() => {
     if (items.length === 0) {
       setDeck([]);
@@ -269,7 +306,7 @@ function useRefreshableResults<T extends { pet: { pet_id: string } }>(
           return;
         }
       } catch {
-        // ignore bad session data
+        // ignore corrupted session storage
       }
     }
 
@@ -280,6 +317,7 @@ function useRefreshableResults<T extends { pet: { pet_id: string } }>(
     sessionStorage.setItem(`${storageKey}-cursor`, "0");
   }, [items, storageKey]);
 
+  // Compute visible items based on pagination window
   const visibleItems = useMemo(() => {
     const itemMap = new Map(
       items.map((item) => [item.pet.pet_id, item] as const),
@@ -291,6 +329,7 @@ function useRefreshableResults<T extends { pet: { pet_id: string } }>(
       .filter((item): item is T => item !== undefined);
   }, [items, deck, cursor, pageSize]);
 
+  // Move to next page or reshuffle when reaching end
   function refreshItems() {
     if (deck.length <= pageSize) return;
 
@@ -320,22 +359,29 @@ function useRefreshableResults<T extends { pet: { pet_id: string } }>(
   };
 }
 
+// ===================== Main Results Page Component =====================
 export function QuizResults() {
+  // Access user wishlist and quiz answers from context
   const { wishlist } = useWishlist();
   const { user, answers } = useUser();
+
+  // Fetch pet dataset and loading state from API hook
   const { pets, loading, error } = useQuizRecommendations();
 
+  // ===================== Compute Evaluation Results =====================
   const results = useMemo(() => {
     if (!answers) return [];
     return pets.map((pet) => evaluatePet(pet, answers));
   }, [pets, answers]);
 
+  // Filter results based on wishlist selection (if any)
   const userFocusedPets = useMemo(() => {
     return wishlist.length > 0
       ? results.filter((r) => wishlist.includes(r.pet.pet_id))
       : results;
   }, [results, wishlist]);
 
+  // Split into suitable and unsuitable categories
   const matches = useMemo(() => {
     return userFocusedPets.filter((r) => r.suitable);
   }, [userFocusedPets]);
@@ -344,6 +390,7 @@ export function QuizResults() {
     return userFocusedPets.filter((r) => !r.suitable);
   }, [userFocusedPets]);
 
+  // Generate alternative recommendations ranked by score + risk
   const alternatives = useMemo(() => {
     return results
       .filter(
@@ -362,6 +409,7 @@ export function QuizResults() {
       .slice(0, 3);
   }, [results, userFocusedPets]);
 
+  // Paginated UI handlers for match sections
   const {
     visibleItems: visibleMatches,
     refreshItems: refreshMatches,
@@ -374,10 +422,12 @@ export function QuizResults() {
     canRefresh: canRefreshUnsuitable,
   } = useRefreshableResults(unsuitable, "quiz-results-unsuitable", 6);
 
+  // Redirect if quiz not completed
   if (!answers) {
     return <Navigate to="/quiz" replace />;
   }
 
+  // ===================== Loading State UI =====================
   if (loading) {
     return (
       <div className="bg-stone-50 min-h-screen py-16 px-4">
@@ -389,6 +439,7 @@ export function QuizResults() {
     );
   }
 
+  // ===================== Error State UI =====================
   if (error) {
     return (
       <div className="bg-stone-50 min-h-screen py-16 px-4">
@@ -399,10 +450,11 @@ export function QuizResults() {
     );
   }
 
+  // ===================== Main Results Rendering =====================
   return (
     <div className="bg-stone-50 min-h-screen py-16 px-4 font-sans text-stone-900">
       <div className="max-w-5xl mx-auto space-y-16">
-        {/* Header */}
+        {/* ===================== Header Section ===================== */}
         <div className="text-center">
           <motion.div
             initial={{ scale: 0 }}
@@ -412,6 +464,7 @@ export function QuizResults() {
           >
             <CheckCircle2 className="w-16 h-16 text-emerald-600" />
           </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -419,6 +472,7 @@ export function QuizResults() {
           >
             Your Lifestyle Compatibility Results
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -429,6 +483,8 @@ export function QuizResults() {
               ? "We've evaluated the species on your list against your answers."
               : "We've evaluated our database to find the best matches for your lifestyle."}
           </motion.p>
+
+          {/* Action buttons */}
           <div className="flex justify-center gap-4 flex-wrap">
             <Link
               to="/quiz"
@@ -437,6 +493,7 @@ export function QuizResults() {
             >
               Retake Quiz
             </Link>
+
             <Link
               to="/identify"
               className="bg-stone-100 text-stone-700 px-6 py-2 rounded-full font-bold hover:bg-stone-200 transition inline-flex items-center gap-2"
@@ -445,6 +502,8 @@ export function QuizResults() {
             </Link>
           </div>
         </div>
+
+        {/* ===================== Authentication Prompt ===================== */}
         <div className="text-center">
           {!user ? (
             <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
@@ -481,7 +540,7 @@ export function QuizResults() {
           )}
         </div>
 
-        {/* Suitable Matches */}
+        {/* ===================== Suitable Matches Section ===================== */}
         {visibleMatches.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -489,11 +548,14 @@ export function QuizResults() {
             transition={{ delay: 0.2 }}
             className="space-y-8"
           >
+            {/* Section header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-3xl font-bold flex items-center gap-3 text-emerald-900 border-b-2 border-emerald-100 pb-4">
                 <Heart className="w-8 h-8 text-emerald-500 fill-current" />
                 Suitable For You
               </h2>
+
+              {/* Refresh pagination button */}
               {canRefreshMatches && (
                 <button
                   type="button"
@@ -505,15 +567,19 @@ export function QuizResults() {
                 </button>
               )}
             </div>
+
+            {/* Match cards grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {visibleMatches.map(({ pet, fits }) => {
                 const { primaryCommonName, otherCommonNames } =
                   getPetCommonNames(pet);
+
                 return (
                   <div
                     key={pet.pet_id}
                     className="bg-white rounded-3xl shadow-lg border-2 border-emerald-500 overflow-hidden flex flex-col relative"
                   >
+                    {/* Image section */}
                     <div className="relative h-48">
                       <img
                         src={
@@ -528,15 +594,19 @@ export function QuizResults() {
                         Great Fit
                       </div>
                     </div>
+
+                    {/* Content section */}
                     <div className="p-6 flex flex-col flex-1">
                       <h3 className="text-2xl font-bold mb-1">
                         {primaryCommonName ?? pet.pet_scientific_name}
                       </h3>
+
                       <p className="text-stone-500 text-sm mb-4">
                         Care: {pet.pet_care_level} • Risk:{" "}
                         {pet.pet_invasive_risk}
                       </p>
 
+                      {/* Fit reasons */}
                       <div className="bg-emerald-50 rounded-2xl p-4 mb-6">
                         <h4 className="text-emerald-900 font-bold mb-2 flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-emerald-600" />{" "}
@@ -549,6 +619,7 @@ export function QuizResults() {
                         </ul>
                       </div>
 
+                      {/* CTA */}
                       <div className="mt-auto">
                         <Link
                           to={`/species/${pet.pet_id}`}
@@ -566,8 +637,7 @@ export function QuizResults() {
           </motion.div>
         )}
 
-        {/* Unsuitable / Reconsider */}
-
+        {/* ===================== Unsuitable Section ===================== */}
         {visibleUnsuitable.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -575,12 +645,14 @@ export function QuizResults() {
             transition={{ delay: 0.3 }}
             className="space-y-8"
           >
+            {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-3xl font-bold flex items-center gap-3 text-rose-900 border-b-2 border-rose-100 pb-4">
                 <ShieldAlert className="w-8 h-8 text-rose-500" />
                 Not Recommended
               </h2>
 
+              {/* Refresh button */}
               {canRefreshUnsuitable && (
                 <button
                   type="button"
@@ -593,16 +665,20 @@ export function QuizResults() {
               )}
             </div>
 
+            {/* Unsuitable cards */}
             <div className="space-y-6">
               {visibleUnsuitable.map(({ pet, reasons }) => {
                 const { primaryCommonName, otherCommonNames } =
                   getPetCommonNames(pet);
+
                 return (
                   <div
                     key={pet.pet_id}
                     className="bg-white rounded-3xl p-6 border border-rose-200 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden"
                   >
                     <div className="absolute top-0 left-0 w-2 h-full bg-rose-500"></div>
+
+                    {/* Image */}
                     <div className="md:w-1/3">
                       <img
                         src={
@@ -617,11 +693,14 @@ export function QuizResults() {
                         {primaryCommonName ?? pet.pet_scientific_name}
                       </h4>
                     </div>
+
+                    {/* Reasons */}
                     <div className="md:w-2/3 bg-rose-50/50 rounded-2xl p-5 border border-rose-100">
                       <h5 className="font-bold text-rose-800 mb-3 flex items-center gap-2 text-lg">
-                        <XOctagon className="w-5 h-5 text-rose-600" /> Why this
-                        may not fit you:
+                        <XOctagon className="w-5 h-5 text-rose-600" />
+                        Why this may not fit you:
                       </h5>
+
                       <ul className="space-y-3">
                         {reasons.map((reason, i) => (
                           <li
@@ -633,6 +712,7 @@ export function QuizResults() {
                           </li>
                         ))}
                       </ul>
+
                       <div className="mt-4 text-sm text-stone-600 italic">
                         Suggestion: Consider adjusting your budget or freeing up
                         more space, otherwise explore the alternatives below.
@@ -645,7 +725,7 @@ export function QuizResults() {
           </motion.div>
         )}
 
-        {/* Top Recommended Alternatives (Always show if no matches, or as extra suggestions) */}
+        {/* ===================== Alternatives Section ===================== */}
         {alternatives.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -656,11 +736,14 @@ export function QuizResults() {
             <h3 className="text-2xl font-bold text-sky-900 mb-4">
               Recommended Alternatives
             </h3>
+
             <p className="text-sky-800 mb-8 text-lg">
               {matches.length === 0
                 ? "Since none of the pets on your list fit your lifestyle, we highly recommend these safer, better-matching alternatives (ranked by lowest ecological risk):"
                 : "You might also want to consider these highly suitable pets:"}
             </p>
+
+            {/* Alternative cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {alternatives.map(({ pet, fits }) => (
                 <div
@@ -676,15 +759,19 @@ export function QuizResults() {
                     alt={pet.pet_vernacular_name ?? "Pet image"}
                     className="w-full h-32 object-fit"
                   />
+
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-bold text-xl text-stone-900 leading-tight">
                         {pet.pet_scientific_name}
                       </h4>
+
                       <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-md uppercase">
                         Top Match
                       </span>
                     </div>
+
+                    {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-md">
                         {pet.pet_care_level} Care
@@ -693,9 +780,12 @@ export function QuizResults() {
                         {pet.pet_invasive_risk} Risk
                       </span>
                     </div>
+
+                    {/* Highlight fit reason */}
                     <div className="text-sm text-stone-600 bg-stone-50 p-3 rounded-xl mb-4 italic flex-1">
                       "{fits[0] || "Perfect fit for your space and budget"}"
                     </div>
+
                     <Link
                       to={`/species/${pet.pet_id}`}
                       className="mt-auto text-sky-700 font-bold hover:text-sky-800 inline-flex items-center gap-1"
@@ -709,7 +799,7 @@ export function QuizResults() {
           </motion.div>
         )}
 
-        {/* Empty State / No Match At All */}
+        {/* ===================== Empty State ===================== */}
         {matches.length === 0 && alternatives.length === 0 && (
           <div className="bg-stone-100 rounded-3xl p-12 text-center border border-stone-200">
             <Search className="w-16 h-16 text-stone-400 mx-auto mb-4" />
@@ -720,6 +810,7 @@ export function QuizResults() {
               Your current lifestyle constraints might make it difficult to
               properly care for the aquatic pets in our database.
             </p>
+
             <Link
               to="/quiz"
               state={{ retake: true }}

@@ -13,11 +13,15 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useHealthScreening } from "../context/HealthScreeningContext";
 
+/* ===================== Type Definitions ===================== */
+
+// Response format from health screening API
 type HealthScreenResponse = {
   result?: string;
   error?: string;
 };
 
+// Structured result for pet identification
 type PetIdentificationResult = {
   scientific_name?: string;
   common_name?: string;
@@ -25,11 +29,13 @@ type PetIdentificationResult = {
   notes?: string;
 };
 
+// Response format from pet identification API
 type PetIdentificationResponse = {
   result?: string | PetIdentificationResult;
   error?: string;
 };
 
+// Species data structure used for matching
 type SpeciesOption = {
   petId?: string;
   pet_id?: string;
@@ -39,6 +45,9 @@ type SpeciesOption = {
   pet_scientific_name?: string | null;
 };
 
+/* ===================== Utility Functions ===================== */
+
+// Normalize text for consistent comparison (case/spacing insensitive)
 function normalizeText(value: string | null | undefined) {
   return String(value || "")
     .trim()
@@ -46,26 +55,32 @@ function normalizeText(value: string | null | undefined) {
     .replace(/\s+/g, " ");
 }
 
+// Get species ID with fallback field names
 function getSpeciesPetId(species: SpeciesOption) {
   return species.petId || species.pet_id || null;
 }
 
+// Get scientific name with fallback fields
 function getSpeciesScientificName(species: SpeciesOption) {
   return species.scientificName || species.pet_scientific_name || null;
 }
 
+// Get common name with fallback fields
 function getSpeciesCommonName(species: SpeciesOption) {
   return species.name || species.pet_vernacular_name || null;
 }
 
+// Convert uploaded file into base64 data URL for preview
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
+    // Resolve when file is successfully read
     reader.onload = () => {
       resolve(String(reader.result));
     };
 
+    // Reject on read error
     reader.onerror = () => {
       reject(new Error("Could not read image file."));
     };
@@ -74,15 +89,18 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+// Parse API result safely into structured object
 function parseIdentificationResult(
   rawResult: PetIdentificationResponse["result"],
 ): PetIdentificationResult | null {
   if (!rawResult) return null;
 
+  // If already object, return directly
   if (typeof rawResult === "object") {
     return rawResult;
   }
 
+  // Attempt JSON parsing if string
   try {
     return JSON.parse(rawResult) as PetIdentificationResult;
   } catch {
@@ -90,6 +108,7 @@ function parseIdentificationResult(
   }
 }
 
+// Match identified pet against known species list
 function findMatchingSpeciesId(
   identifiedPet: PetIdentificationResult,
   speciesOptions: SpeciesOption[],
@@ -97,6 +116,7 @@ function findMatchingSpeciesId(
   const identifiedScientificName = normalizeText(identifiedPet.scientific_name);
   const identifiedCommonName = normalizeText(identifiedPet.common_name);
 
+  // Reject invalid unknown values
   if (
     !identifiedScientificName ||
     identifiedScientificName === "unknown" ||
@@ -105,6 +125,7 @@ function findMatchingSpeciesId(
     return null;
   }
 
+  // Try matching by scientific name first (more reliable)
   const scientificMatch = speciesOptions.find((species) => {
     return (
       normalizeText(getSpeciesScientificName(species)) ===
@@ -116,6 +137,7 @@ function findMatchingSpeciesId(
     return getSpeciesPetId(scientificMatch);
   }
 
+  // Fallback: match by common name
   const commonNameMatch = speciesOptions.find((species) => {
     return (
       normalizeText(getSpeciesCommonName(species)) === identifiedCommonName
@@ -129,8 +151,9 @@ function findMatchingSpeciesId(
   return null;
 }
 
+// Generic fetch wrapper with JSON parsing and error handling
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, options);
+  const response = await fetch(url);
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
@@ -140,12 +163,19 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return data as T;
 }
 
+/* ===================== Main Component ===================== */
+
 export function HealthScreening() {
+  // Drag state for upload UI
   const [dragActive, setDragActive] = useState(false);
+
+  // Screening loading state
   const [isScreening, setIsScreening] = useState(false);
 
+  // Global screening state from context
   const { screening, setScreening, resetScreening } = useHealthScreening();
 
+  // Destructure screening state
   const {
     selectedImage,
     selectedFileName,
@@ -155,17 +185,24 @@ export function HealthScreening() {
     error,
   } = screening;
 
+  // File input reference
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  /* ===================== Reset Form ===================== */
 
   const resetForm = () => {
     resetScreening();
     setIsScreening(false);
 
+    // Clear file input value
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  /* ===================== API Calls ===================== */
+
+  // Run health screening model on uploaded image
   const runHealthScreening = async (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -188,11 +225,13 @@ export function HealthScreening() {
     return data.result;
   };
 
+  // Identify pet species from image and match with database
   const findCareGuidePetIdFromImage = async (file: File) => {
     try {
       const identifyFormData = new FormData();
       identifyFormData.append("image", file);
 
+      // Call identification API
       const identificationResponse = await fetch(
         "/api/pet-analysis?action=identify-pet",
         {
@@ -209,6 +248,7 @@ export function HealthScreening() {
         return null;
       }
 
+      // Parse structured result
       const identifiedPet = parseIdentificationResult(
         identificationData.result,
       );
@@ -217,8 +257,10 @@ export function HealthScreening() {
         return null;
       }
 
+      // Fetch species database
       const speciesOptions = await fetchJson<SpeciesOption[]>("/api/species");
 
+      // Match result to internal database
       return findMatchingSpeciesId(identifiedPet, speciesOptions);
     } catch (lookupError) {
       console.warn(
@@ -229,7 +271,10 @@ export function HealthScreening() {
     }
   };
 
+  /* ===================== Core Screening Flow ===================== */
+
   const handleImageAnalysis = async (file: File) => {
+    // Reset previous result state
     setScreening((previous) => ({
       ...previous,
       result: null,
@@ -241,11 +286,13 @@ export function HealthScreening() {
     setIsScreening(true);
 
     try {
+      // Run health screening and identification in parallel
       const [healthResult, careGuidePetId] = await Promise.all([
         runHealthScreening(file),
         findCareGuidePetIdFromImage(file),
       ]);
 
+      // Save results
       setScreening((previous) => ({
         ...previous,
         result: healthResult,
@@ -271,9 +318,12 @@ export function HealthScreening() {
     }
   };
 
+  /* ===================== File Handling ===================== */
+
   const handleFile = async (file: File | null | undefined) => {
     if (!file) return;
 
+    // Validate file type
     if (!file.type.startsWith("image/")) {
       setScreening((previous) => ({
         ...previous,
@@ -282,8 +332,10 @@ export function HealthScreening() {
       return;
     }
 
+    // Convert image for preview
     const imageDataUrl = await fileToDataUrl(file);
 
+    // Store initial state
     setScreening({
       selectedImage: imageDataUrl,
       selectedFileName: file.name,
@@ -293,8 +345,11 @@ export function HealthScreening() {
       error: null,
     });
 
+    // Run analysis
     await handleImageAnalysis(file);
   };
+
+  /* ===================== Drag & Drop ===================== */
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -319,22 +374,30 @@ export function HealthScreening() {
     await handleFile(e.target.files?.[0]);
   };
 
+  /* ===================== Derived State ===================== */
+
   const isHealthy = result === "Healthy";
+
+  /* ===================== UI ===================== */
 
   return (
     <div className="bg-stone-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-3xl mx-auto">
+        {/* Page Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
             Pet Health Screening
           </h1>
+
           <p className="text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
             Upload a fish photo to screen for visible disease signs using the
             Shell &amp; Fin health screening model.
           </p>
         </div>
 
+        {/* Upload / Result Container */}
         <div className="bg-white rounded-3xl shadow-xl border border-stone-100 overflow-hidden">
+          {/* Hidden file input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -344,6 +407,7 @@ export function HealthScreening() {
           />
 
           <AnimatePresence mode="wait">
+            {/* ===================== Upload State ===================== */}
             {!selectedImage && !result && (
               <motion.div
                 key="upload"
@@ -360,10 +424,12 @@ export function HealthScreening() {
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
+                {/* Upload icon */}
                 <div className="mx-auto w-24 h-24 mb-6 bg-amber-100 rounded-full flex items-center justify-center">
                   <HeartPulse className="w-12 h-12 text-amber-600" />
                 </div>
 
+                {/* Upload text */}
                 <h3 className="text-2xl font-bold text-stone-800 mb-2">
                   Upload a pet health photo
                 </h3>
@@ -372,6 +438,7 @@ export function HealthScreening() {
                   Choose a clear fish photo for health screening.
                 </p>
 
+                {/* File select button */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -380,10 +447,12 @@ export function HealthScreening() {
                   <Camera className="w-5 h-5" /> Select Photo
                 </button>
 
+                {/* Supported formats */}
                 <p className="text-xs text-stone-400 mt-4 uppercase tracking-widest font-semibold">
                   Supported: JPG, PNG, HEIC
                 </p>
 
+                {/* Upload error */}
                 {error && (
                   <p className="mt-4 text-sm text-rose-600 font-medium">
                     {error}
@@ -392,6 +461,7 @@ export function HealthScreening() {
               </motion.div>
             )}
 
+            {/* ===================== Loading State ===================== */}
             {selectedImage && isScreening && (
               <motion.div
                 key="screening"
@@ -400,6 +470,7 @@ export function HealthScreening() {
                 exit={{ opacity: 0 }}
                 className="p-12 flex flex-col items-center justify-center min-h-[400px]"
               >
+                {/* Preview image */}
                 <div className="relative w-64 h-64 mb-8 rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src={selectedImage}
@@ -409,6 +480,7 @@ export function HealthScreening() {
                   <div className="absolute inset-0 bg-amber-500/20 scan-line"></div>
                 </div>
 
+                {/* Loading spinner */}
                 <Loader2 className="w-10 h-10 text-amber-600 animate-spin mb-4" />
 
                 <h3 className="text-2xl font-bold text-stone-800">
@@ -421,6 +493,7 @@ export function HealthScreening() {
               </motion.div>
             )}
 
+            {/* ===================== Result State ===================== */}
             {selectedImage && !isScreening && (result || error) && (
               <motion.div
                 key="result"
@@ -429,6 +502,7 @@ export function HealthScreening() {
                 className="p-8"
               >
                 <div className="flex flex-col md:flex-row gap-8 items-start">
+                  {/* Left: Image preview */}
                   <div className="w-full md:w-1/3">
                     {selectedImage ? (
                       <img
@@ -445,12 +519,14 @@ export function HealthScreening() {
                       </div>
                     )}
 
+                    {/* File name */}
                     {selectedFileName && (
                       <p className="text-sm text-stone-500 mb-4 truncate">
                         {selectedFileName}
                       </p>
                     )}
 
+                    {/* Reset button */}
                     <button
                       type="button"
                       onClick={resetForm}
@@ -460,7 +536,9 @@ export function HealthScreening() {
                     </button>
                   </div>
 
+                  {/* Right: Result content */}
                   <div className="w-full md:w-2/3 space-y-6">
+                    {/* Error box */}
                     {error && (
                       <div className="p-4 rounded-xl border-l-4 bg-rose-50 border-rose-500 text-rose-800">
                         <div className="flex gap-3">
@@ -475,8 +553,10 @@ export function HealthScreening() {
                       </div>
                     )}
 
+                    {/* Result display */}
                     {result && (
                       <>
+                        {/* Result header */}
                         <div>
                           <div className="flex items-center gap-3 mb-2">
                             <CheckCircle className="text-amber-500 w-6 h-6" />
@@ -490,6 +570,7 @@ export function HealthScreening() {
                           </h2>
                         </div>
 
+                        {/* Interpretation box */}
                         <div
                           className={`p-4 rounded-xl border-l-4 ${
                             isHealthy
@@ -513,6 +594,7 @@ export function HealthScreening() {
                           </div>
                         </div>
 
+                        {/* Care guide link or fallback message */}
                         <div className="pt-2">
                           {matchedCareGuidePetId ? (
                             <Link
@@ -544,6 +626,7 @@ export function HealthScreening() {
         </div>
       </div>
 
+      {/* Scan animation styling */}
       <style>{`
         @keyframes scan {
           0% { transform: translateY(-100%); }

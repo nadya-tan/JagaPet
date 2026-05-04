@@ -7,6 +7,9 @@ import React, {
   ReactNode,
 } from "react";
 
+/**
+ * User lifestyle quiz answers structure
+ */
 export interface LifestyleAnswers {
   age?: string;
   time: "low" | "medium" | "high";
@@ -16,11 +19,17 @@ export interface LifestyleAnswers {
   experience: "beginner" | "intermediate" | "advanced";
 }
 
+/**
+ * Authenticated user information
+ */
 interface AuthUser {
   userId: string;
   username: string;
 }
 
+/**
+ * Species dropdown option format
+ */
 export interface SpeciesOption {
   petId: string;
   name: string;
@@ -28,6 +37,9 @@ export interface SpeciesOption {
   imageUrl: string | null;
 }
 
+/**
+ * User-owned pet entity
+ */
 export interface UserPet {
   petListId: string;
   petId: string;
@@ -39,6 +51,9 @@ export interface UserPet {
   imageUrl: string | null;
 }
 
+/**
+ * Scheduled care task for a pet
+ */
 export interface CareTask {
   id: string;
   petListId: string;
@@ -50,21 +65,29 @@ export interface CareTask {
   lastCompleted?: string | null;
 }
 
+/**
+ * Full user context state and actions
+ */
 interface UserContextType {
   user: AuthUser | null;
   answers: LifestyleAnswers | null;
   loading: boolean;
+
   setAnswers: (answers: LifestyleAnswers) => Promise<void>;
   clearAnswers: () => void;
+
   register: (username: string, password: string) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+
   speciesOptions: SpeciesOption[];
   userPets: UserPet[];
   careTasks: CareTask[];
+
   petsLoading: boolean;
   petError: string;
+
   loadPetData: () => Promise<void>;
   addUserPet: (
     petId: string,
@@ -76,6 +99,9 @@ interface UserContextType {
   clearPetError: () => void;
 }
 
+/**
+ * Default context values (used before provider initialization)
+ */
 const UserContext = createContext<UserContextType>({
   user: null,
   answers: null,
@@ -98,8 +124,16 @@ const UserContext = createContext<UserContextType>({
   clearPetError: () => {},
 });
 
+/**
+ * Hook to access user context
+ */
 export const useUser = () => useContext(UserContext);
 
+/**
+ * Safely parse JSON response from API
+ *
+ * Ensures backend always returns valid JSON or throws descriptive error
+ */
 async function parseJsonResponse(res: Response) {
   const text = await res.text();
 
@@ -112,6 +146,9 @@ async function parseJsonResponse(res: Response) {
   }
 }
 
+/**
+ * Generic fetch wrapper with JSON parsing + error handling
+ */
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
     credentials: "include",
@@ -127,17 +164,32 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return data as T;
 }
 
+/**
+ * User context provider component
+ *
+ * Responsibilities:
+ * - Authentication state management
+ * - Quiz/lifestyle answers persistence
+ * - Pet management system (CRUD)
+ * - Care task tracking system
+ */
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [answers, setAnswersState] = useState<LifestyleAnswers | null>(null);
+
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
   const [userPets, setUserPets] = useState<UserPet[]>([]);
   const [careTasks, setCareTasks] = useState<CareTask[]>([]);
+
   const [petsLoading, setPetsLoading] = useState(false);
   const [petError, setPetError] = useState("");
   const [petsLoaded, setPetsLoaded] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Fetch current authenticated user session
+   */
   const refreshUser = async () => {
     setLoading(true);
 
@@ -160,6 +212,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setAnswersState(data.user.answers ?? null);
       } else {
         setUser(null);
+
         const local = localStorage.getItem("guest_quiz_answers");
         setAnswersState(local ? JSON.parse(local) : null);
       }
@@ -168,10 +221,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * Load user session on first render
+   */
   useEffect(() => {
     refreshUser();
   }, []);
 
+  /**
+   * Update lifestyle answers (user or guest)
+   */
   const setAnswers = async (newAnswers: LifestyleAnswers) => {
     setAnswersState(newAnswers);
 
@@ -193,11 +252,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * Clear quiz answers (logout/reset state)
+   */
   const clearAnswers = () => {
     setAnswersState(null);
     localStorage.removeItem("guest_quiz_answers");
   };
 
+  /**
+   * Reset all pet-related state
+   */
   const resetPetData = () => {
     setSpeciesOptions([]);
     setUserPets([]);
@@ -206,9 +271,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setPetsLoaded(false);
   };
 
+  /**
+   * Load species + user pet data from backend
+   */
   const loadPetData = async () => {
     if (!user) return;
-
     if (petsLoaded) return;
 
     try {
@@ -232,6 +299,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * Add a new pet to user profile
+   */
   const addUserPet = async (
     petId: string,
     nickname: string,
@@ -257,6 +327,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setPetsLoaded(true);
   };
 
+  /**
+   * Remove a pet from user profile
+   */
   const removeUserPet = async (petListId: string) => {
     await fetchJson<{ ok: boolean }>(
       `/api/user-pets?petListId=${encodeURIComponent(petListId)}`,
@@ -271,6 +344,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  /**
+   * Mark care task as completed
+   */
   const completeCareTask = async (taskId: string) => {
     const updatedTask = await fetchJson<CareTask>("/api/user-pet-tasks", {
       method: "PATCH",
@@ -285,10 +361,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  /**
+   * Clear pet error message
+   */
   const clearPetError = () => {
     setPetError("");
   };
 
+  /**
+   * User registration
+   */
   const register = async (username: string, password: string) => {
     const res = await fetch("/api/auth?action=register", {
       method: "POST",
@@ -327,6 +409,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * User login
+   */
   const login = async (username: string, password: string) => {
     const res = await fetch("/api/auth?action=login", {
       method: "POST",
@@ -366,6 +451,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * User logout
+   */
   const logout = async () => {
     const res = await fetch("/api/auth?action=logout", {
       method: "POST",
@@ -385,6 +473,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setAnswersState(local ? JSON.parse(local) : null);
   };
 
+  /**
+   * Memoized context value to prevent unnecessary rerenders
+   */
   const value = useMemo(
     () => ({
       user,

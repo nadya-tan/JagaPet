@@ -41,21 +41,43 @@ import {
 import { useCompare } from "../context/CompareContext";
 import { useUser } from "../context/UserContext";
 
+/**
+ * =========================
+ * Type Definitions
+ * =========================
+ * These types define user experience level and ecological risk level
+ * used for recommendation and suitability scoring logic.
+ */
 type ExperienceLevel = "beginner" | "intermediate" | "advanced";
 type RiskLevel = "low" | "medium" | "high";
 
+/**
+ * Mapping experience levels into numeric ranking
+ * Used to compare user skill vs pet difficulty.
+ */
 const experienceRank: Record<ExperienceLevel, number> = {
   beginner: 1,
   intermediate: 2,
   advanced: 3,
 };
 
+/**
+ * Mapping risk levels into numeric ranking
+ * Used for sorting ecological risk comparisons.
+ */
 const riskRank: Record<RiskLevel, number> = {
   low: 1,
   medium: 2,
   high: 3,
 };
 
+/**
+ * =========================
+ * Care Level Normalization
+ * =========================
+ * Converts raw string values from backend into standardized enum-like values
+ * so they can be compared consistently in logic.
+ */
 function normalizeCareLevel(
   value: string | null | undefined,
 ): ExperienceLevel | null {
@@ -68,6 +90,12 @@ function normalizeCareLevel(
   return null;
 }
 
+/**
+ * =========================
+ * Risk Level Normalization
+ * =========================
+ * Converts raw risk strings into standardized categories.
+ */
 function normalizeRiskLevel(
   value: string | null | undefined,
 ): RiskLevel | null {
@@ -80,35 +108,79 @@ function normalizeRiskLevel(
   return null;
 }
 
+/**
+ * ======================================================
+ * SpeciesProfile Component (Main Detail Page)
+ * ======================================================
+ * This component renders:
+ * 1. Full species profile page
+ * 2. Suitability analysis for current user
+ * 3. Alternatives recommendation system
+ * 4. Safety + ecological warnings
+ * 5. Comparison feature integration
+ */
 export function SpeciesProfile() {
+  /**
+   * =========================
+   * Navigation & Routing
+   * =========================
+   */
   const navigate = useNavigate();
+
+  /**
+   * Compare system (global state)
+   * Used to add/remove species for comparison
+   */
   const { toggleCompare, isInCompare, isCompareFull } = useCompare();
+
+  /**
+   * URL parameter (species ID)
+   */
   const { id } = useParams<{ id: string }>();
+
+  /**
+   * Fetch pet detail data + related species
+   */
   const { pet, relatedPets, loading, error } = usePetDetail(id);
+
+  /**
+   * User profile data (used for personalization logic)
+   */
   const { answers } = useUser();
 
+  /**
+   * =========================
+   * Suitability Calculation
+   * =========================
+   * Determines whether a species is suitable for the user
+   * based on:
+   * - care difficulty
+   * - ecological risk
+   * - legal restrictions
+   */
   const suitability = useMemo(() => {
     if (!answers || !pet) return null;
 
     const fits: string[] = [];
     const reasons: string[] = [];
 
+    // Normalize pet attributes into comparable values
     const petCareLevel = normalizeCareLevel(pet.pet_care_level);
     const petRiskLevel = normalizeRiskLevel(pet.pet_invasive_risk);
 
-    // hard-stop reason
+    // Hard stop: illegal species
     if (pet.pet_banned) {
       reasons.push("This species is banned in Malaysia");
     }
 
-    // ecological risk
+    // Risk evaluation
     if (petRiskLevel === "high") {
       reasons.push("Higher ecological risk");
     } else if (petRiskLevel === "low") {
       fits.push("Low ecological risk");
     }
 
-    // care vs user experience
+    // Experience vs care difficulty comparison
     if (petCareLevel) {
       if (experienceRank[answers.experience] >= experienceRank[petCareLevel]) {
         fits.push("Manageable care level");
@@ -124,6 +196,14 @@ export function SpeciesProfile() {
     };
   }, [answers, pet]);
 
+  /**
+   * =========================
+   * Alternative Recommendations
+   * =========================
+   * Suggests similar species with:
+   * - lower ecological risk OR
+   * - easier care requirements
+   */
   const recommendedAlternatives = useMemo(() => {
     if (!pet) return [];
 
@@ -155,29 +235,45 @@ export function SpeciesProfile() {
       .sort((a, b) => {
         const aScore = (a.hasLowerRisk ? 1 : 0) + (a.hasLowerCare ? 1 : 0);
         const bScore = (b.hasLowerRisk ? 1 : 0) + (b.hasLowerCare ? 1 : 0);
-
         return bScore - aScore;
       });
   }, [pet, relatedPets]);
 
+  /**
+   * Scroll to top when switching species
+   */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
+  /**
+   * Normalize danger level for consistent UI display
+   */
   const dangerLevel = useMemo(
     () => normalizeDangerBadge(pet?.pet_danger),
     [pet?.pet_danger],
   );
 
+  /**
+   * Check if species is invasive
+   */
   const isInvasive = useMemo(
     () => isInvasiveSpecies(pet?.pet_is_native),
     [pet?.pet_is_native],
   );
 
+  /**
+   * Extract readable names for UI display
+   */
   const { primaryCommonName, otherCommonNames } = pet
     ? getPetCommonNames(pet)
     : { primaryCommonName: "Unknown Pet", otherCommonNames: [] };
 
+  /**
+   * =========================
+   * Loading State UI
+   * =========================
+   */
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
@@ -188,6 +284,11 @@ export function SpeciesProfile() {
     );
   }
 
+  /**
+   * =========================
+   * Error / Not Found State
+   * =========================
+   */
   if (error || !pet) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
@@ -196,15 +297,18 @@ export function SpeciesProfile() {
             <AlertTriangle className="h-6 w-6" />
             <h1 className="text-2xl font-bold">Species Not Found</h1>
           </div>
+
           <p className="mb-6 text-stone-600">
             The pet you are looking for might not be in the database yet, or the
             link may be incorrect.
           </p>
+
           {error && (
             <p className="mb-6 rounded-xl bg-stone-100 px-4 py-3 text-sm text-stone-700">
               {error}
             </p>
           )}
+
           <Link
             to="/"
             className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
@@ -217,12 +321,19 @@ export function SpeciesProfile() {
     );
   }
 
+  /**
+   * Compare system state for UI control
+   */
   const inCompare = isInCompare(pet.pet_id);
   const compareDisabled = isCompareFull && !inCompare;
+
   const hasPetPrice = pet.pet_cost != null;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50">
+      {/* =========================
+          High Danger Warning Banner
+          ========================= */}
       {dangerLevel === "High" && (
         <div className="border-b border-red-200 bg-red-50 px-4 py-3 text-red-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
@@ -233,6 +344,9 @@ export function SpeciesProfile() {
         </div>
       )}
 
+      {/* =========================
+          Legal Warning Banner
+          ========================= */}
       {pet.pet_banned && (
         <div className="border-b border-red-200 bg-red-50 px-4 py-3 text-red-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
@@ -244,6 +358,9 @@ export function SpeciesProfile() {
         </div>
       )}
 
+      {/* =========================
+          Invasive Species Warning
+          ========================= */}
       {isInvasive && (
         <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
@@ -254,10 +371,14 @@ export function SpeciesProfile() {
         </div>
       )}
 
-      {/* Hero Header */}
+      {/* ======================================================
+          HERO SECTION (Image + Title + Key Info Overlay)
+          ====================================================== */}
       <div className="relative h-[450px] md:h-[550px] w-full bg-stone-900 overflow-hidden">
+        {/* Top navigation overlay */}
         <div className="absolute top-6 inset-x-0 z-20">
           <div className="mx-auto max-w-7xl px-8 md:px-12 flex justify-between items-center">
+            {/* Back button */}
             <button
               onClick={() => {
                 if (window.history.length > 1) {
@@ -272,7 +393,7 @@ export function SpeciesProfile() {
               <span>Back</span>
             </button>
 
-            {/* // Compare Button */}
+            {/* Compare button */}
             <button
               onClick={() => toggleCompare(pet)}
               disabled={compareDisabled}
@@ -300,7 +421,10 @@ export function SpeciesProfile() {
           </div>
         </div>
 
+        {/* Dark gradient overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-900/40 to-transparent z-10"></div>
+
+        {/* Hero image */}
         <motion.img
           key={pet?.pet_id}
           initial={{ scale: 1.05 }}
@@ -315,8 +439,10 @@ export function SpeciesProfile() {
           className="absolute inset-0 w-full h-full object-fit"
         />
 
+        {/* Title + badges overlay */}
         <div className="absolute bottom-0 inset-x-0 z-20">
           <div className="mx-auto max-w-7xl px-8 md:px-12 pb-8 md:pb-12">
+            {/* Badges */}
             <motion.div
               key={`tags-${pet?.pet_id}`}
               initial={{ opacity: 0, y: 20 }}
@@ -359,8 +485,10 @@ export function SpeciesProfile() {
               )}
             </motion.div>
 
+            {/* Title block */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-3xl">
+                {/* Common name */}
                 <motion.h1
                   key={`title-${pet?.pet_id}`}
                   initial={{ opacity: 0, y: 20 }}
@@ -371,6 +499,7 @@ export function SpeciesProfile() {
                   {primaryCommonName}
                 </motion.h1>
 
+                {/* Scientific name */}
                 <motion.p
                   key={`subtitle-${pet?.pet_id}`}
                   initial={{ opacity: 0, y: 20 }}
@@ -383,6 +512,7 @@ export function SpeciesProfile() {
                   {pet?.pet_scientific_name}
                 </motion.p>
 
+                {/* Alternative names */}
                 {otherCommonNames.length > 0 && (
                   <motion.p
                     key={`aka-${pet?.pet_id}`}
@@ -397,6 +527,7 @@ export function SpeciesProfile() {
                 )}
               </div>
 
+              {/* Price display */}
               {pet.pet_cost != null && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -417,9 +548,16 @@ export function SpeciesProfile() {
         </div>
       </div>
 
+      {/* ======================================================
+          MAIN CONTENT SECTION
+          ====================================================== */}
       <section className="px-4 py-12">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.6fr_1fr]">
+          {/* LEFT COLUMN (Details) */}
           <div className="space-y-8">
+            {/* =========================
+                Suitability Analysis Card
+                ========================= */}
             {suitability &&
               (suitability.reasons.length > 0 ||
                 suitability.fits.length > 0) && (
@@ -447,6 +585,7 @@ export function SpeciesProfile() {
                       : "Why this may not fit you"}
                   </h2>
 
+                  {/* Fit / Reason grid */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {suitability.isSuitable
                       ? suitability.fits.map((fit, index) => (
@@ -475,6 +614,9 @@ export function SpeciesProfile() {
                 </section>
               )}
 
+            {/* =========================
+                Recommended Alternatives
+                ========================= */}
             {recommendedAlternatives?.length > 0 && (
               <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
                 <div className="mb-5 flex items-center gap-2 text-emerald-800">
@@ -491,6 +633,7 @@ export function SpeciesProfile() {
                       to={`/species/${item.pet_id}`}
                       className="rounded-2xl border border-stone-200 p-4 transition hover:border-emerald-400 hover:bg-emerald-50"
                     >
+                      {/* Badges */}
                       <div className="mb-3 flex flex-wrap gap-2">
                         {item.hasLowerRisk && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
@@ -520,6 +663,7 @@ export function SpeciesProfile() {
                         {displayText(item.pet_scientific_name)}
                       </p>
 
+                      {/* Risk + care badges */}
                       <div className="mt-4 flex flex-wrap gap-2">
                         {item.pet_invasive_risk && (
                           <span
@@ -547,12 +691,16 @@ export function SpeciesProfile() {
               </div>
             )}
 
+            {/* =========================
+                Basic Info Section
+                ========================= */}
             <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-emerald-800">
                 <Info className="h-5 w-5" />
                 <h2 className="text-2xl font-bold">About this pet</h2>
               </div>
 
+              {/* Grid of biological attributes */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
@@ -614,6 +762,9 @@ export function SpeciesProfile() {
               </div>
             </div>
 
+            {/* =========================
+                Traits Section
+                ========================= */}
             {pet.pet_traits && (
               <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
                 <div className="mb-4 flex items-center gap-2 text-emerald-800">
@@ -629,6 +780,9 @@ export function SpeciesProfile() {
               </div>
             )}
 
+            {/* =========================
+                Diet Section
+                ========================= */}
             {pet.pet_diet &&
               (pet.pet_diet.main_type || pet.pet_diet.remarks) && (
                 <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
@@ -638,6 +792,7 @@ export function SpeciesProfile() {
                   </div>
 
                   <div className="space-y-4">
+                    {/* Main diet type */}
                     {pet.pet_diet.main_type && (
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
@@ -651,6 +806,7 @@ export function SpeciesProfile() {
                       </div>
                     )}
 
+                    {/* Feeding notes */}
                     {pet.pet_diet.remarks && (
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
@@ -665,11 +821,15 @@ export function SpeciesProfile() {
                 </div>
               )}
 
+            {/* =========================
+                Notes Section
+                ========================= */}
             <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-emerald-800">
                 <MessageSquareText className="h-5 w-5" />
                 <h2 className="text-2xl font-bold">Notes</h2>
               </div>
+
               <p className="leading-7 text-stone-700">
                 {displayText(
                   pet.pet_comments,
@@ -679,7 +839,11 @@ export function SpeciesProfile() {
             </div>
           </div>
 
+          {/* RIGHT SIDEBAR */}
           <aside className="space-y-6">
+            {/* =========================
+                Safety Summary Panel
+                ========================= */}
             <div className="rounded-3xl border border-rose-800 bg-gradient-to-br from-rose-950 via-red-950 to-stone-950 p-6 text-white shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-rose-100">
                 <ShieldAlert className="h-5 w-5 text-rose-300" />
@@ -687,6 +851,7 @@ export function SpeciesProfile() {
               </div>
 
               <div className="space-y-4">
+                {/* Danger level */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     Danger
@@ -696,6 +861,7 @@ export function SpeciesProfile() {
                   </p>
                 </div>
 
+                {/* Native status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     Native Status
@@ -705,6 +871,7 @@ export function SpeciesProfile() {
                   </p>
                 </div>
 
+                {/* Legal status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     Legal Status
@@ -714,6 +881,7 @@ export function SpeciesProfile() {
                   </p>
                 </div>
 
+                {/* Aquarium status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     Common Aquarium Species
@@ -735,12 +903,16 @@ export function SpeciesProfile() {
               </div>
             </div>
 
-            {/* Care Tips */}
+            {/* =========================
+                Quick Facts Panel
+                ========================= */}
             <div className="bg-emerald-900 text-white rounded-3xl p-8 shadow-sm sticky top-24">
               <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-emerald-50">
                 <Leaf className="w-6 h-6 text-emerald-400" /> Quick Facts
               </h3>
+
               <div className="space-y-6">
+                {/* Physical stats grid */}
                 <div className="grid gap-4 sm:grid-cols-2">
                   {pet.pet_max_length && (
                     <div className="rounded-2xl border border-emerald-700 bg-emerald-800/40 p-4 flex flex-col items-center justify-center text-center">
@@ -820,6 +992,7 @@ export function SpeciesProfile() {
                   )}
                 </div>
 
+                {/* Setup / requirements block */}
                 {(pet.pet_cost != null ||
                   pet.pet_tank_size ||
                   pet.pet_care_level) && (
@@ -827,6 +1000,7 @@ export function SpeciesProfile() {
                     <h4 className="font-bold text-emerald-100 mb-2 border-b border-emerald-800 pb-2">
                       Minimum Setup:
                     </h4>
+
                     {pet.pet_cost != null && (
                       <div className="flex justify-between text-sm">
                         <span className="text-emerald-400">Pet Price (RM)</span>
@@ -835,6 +1009,7 @@ export function SpeciesProfile() {
                         </span>
                       </div>
                     )}
+
                     {pet.pet_tank_size && (
                       <div className="flex justify-between text-sm">
                         <span className="text-emerald-400">
@@ -845,6 +1020,7 @@ export function SpeciesProfile() {
                         </span>
                       </div>
                     )}
+
                     {pet.pet_care_level && (
                       <div className="flex justify-between text-sm">
                         <span className="text-emerald-400">Experience</span>

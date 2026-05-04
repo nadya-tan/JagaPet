@@ -12,11 +12,19 @@ import { useCompare } from "../context/CompareContext";
 import logoImage from "../../imports/image-0.jpg";
 
 export function MainLayout() {
+  // Control mobile navigation menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Control floating chatbot window visibility
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // Get current route path for active navigation styling
   const location = useLocation();
+
+  // Get compare list state from global context
   const { comparePets } = useCompare();
 
+  // Main navigation links used in desktop + mobile menus
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Identify Pet", path: "/identify" },
@@ -28,10 +36,11 @@ export function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-stone-50 text-stone-800">
-      {/* Navigation */}
+      {/* ===================== Navigation Header ===================== */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+            {/* Website Logo + Home Link */}
             <Link
               to="/"
               className="flex items-center gap-3 hover:opacity-80 transition"
@@ -46,7 +55,7 @@ export function MainLayout() {
               </span>
             </Link>
 
-            {/* Desktop Nav */}
+            {/* ===================== Desktop Navigation ===================== */}
             <nav className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
@@ -62,6 +71,7 @@ export function MainLayout() {
                 </Link>
               ))}
 
+              {/* Compare Wishlist Button */}
               <Link
                 to="/compare"
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
@@ -75,7 +85,7 @@ export function MainLayout() {
               </Link>
             </nav>
 
-            {/* Mobile Menu Button */}
+            {/* ===================== Mobile Menu Button ===================== */}
             <button
               className="md:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -89,7 +99,7 @@ export function MainLayout() {
           </div>
         </div>
 
-        {/* Mobile Nav */}
+        {/* ===================== Mobile Navigation Panel ===================== */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
             {navLinks.map((link) => (
@@ -106,6 +116,8 @@ export function MainLayout() {
                 {link.name}
               </Link>
             ))}
+
+            {/* Mobile Compare Button */}
             <Link
               to="/compare"
               onClick={() => setIsMenuOpen(false)}
@@ -120,14 +132,16 @@ export function MainLayout() {
         )}
       </header>
 
-      {/* Main Content */}
+      {/* ===================== Main Routed Content ===================== */}
       <main className="flex-1 w-full">
+        {/* Nested route content renders here */}
         <Outlet />
       </main>
 
-      {/* Footer */}
+      {/* ===================== Footer Section ===================== */}
       <footer className="bg-emerald-900 text-emerald-50 py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Brand Description */}
           <div>
             <div className="flex items-center gap-3 mb-4">
               <img
@@ -137,31 +151,38 @@ export function MainLayout() {
               />
               <span className="text-xl font-bold">Shell & Fin MY</span>
             </div>
+
             <p className="text-emerald-200 text-sm leading-relaxed max-w-xs">
               Empowering Malaysians to make safe, responsible choices for
               non-native pets. Protect our biodiversity, one pet at a time.
             </p>
           </div>
+
+          {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
               Quick Links
             </h3>
+
             <ul className="space-y-2 text-sm text-emerald-200">
               <li>
                 <Link to="/quiz" className="hover:text-white transition">
                   Pre-purchase Quiz
                 </Link>
               </li>
+
               <li>
                 <Link to="/identify" className="hover:text-white transition">
                   Identify Your Pet
                 </Link>
               </li>
+
               <li>
                 <Link to="/compare" className="hover:text-white transition">
                   Compare Species
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/safe-exit"
@@ -172,39 +193,39 @@ export function MainLayout() {
               </li>
             </ul>
           </div>
+
+          {/* Legal / Emergency Information */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
               Emergency & Legal
             </h3>
+
             <ul className="space-y-2 text-sm text-emerald-200">
               <li>PERHILITAN Hotline: 1-800-88-5151</li>
               <li>Department of Fisheries Malaysia</li>
+
               <li className="text-xs mt-4 opacity-70">
                 Releasing non-native species into public waterways is illegal
                 under Malaysian law.
-              </li>
-              <li className="mt-4 pt-4 border-t border-emerald-700">
-                <Link
-                  to="/api-test-lab"
-                  className="hover:text-white transition text-xs opacity-60 hover:opacity-100"
-                >
-                  🔬 API Test Lab (Dev)
-                </Link>
               </li>
             </ul>
           </div>
         </div>
       </footer>
 
-      {/* Floating AI ChatBot */}
+      {/* ===================== Floating AI ChatBot ===================== */}
       <div className="fixed bottom-6 right-6 z-50">
         {isChatOpen ? (
+          /* Open Chat Window */
           <div className="bg-white w-80 sm:w-96 rounded-2xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col h-[500px] transition-all transform origin-bottom-right">
+            {/* Chat Header */}
             <div className="bg-emerald-700 p-4 text-white flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <HelpCircle className="h-5 w-5" />
                 <h3 className="font-semibold">Shell & Fin MY Assistant</h3>
               </div>
+
+              {/* Close Chat Button */}
               <button
                 onClick={() => setIsChatOpen(false)}
                 className="text-emerald-200 hover:text-white"
@@ -212,16 +233,21 @@ export function MainLayout() {
                 <X className="h-5 w-5" />
               </button>
             </div>
+
+            {/* Chat Messages Area */}
             <div className="flex-1 p-4 overflow-y-auto bg-stone-50 space-y-4 text-sm">
+              {/* Assistant Welcome Message */}
               <div className="bg-emerald-100 text-emerald-900 p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%]">
                 Hi! I'm your Shell & Fin MY Assistant. Do you have questions
                 about caring for a specific species, or need advice on rehoming
                 a pet you can no longer keep?
               </div>
-              {/* Fake conversation for prototype */}
+
+              {/* Prototype Example Conversation */}
               <div className="bg-white border border-stone-200 text-stone-800 p-3 rounded-2xl rounded-tr-sm self-end max-w-[85%] ml-auto shadow-sm">
                 What size tank does a red-eared slider need?
               </div>
+
               <div className="bg-emerald-100 text-emerald-900 p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%]">
                 A baby slider can start in a 20-gallon tank, but they grow fast!
                 An adult needs a minimum of 100 gallons (about 380 liters) or a
@@ -229,6 +255,8 @@ export function MainLayout() {
                 you thinking of getting one?
               </div>
             </div>
+
+            {/* Chat Input Area */}
             <div className="p-3 bg-white border-t border-stone-200">
               <div className="flex items-center gap-2 bg-stone-100 rounded-full px-4 py-2">
                 <input
@@ -236,6 +264,7 @@ export function MainLayout() {
                   placeholder="Type a message..."
                   className="bg-transparent border-none focus:outline-none flex-1 text-sm text-stone-700 placeholder-stone-400"
                 />
+
                 <button className="text-emerald-600 hover:text-emerald-700">
                   <MessageCircleQuestion className="h-5 w-5" />
                 </button>
@@ -243,6 +272,7 @@ export function MainLayout() {
             </div>
           </div>
         ) : (
+          /* Floating Open Chat Button */
           <button
             onClick={() => setIsChatOpen(true)}
             className="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center transform hover:scale-105"
