@@ -30,7 +30,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage, type Language } from "../context/LanguageContext";
 
 /**
  * Utility function:
@@ -45,6 +45,92 @@ function shuffleArray<T>(items: T[]) {
   return copy;
 }
 
+type LocalizedLabelMap = Record<string, Record<Language, string>>;
+
+const careLevelLabels: LocalizedLabelMap = {
+  Beginner: {
+    en: "Beginner Care",
+    ms: "Pemula",
+    zh: "新手",
+  },
+  Intermediate: {
+    en: "Intermediate Care",
+    ms: "Pertengahan",
+    zh: "中级",
+  },
+  Advanced: {
+    en: "Advanced Care",
+    ms: "Lanjutan",
+    zh: "高级",
+  },
+};
+
+const invasiveRiskLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Risk",
+    ms: "Risiko Rendah",
+    zh: "低风险",
+  },
+  Medium: {
+    en: "Medium Risk",
+    ms: "Risiko Sederhana",
+    zh: "中风险",
+  },
+  High: {
+    en: "High Risk",
+    ms: "Risiko Tinggi",
+    zh: "高风险",
+  },
+};
+
+const budgetLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Budget",
+    ms: "Kos Rendah",
+    zh: "低预算",
+  },
+  Medium: {
+    en: "Medium Budget",
+    ms: "Kos Sederhana",
+    zh: "中预算",
+  },
+  High: {
+    en: "High Budget",
+    ms: "Kos Tinggi",
+    zh: "高预算",
+  },
+};
+
+const nativeStatusLabels: LocalizedLabelMap = {
+  Native: {
+    en: "Native",
+    ms: "Asli",
+    zh: "本地",
+  },
+  "Not Native": {
+    en: "Not Native",
+    ms: "Bukan Asli",
+    zh: "非本地",
+  },
+  Invasive: {
+    en: "Invasive",
+    ms: "Invasif",
+    zh: "入侵",
+  },
+};
+
+function getLocalizedPetLabel(
+  labels: LocalizedLabelMap,
+  value: string | null | undefined,
+  language: Language,
+) {
+  if (!value) return "";
+
+  const key = value.trim();
+
+  return labels[key]?.[language] ?? key;
+}
+
 /**
  * Home page component
  * - Displays pet recommendations
@@ -52,7 +138,7 @@ function shuffleArray<T>(items: T[]) {
  * - Provides navigation and interactive features
  */
 export function Home() {
-  const { t } = useLanguage(); // Translation function from LanguageContext
+  const { t, language } = useLanguage(); // Translation function from LanguageContext
   const { recommendations, loading, error } = usePetRecommendationPool(); // Fetch recommended pets from API/hook
   const navigate = useNavigate(); // Navigation hook for routing
 
@@ -537,7 +623,11 @@ export function Home() {
                             )}
                           >
                             <ShieldAlert className="w-3 h-3" />
-                            {pet.pet_invasive_risk} {t("home.risk")}
+                            {getLocalizedPetLabel(
+                              invasiveRiskLabels,
+                              pet.pet_invasive_risk,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -564,7 +654,11 @@ export function Home() {
                             className={getNativeBadgeClasses(pet.pet_is_native)}
                           >
                             <Fish className="w-3 h-3" />
-                            {pet.pet_is_native}
+                            {getLocalizedPetLabel(
+                              nativeStatusLabels,
+                              pet.pet_is_native,
+                              language,
+                            )}
                           </span>
                         )}
                         {pet.pet_care_level && (
@@ -572,7 +666,11 @@ export function Home() {
                             className={getCareBadgeClasses(pet.pet_care_level)}
                           >
                             <HandHeart className="w-3 h-3" />
-                            {pet.pet_care_level} {t("home.care")}
+                            {getLocalizedPetLabel(
+                              careLevelLabels,
+                              pet.pet_care_level,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -583,8 +681,11 @@ export function Home() {
                             )}
                           >
                             <Banknote className="w-3 h-3" />
-                            {pet.pet_lifetime_budget_category}{" "}
-                            {t("home.budget")}
+                            {getLocalizedPetLabel(
+                              budgetLabels,
+                              pet.pet_lifetime_budget_category,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
@@ -675,7 +776,11 @@ export function Home() {
                             )}
                           >
                             <ShieldAlert className="w-3 h-3" />
-                            {pet.pet_invasive_risk} {t("home.risk")}
+                            {getLocalizedPetLabel(
+                              invasiveRiskLabels,
+                              pet.pet_invasive_risk,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -684,7 +789,11 @@ export function Home() {
                             className={getCareBadgeClasses(pet.pet_care_level)}
                           >
                             <HandHeart className="w-3 h-3" />
-                            {pet.pet_care_level} {t("home.care")}
+                            {getLocalizedPetLabel(
+                              careLevelLabels,
+                              pet.pet_care_level,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
@@ -706,7 +815,11 @@ export function Home() {
                             className={getNativeBadgeClasses(pet.pet_is_native)}
                           >
                             <Fish className="w-3 h-3" />
-                            {pet.pet_is_native}
+                            {getLocalizedPetLabel(
+                              nativeStatusLabels,
+                              pet.pet_is_native,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>

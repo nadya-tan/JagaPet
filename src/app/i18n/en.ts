@@ -52,7 +52,7 @@ export const en = {
   "home.findRehoming": "Find Alternative Rehoming",
 
   "footer.description":
-    "Empowering Malaysians to make safe, responsible choices for non-native pets. Protect our biodiversity, one pet at a time.",
+    "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
   "footer.quickLinks": "Quick Links",
   "footer.quiz": "Pre-purchase Quiz",
   "footer.identify": "Identify Your Pet",

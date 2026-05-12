@@ -52,7 +52,7 @@ export const ms = {
   "home.findRehoming": "Cari Pilihan Penempatan Semula",
 
   "footer.description":
-    "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan bukan natif. Lindungi biodiversiti kita, satu haiwan pada satu masa.",
+    "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",
   "footer.quickLinks": "Pautan Pantas",
   "footer.quiz": "Kuiz Sebelum Membeli",
   "footer.identify": "Kenal Pasti Haiwan Anda",

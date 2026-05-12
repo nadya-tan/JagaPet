@@ -13,7 +13,7 @@ export const zh = {
   "home.alert": "不要把宠物放生到野外",
   "home.heroTitle": "负责任的宠物饲养，从这里开始",
   "home.heroDescription":
-    "探索物种资料，检查生活方式适配度，并学习如何在马来西亚安全管理观赏鱼和宠物龟。",
+    "探索物种资料，检查生活方式适配度，并学习如何在马来西亚安全驯养观赏鱼和宠物龟。",
 
   "home.quizTitle": "购买前测验",
   "home.quizDescription": "了解你是否有足够的预算、空间和时间照顾该宠物。",
@@ -47,7 +47,7 @@ export const zh = {
   "home.findRehoming": "寻找其他重新安置方式",
 
   "footer.description":
-    "帮助马来西亚人安全、负责任地选择非本土宠物。一次一个宠物，共同保护我们的生物多样性。",
+    "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",
   "footer.quickLinks": "快速链接",
   "footer.quiz": "购买前测验",
   "footer.identify": "识别你的宠物",
