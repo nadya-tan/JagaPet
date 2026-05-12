@@ -1,11 +1,11 @@
 export const ms = {
   "language.label": "Bahasa",
 
-  "nav.home": "Laman Utama",
-  "nav.identify": "Kenal Pasti Haiwan",
-  "nav.health": "Saringan Kesihatan",
+  "nav.home": "Utama",
+  "nav.identify": "Kenal Pasti",
+  "nav.health": "Saringan",
   "nav.quiz": "Kuiz Keserasian",
-  "nav.rehome": "Perlu Cari Rumah Baharu?",
+  "nav.rehome": "Cari Rumah Baharu?",
   "nav.profile": "Profil",
   "nav.compare": "Banding",
   "nav.compareWishlist": "Senarai Perbandingan",
