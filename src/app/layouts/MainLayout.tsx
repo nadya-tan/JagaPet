@@ -52,32 +52,32 @@ export function MainLayout() {
       {/* ===================== Navigation Header ===================== */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex items-center justify-between gap-4 h-16 min-w-0">
             {/* Website Logo + Home Link */}
             <Link
               to="/"
-              className="flex items-center gap-3 hover:opacity-80 transition"
+              className="flex shrink-0 items-center gap-3 hover:opacity-80 transition"
             >
               <img
                 src={logoImage}
                 alt="Shell & Fin MY Logo"
                 className="h-12 w-12 object-cover rounded-full mix-blend-multiply"
               />
-              <span className="text-xl font-bold tracking-tight text-emerald-700">
+              <span className="whitespace-nowrap text-xl font-bold tracking-tight text-emerald-700">
                 Shell & Fin MY
               </span>
             </Link>
 
             {/* ===================== Desktop Navigation ===================== */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-end gap-3 xl:gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-sm font-medium transition ${
+                  className={`shrink-0 whitespace-nowrap border-b-2 px-1 py-5 text-sm font-medium transition ${
                     location.pathname === link.path
-                      ? "text-emerald-700 border-b-2 border-emerald-700"
-                      : "text-stone-600 hover:text-emerald-600"
+                      ? "border-emerald-700 text-emerald-700"
+                      : "border-transparent text-stone-600 hover:text-emerald-600"
                   }`}
                 >
                   {link.name}
@@ -87,7 +87,7 @@ export function MainLayout() {
               {/* Compare Wishlist Button */}
               <Link
                 to="/compare"
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
+                className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 xl:px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
                   comparePets.length > 0
                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
                     : "bg-stone-100 text-stone-400 hover:bg-stone-200 hover:text-stone-600"
@@ -99,7 +99,7 @@ export function MainLayout() {
               </Link>
 
               {/* Language Selector */}
-              <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
+              <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
                 <Languages className="h-4 w-4 text-emerald-700" />
 
                 <select
@@ -119,7 +119,7 @@ export function MainLayout() {
 
             {/* ===================== Mobile Menu Button ===================== */}
             <button
-              className="md:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
+              className="lg:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? (
@@ -133,7 +133,7 @@ export function MainLayout() {
 
         {/* ===================== Mobile Navigation Panel ===================== */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
+          <div className="lg:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
