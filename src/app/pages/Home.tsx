@@ -772,45 +772,10 @@ export function Home() {
       </section>
 
       {/* Mini Player */}
-      {/* {showMiniPlayer && (
-        <div className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700">
-          <div className="relative aspect-video w-full bg-black">
-            <button
-              type="button"
-              onClick={handleMiniPlayerFullscreen}
-              className="absolute left-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
-              aria-label="Open mini player in fullscreen"
-              title="Fullscreen"
-            >
-              <Maximize2 className="h-4 w-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowMiniPlayer(false)}
-              className="absolute right-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
-              aria-label="Close mini player"
-              title="Close"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            <video
-              ref={videoRef}
-              className="h-full w-full object-contain"
-              src="/videos/pet-care-guide.mp4"
-              controls
-              autoPlay
-              muted
-              playsInline
-            />
-          </div>
-        </div>
-      )} */}
       {showMiniPlayer && (
         <div
           ref={miniPlayerRef}
-          className="fixed z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
+          className="fixed z-50 w-[260px] sm:w-[300px] md:w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
           style={{
             left: miniPlayerPosition.x,
             top: miniPlayerPosition.y,
