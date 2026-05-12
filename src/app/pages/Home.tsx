@@ -784,7 +784,7 @@ export function Home() {
           <div
             onPointerDown={handleMiniPlayerDragStart}
             onPointerMove={handleMiniPlayerDragMove}
-            className="flex cursor-grab select-none items-center justify-center bg-stone-900 px-3 text-xs text-white active:cursor-grabbing"
+            className="flex touch-none cursor-grab select-none items-center justify-center bg-stone-900 px-3 text-xs text-white active:cursor-grabbing"
           >
             <Minus className="h-4 w-4" />
           </div>
