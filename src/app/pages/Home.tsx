@@ -81,6 +81,68 @@ export function Home() {
   // Controls visibility of mini video player
   const [showMiniPlayer, setShowMiniPlayer] = useState(true);
 
+  // Mini player draggable container reference
+  const miniPlayerRef = useRef<HTMLDivElement | null>(null);
+
+  // Stores drag offset while user is dragging
+  const dragOffsetRef = useRef({
+    x: 0,
+    y: 0,
+  });
+
+  // Mini player position on screen
+  const [miniPlayerPosition, setMiniPlayerPosition] = useState({
+    x: 24,
+    y: 24,
+  });
+
+  // Put mini player at bottom-left when it first appears
+  useEffect(() => {
+    if (!showMiniPlayer) return;
+
+    const playerWidth = 340;
+    const estimatedPlayerHeight = 230;
+
+    setMiniPlayerPosition({
+      x: 24,
+      y: window.innerHeight - estimatedPlayerHeight - 24,
+    });
+  }, [showMiniPlayer]);
+
+  const handleMiniPlayerDragStart = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    if (!miniPlayerRef.current) return;
+
+    const rect = miniPlayerRef.current.getBoundingClientRect();
+
+    dragOffsetRef.current = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMiniPlayerDragMove = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    if (!miniPlayerRef.current || event.buttons !== 1) return;
+
+    const rect = miniPlayerRef.current.getBoundingClientRect();
+
+    const nextX = event.clientX - dragOffsetRef.current.x;
+    const nextY = event.clientY - dragOffsetRef.current.y;
+
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+
+    setMiniPlayerPosition({
+      x: Math.min(Math.max(nextX, 8), maxX - 8),
+      y: Math.min(Math.max(nextY, 8), maxY - 8),
+    });
+  };
+
   /**
    * Open mini player in fullscreen mode
    * Supports standard and webkit fullscreen APIs
@@ -709,8 +771,59 @@ export function Home() {
       </section>
 
       {/* Mini Player */}
-      {showMiniPlayer && (
+      {/* {showMiniPlayer && (
         <div className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700">
+          <div className="relative aspect-video w-full bg-black">
+            <button
+              type="button"
+              onClick={handleMiniPlayerFullscreen}
+              className="absolute left-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
+              aria-label="Open mini player in fullscreen"
+              title="Fullscreen"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowMiniPlayer(false)}
+              className="absolute right-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white backdrop-blur-sm transition hover:bg-black"
+              aria-label="Close mini player"
+              title="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <video
+              ref={videoRef}
+              className="h-full w-full object-contain"
+              src="/videos/pet-care-guide.mp4"
+              controls
+              autoPlay
+              muted
+              playsInline
+            />
+          </div>
+        </div>
+      )} */}
+      {showMiniPlayer && (
+        <div
+          ref={miniPlayerRef}
+          className="fixed z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
+          style={{
+            left: miniPlayerPosition.x,
+            top: miniPlayerPosition.y,
+          }}
+        >
+          <div
+            onPointerDown={handleMiniPlayerDragStart}
+            onPointerMove={handleMiniPlayerDragMove}
+            className="flex cursor-grab select-none items-center justify-between bg-stone-900 px-3 py-2 text-xs text-white active:cursor-grabbing"
+          >
+            <span>Mini Player</span>
+            <span className="text-stone-400">Drag to move</span>
+          </div>
+
           <div className="relative aspect-video w-full bg-black">
             <button
               type="button"
