@@ -25,11 +25,16 @@ import {
   getCareBadgeClasses,
   getCostBadgeClasses,
   getNativeBadgeClasses,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+  budgetLabels,
+  nativeStatusLabels,
 } from "../utils/petDisplay";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
-import { useLanguage, type Language } from "../context/LanguageContext";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * Utility function:
@@ -42,93 +47,6 @@ function shuffleArray<T>(items: T[]) {
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
-}
-
-type LocalizedLabelMap = Record<string, Record<Language, string>>;
-
-// Localized labels for pet attributes
-const careLevelLabels: LocalizedLabelMap = {
-  Beginner: {
-    en: "Beginner Care",
-    ms: "Pemula Penjagaan",
-    zh: "新手养护",
-  },
-  Intermediate: {
-    en: "Intermediate Care",
-    ms: "Pertengahan Penjagaan",
-    zh: "中级养护",
-  },
-  Advanced: {
-    en: "Advanced Care",
-    ms: "Lanjutan Penjagaan",
-    zh: "高级养护",
-  },
-};
-
-const invasiveRiskLabels: LocalizedLabelMap = {
-  Low: {
-    en: "Low Risk",
-    ms: "Risiko Rendah",
-    zh: "低风险",
-  },
-  Medium: {
-    en: "Medium Risk",
-    ms: "Risiko Sederhana",
-    zh: "中风险",
-  },
-  High: {
-    en: "High Risk",
-    ms: "Risiko Tinggi",
-    zh: "高风险",
-  },
-};
-
-const budgetLabels: LocalizedLabelMap = {
-  Low: {
-    en: "Low Budget",
-    ms: "Kos Rendah",
-    zh: "低预算",
-  },
-  Medium: {
-    en: "Medium Budget",
-    ms: "Kos Sederhana",
-    zh: "中预算",
-  },
-  High: {
-    en: "High Budget",
-    ms: "Kos Tinggi",
-    zh: "高预算",
-  },
-};
-
-const nativeStatusLabels: LocalizedLabelMap = {
-  Native: {
-    en: "Native",
-    ms: "Asli",
-    zh: "本地物种",
-  },
-  "Not Native": {
-    en: "Not Native",
-    ms: "Bukan Asli",
-    zh: "非本地物种",
-  },
-  Invasive: {
-    en: "Invasive",
-    ms: "Invasif",
-    zh: "入侵物种",
-  },
-};
-
-function getLocalizedPetLabel(
-  labels: LocalizedLabelMap,
-  value: string | null | undefined,
-  language: Language,
-) {
-  if (!value) return "";
-
-  const key = value.trim();
-
-  return labels[key]?.[language] ?? key;
 }
 
 /**

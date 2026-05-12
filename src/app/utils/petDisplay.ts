@@ -5,6 +5,96 @@ import type {
   RecommendedPet,
 } from "../types/pet.types";
 
+import type { Language } from "../context/LanguageContext";
+
+// ===================== Localized Labels =====================
+export type LocalizedLabelMap = Record<string, Record<Language, string>>;
+
+// Localized labels for pet attributes (care level, invasive risk, budget, native status)
+export const careLevelLabels: LocalizedLabelMap = {
+  Beginner: {
+    en: "Beginner Care",
+    ms: "Pemula Penjagaan",
+    zh: "新手养护",
+  },
+  Intermediate: {
+    en: "Intermediate Care",
+    ms: "Pertengahan Penjagaan",
+    zh: "中级养护",
+  },
+  Advanced: {
+    en: "Advanced Care",
+    ms: "Lanjutan Penjagaan",
+    zh: "高级养护",
+  },
+};
+
+export const invasiveRiskLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Risk",
+    ms: "Risiko Rendah",
+    zh: "低风险",
+  },
+  Medium: {
+    en: "Medium Risk",
+    ms: "Risiko Sederhana",
+    zh: "中风险",
+  },
+  High: {
+    en: "High Risk",
+    ms: "Risiko Tinggi",
+    zh: "高风险",
+  },
+};
+
+export const budgetLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Budget",
+    ms: "Kos Rendah",
+    zh: "低预算",
+  },
+  Medium: {
+    en: "Medium Budget",
+    ms: "Kos Sederhana",
+    zh: "中预算",
+  },
+  High: {
+    en: "High Budget",
+    ms: "Kos Tinggi",
+    zh: "高预算",
+  },
+};
+
+export const nativeStatusLabels: LocalizedLabelMap = {
+  Native: {
+    en: "Native",
+    ms: "Asli",
+    zh: "本地物种",
+  },
+  "Not Native": {
+    en: "Not Native",
+    ms: "Bukan Asli",
+    zh: "非本地物种",
+  },
+  Invasive: {
+    en: "Invasive",
+    ms: "Invasif",
+    zh: "入侵物种",
+  },
+};
+
+export function getLocalizedPetLabel(
+  labels: LocalizedLabelMap,
+  value: string | null | undefined,
+  language: Language,
+) {
+  if (!value) return "";
+
+  const key = value.trim();
+
+  return labels[key]?.[language] ?? key;
+}
+
 // ===================== Name / Display Utilities =====================
 
 /**
