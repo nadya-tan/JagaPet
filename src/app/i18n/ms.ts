@@ -328,6 +328,85 @@ export const ms = {
     },
   },
 
+  quizResults: {
+    loading: "Memuatkan padanan kuiz anda...",
+    title: "Keputusan Keserasian Gaya Hidup Anda",
+    wishlistDescription:
+      "Kami telah menilai spesies dalam senarai anda berdasarkan jawapan anda.",
+    databaseDescription:
+      "Kami telah menilai pangkalan data kami untuk mencari padanan terbaik dengan gaya hidup anda.",
+
+    retakeQuiz: "Ambil Semula Kuiz",
+    identifyHelp: "Tidak pasti haiwan apa yang anda miliki?",
+
+    saveResultsTitle: "Simpan keputusan ini ke profil anda",
+    saveResultsDescription:
+      "Cipta profil atau log masuk untuk menyimpan jawapan kuiz anda dan mengemas kininya apabila anda mengambil semula kuiz.",
+    createProfileLogin: "Cipta profil / Log masuk",
+
+    profileUpdatedTitle: "Profil dikemas kini",
+    profileUpdatedDescriptionStart:
+      "Jawapan kuiz terkini anda disimpan ke profil",
+    profileUpdatedDescriptionEnd:
+      ". Mengambil semula kuiz akan mengemas kininya secara automatik.",
+
+    suitableForYou: "Sesuai Untuk Anda",
+    showOtherMatches: "Tunjuk padanan lain",
+    greatFit: "Sangat Sesuai",
+    care: "Penjagaan",
+    risk: "Risiko",
+    whyItFitsYou: "Mengapa ia sesuai untuk anda:",
+    viewFullCareGuide: "Lihat Panduan Penjagaan Penuh",
+
+    notRecommended: "Tidak Disyorkan",
+    showOtherConcerns: "Tunjuk kebimbangan lain",
+    whyThisMayNotFitYou: "Mengapa ia mungkin tidak sesuai untuk anda:",
+    suggestion:
+      "Cadangan: Pertimbangkan untuk menyesuaikan bajet anda atau menyediakan lebih banyak ruang, jika tidak terokai alternatif di bawah.",
+
+    recommendedAlternatives: "Alternatif yang Disyorkan",
+    alternativesWhenNoMatches:
+      "Memandangkan tiada haiwan dalam senarai anda sesuai dengan gaya hidup anda, kami sangat mengesyorkan alternatif yang lebih selamat dan lebih sesuai ini, disusun mengikut risiko ekologi terendah:",
+    alternativesWhenHasMatches:
+      "Anda juga boleh mempertimbangkan haiwan yang sangat sesuai ini:",
+    topMatch: "Padanan Terbaik",
+    perfectFitFallback: "Sesuai untuk ruang dan bajet anda",
+    viewProfile: "Lihat Profil",
+
+    noRecommendationTitle: "Tiada cadangan yang sesuai ditemui",
+    noRecommendationDescription:
+      "Kekangan gaya hidup semasa anda mungkin menyukarkan penjagaan haiwan akuatik dalam pangkalan data kami dengan betul.",
+    adjustAnswers: "Laraskan Jawapan Anda",
+
+    fits: {
+      suitableBudget: "Bajet yang sesuai",
+      appropriateSpace: "Keperluan ruang yang sesuai",
+      manageableTime: "Masa penyelenggaraan yang boleh diurus",
+      manageableCare: "Tahap penjagaan yang boleh diurus",
+      lifespanMatch: "Sepadan dengan pilihan jangka hayat anda",
+    },
+
+    reasons: {
+      budget: {
+        low: "Bajet: Haiwan ini mungkin memerlukan bajet hayat yang rendah, tetapi masih melebihi bajet yang anda pilih.",
+        medium:
+          "Bajet: Haiwan ini mungkin memerlukan bajet hayat sederhana, yang melebihi bajet yang anda pilih.",
+        high: "Bajet: Haiwan ini mungkin memerlukan bajet hayat yang tinggi, yang melebihi bajet yang anda pilih.",
+        unknown:
+          "Bajet: Haiwan ini mungkin memerlukan bajet hayat yang lebih tinggi daripada bajet yang anda pilih.",
+      },
+      space:
+        "Ruang: Haiwan ini mungkin memerlukan habitat yang lebih besar daripada ruang yang anda pilih.",
+      time: "Masa: Haiwan ini mungkin memerlukan lebih banyak masa penjagaan daripada ketersediaan anda sekarang.",
+      experience:
+        "Pengalaman: Haiwan ini mungkin terlalu mencabar untuk tahap pengalaman anda sekarang.",
+      commitment:
+        "Komitmen: Haiwan ini mungkin hidup lebih lama daripada komitmen yang anda inginkan.",
+      highEcologicalRisk:
+        "Risiko ekologi tinggi: Spesies ini memerlukan kawalan yang sangat bertanggungjawab dan tidak boleh dilepaskan sama sekali.",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

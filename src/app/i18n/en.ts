@@ -323,6 +323,84 @@ export const en = {
     },
   },
 
+  quizResults: {
+    loading: "Loading your quiz matches...",
+    title: "Your Lifestyle Compatibility Results",
+    wishlistDescription:
+      "We've evaluated the species on your list against your answers.",
+    databaseDescription:
+      "We've evaluated our database to find the best matches for your lifestyle.",
+
+    retakeQuiz: "Retake Quiz",
+    identifyHelp: "Not sure what pet you have?",
+
+    saveResultsTitle: "Save these results to your profile",
+    saveResultsDescription:
+      "Create a profile or log in to keep your quiz answers and update them whenever you retake the quiz.",
+    createProfileLogin: "Create profile / Log in",
+
+    profileUpdatedTitle: "Profile updated",
+    profileUpdatedDescriptionStart: "Your latest quiz answers are saved to",
+    profileUpdatedDescriptionEnd:
+      "profile. Retaking the quiz will update them automatically.",
+
+    suitableForYou: "Suitable For You",
+    showOtherMatches: "Show other matches",
+    greatFit: "Great Fit",
+    care: "Care",
+    risk: "Risk",
+    whyItFitsYou: "Why it fits you:",
+    viewFullCareGuide: "View Full Care Guide",
+
+    notRecommended: "Not Recommended",
+    showOtherConcerns: "Show other concerns",
+    whyThisMayNotFitYou: "Why this may not fit you:",
+    suggestion:
+      "Suggestion: Consider adjusting your budget or freeing up more space, otherwise explore the alternatives below.",
+
+    recommendedAlternatives: "Recommended Alternatives",
+    alternativesWhenNoMatches:
+      "Since none of the pets on your list fit your lifestyle, we highly recommend these safer, better-matching alternatives, ranked by lowest ecological risk:",
+    alternativesWhenHasMatches:
+      "You might also want to consider these highly suitable pets:",
+    topMatch: "Top Match",
+    perfectFitFallback: "Perfect fit for your space and budget",
+    viewProfile: "View Profile",
+
+    noRecommendationTitle: "No suitable recommendation found",
+    noRecommendationDescription:
+      "Your current lifestyle constraints might make it difficult to properly care for the aquatic pets in our database.",
+    adjustAnswers: "Adjust Your Answers",
+
+    fits: {
+      suitableBudget: "Suitable budget",
+      appropriateSpace: "Appropriate space requirement",
+      manageableTime: "Manageable maintenance time",
+      manageableCare: "Manageable care level",
+      lifespanMatch: "Matches your lifespan preference",
+    },
+
+    reasons: {
+      budget: {
+        low: "Budget: This pet likely needs a low lifetime budget, which is above your selected budget.",
+        medium:
+          "Budget: This pet likely needs a medium lifetime budget, which is above your selected budget.",
+        high: "Budget: This pet likely needs a high lifetime budget, which is above your selected budget.",
+        unknown:
+          "Budget: This pet may need a higher lifetime budget than your selected budget.",
+      },
+      space:
+        "Space: This pet may need a larger habitat setup than the space you selected.",
+      time: "Time: This pet may require more care time than your current availability.",
+      experience:
+        "Experience: This pet may be too challenging for your current experience level.",
+      commitment:
+        "Commitment: This pet may live longer than the commitment you prefer.",
+      highEcologicalRisk:
+        "High ecological risk: This species needs especially responsible containment and must never be released.",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

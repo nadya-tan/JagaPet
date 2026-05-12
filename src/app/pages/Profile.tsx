@@ -173,7 +173,7 @@ export function Profile() {
   /**
    * Guard: loading state
    */
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <div className="p-8">{t("profile.loading")}</div>;
 
   /**
    * Guard: unauthenticated redirect

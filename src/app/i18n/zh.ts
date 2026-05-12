@@ -318,6 +318,75 @@ export const zh = {
     },
   },
 
+  quizResults: {
+    loading: "正在加载你的测验匹配结果...",
+    title: "你的生活方式适配结果",
+    wishlistDescription: "我们已根据你的答案评估了清单中的物种。",
+    databaseDescription: "我们已评估数据库，为你的生活方式寻找最佳匹配。",
+
+    retakeQuiz: "重新测验",
+    identifyHelp: "不确定你养的是什么宠物？",
+
+    saveResultsTitle: "将这些结果保存到你的个人资料",
+    saveResultsDescription:
+      "创建个人资料或登录，以保存你的测验答案，并在重新测验时自动更新。",
+    createProfileLogin: "创建个人资料 / 登录",
+
+    profileUpdatedTitle: "个人资料已更新",
+    profileUpdatedDescriptionStart: "你的最新测验答案已保存到",
+    profileUpdatedDescriptionEnd: "的个人资料。重新测验会自动更新这些答案。",
+
+    suitableForYou: "适合你",
+    showOtherMatches: "显示其他匹配",
+    greatFit: "非常适合",
+    care: "养护",
+    risk: "风险",
+    whyItFitsYou: "为什么它适合你：",
+    viewFullCareGuide: "查看完整护理指南",
+
+    notRecommended: "不推荐",
+    showOtherConcerns: "显示其他注意事项",
+    whyThisMayNotFitYou: "为什么它可能不适合你：",
+    suggestion:
+      "建议：考虑调整预算或腾出更多空间，否则可以查看下方的替代选择。",
+
+    recommendedAlternatives: "推荐替代物种",
+    alternativesWhenNoMatches:
+      "由于你清单中的宠物都不太适合你的生活方式，我们强烈推荐以下更安全、更匹配的替代选择，并按最低生态风险排序：",
+    alternativesWhenHasMatches: "你也可以考虑这些高度适合的宠物：",
+    topMatch: "最佳匹配",
+    perfectFitFallback: "非常适合你的空间和预算",
+    viewProfile: "查看资料",
+
+    noRecommendationTitle: "未找到合适的推荐",
+    noRecommendationDescription:
+      "你目前的生活方式限制可能会让你难以妥善照顾数据库中的水生宠物。",
+    adjustAnswers: "调整你的答案",
+
+    fits: {
+      suitableBudget: "预算合适",
+      appropriateSpace: "空间需求合适",
+      manageableTime: "维护时间可管理",
+      manageableCare: "养护难度可管理",
+      lifespanMatch: "符合你的寿命偏好",
+    },
+
+    reasons: {
+      budget: {
+        low: "预算：这种宠物可能需要较低的终身预算，但仍高于你选择的预算。",
+        medium: "预算：这种宠物可能需要中等终身预算，高于你选择的预算。",
+        high: "预算：这种宠物可能需要较高的终身预算，高于你选择的预算。",
+        unknown: "预算：这种宠物可能需要高于你所选预算的终身费用。",
+      },
+      space: "空间：这种宠物可能需要比你所选空间更大的栖息环境。",
+      time: "时间：这种宠物可能需要比你目前可投入时间更多的照顾时间。",
+      experience: "经验：这种宠物对你目前的经验水平来说可能太具挑战性。",
+      commitment: "承诺：这种宠物的寿命可能比你希望承担的时间更长。",
+      highEcologicalRisk:
+        "高生态风险：该物种需要特别负责任的管控，并且绝对不能被放生。",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",
