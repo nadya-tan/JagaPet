@@ -407,6 +407,50 @@ export const ms = {
     },
   },
 
+  identify: {
+    title: "Kenal Pasti Spesies",
+    description:
+      "Muat naik gambar ikan atau kura-kura sebenar. Kami akan menghantarnya ke perkhidmatan pengecaman tempatan, memaparkan tekaan AI, dan menghubungkannya dengan panduan Shell & Fin MY jika terdapat padanan tempatan.",
+
+    dropTitle: "Seret & lepaskan gambar anda di sini",
+    dropDescription: "atau klik butang di bawah untuk memilih fail",
+    selectPhoto: "Pilih Gambar",
+    supportedFormats: "Disokong: JPG, PNG, HEIC",
+
+    scanningAlt: "Sedang mengimbas",
+    uploadedAlt: "Dimuat naik",
+    analyzing: "Menganalisis Gambar...",
+    analyzingDescription:
+      "Menghantar imej anda ke backend tempatan yang dikuasakan oleh Gemini.",
+
+    tryAnother: "Cuba gambar lain",
+    identificationUnavailable: "Pengecaman tidak tersedia",
+    aiResult: "Keputusan Pengecaman AI",
+    unknown: "Tidak diketahui",
+    notes: "Nota",
+    noNotes: "Tiada nota diberikan.",
+
+    biodiversityRisk: "Risiko Biodiversiti",
+    riskDescription:
+      "Tahap risiko ini berdasarkan maklumat risiko invasif dalam pangkalan data haiwan Shell & Fin.",
+    viewSpeciesProfile: "Lihat Profil Spesies",
+
+    needsHumanReview: "Memerlukan semakan manusia",
+    humanReviewDescription:
+      "Kami tidak dapat memadankan keputusan AI ini dengan yakin kepada profil spesies tempatan Shell & Fin MY, jadi kad penjagaan dan biodiversiti disembunyikan buat sementara untuk semakan manual.",
+
+    errors: {
+      loadSpeciesFailed: "Gagal memuatkan pangkalan data spesies.",
+      invalidSpeciesFormat:
+        "Pangkalan data spesies mengembalikan format yang tidak sah.",
+      requestFailed: "Permintaan pengecaman gagal.",
+      emptyResult: "Pelayan mengembalikan keputusan pengecaman kosong.",
+      identifyFailed:
+        "Kami tidak dapat mengenal pasti imej ini sekarang. Sila cuba lagi.",
+      invalidFileType: "Sila pilih fail imej seperti JPG, PNG, atau HEIC.",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

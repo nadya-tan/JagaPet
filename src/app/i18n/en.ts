@@ -401,6 +401,49 @@ export const en = {
     },
   },
 
+  identify: {
+    title: "Identify a Species",
+    description:
+      "Upload a real fish or turtle photo. We'll send it to the local identification service, surface the AI guess, and connect it to Shell & Fin MY guidance when we have a local match.",
+
+    dropTitle: "Drag & Drop your photo here",
+    dropDescription: "or click the button below to browse",
+    selectPhoto: "Select Photo",
+    supportedFormats: "Supported: JPG, PNG, HEIC",
+
+    scanningAlt: "Scanning",
+    uploadedAlt: "Uploaded",
+    analyzing: "Analyzing Photo...",
+    analyzingDescription:
+      "Sending your image to the local Gemini-powered backend.",
+
+    tryAnother: "Try another photo",
+    identificationUnavailable: "Identification unavailable",
+    aiResult: "AI Identification Result",
+    unknown: "Unknown",
+    notes: "Notes",
+    noNotes: "No notes provided.",
+
+    biodiversityRisk: "Biodiversity Risk",
+    riskDescription:
+      "This risk level is based on the invasive risk information in the Shell & Fin pet database.",
+    viewSpeciesProfile: "View Species Profile",
+
+    needsHumanReview: "Needs human review",
+    humanReviewDescription:
+      "We couldn't confidently map this AI result to a local Shell & Fin MY species profile yet, so the care and biodiversity cards are intentionally hidden for manual review.",
+
+    errors: {
+      loadSpeciesFailed: "Failed to load species database.",
+      invalidSpeciesFormat: "Species database returned an invalid format.",
+      requestFailed: "The identification request failed.",
+      emptyResult: "The server returned an empty identification result.",
+      identifyFailed:
+        "We couldn't identify this image right now. Please try again.",
+      invalidFileType: "Please choose an image file such as JPG, PNG, or HEIC.",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

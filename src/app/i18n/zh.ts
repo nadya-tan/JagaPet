@@ -387,6 +387,46 @@ export const zh = {
     },
   },
 
+  identify: {
+    title: "识别物种",
+    description:
+      "上传真实的鱼类或龟类照片。我们会将照片发送到本地识别服务，显示 AI 的判断，并在找到本地匹配时连接到 Shell & Fin MY 的相关指南。",
+
+    dropTitle: "将照片拖放到这里",
+    dropDescription: "或点击下方按钮浏览文件",
+    selectPhoto: "选择照片",
+    supportedFormats: "支持格式：JPG、PNG、HEIC",
+
+    scanningAlt: "正在扫描",
+    uploadedAlt: "已上传",
+    analyzing: "正在分析照片...",
+    analyzingDescription: "正在将你的图片发送到由 Gemini 驱动的本地后端。",
+
+    tryAnother: "尝试另一张照片",
+    identificationUnavailable: "识别暂时不可用",
+    aiResult: "AI 识别结果",
+    unknown: "未知",
+    notes: "备注",
+    noNotes: "没有提供备注。",
+
+    biodiversityRisk: "生物多样性风险",
+    riskDescription: "该风险等级基于 Shell & Fin 宠物数据库中的入侵风险信息。",
+    viewSpeciesProfile: "查看物种资料",
+
+    needsHumanReview: "需要人工审核",
+    humanReviewDescription:
+      "我们目前无法自信地将这个 AI 结果匹配到本地 Shell & Fin MY 物种资料，因此护理和生物多样性卡片会暂时隐藏，以便进行人工审核。",
+
+    errors: {
+      loadSpeciesFailed: "无法加载物种数据库。",
+      invalidSpeciesFormat: "物种数据库返回了无效格式。",
+      requestFailed: "识别请求失败。",
+      emptyResult: "服务器返回了空的识别结果。",
+      identifyFailed: "我们现在无法识别这张图片。请稍后再试。",
+      invalidFileType: "请选择 JPG、PNG 或 HEIC 等图片文件。",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",
