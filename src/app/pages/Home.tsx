@@ -30,7 +30,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
-import { autoTranslate } from "js-auto-translate";
+import { loadAutoTranslate } from "../utils/loadAutoTranslate";
 
 /**
  * Utility function:
@@ -345,20 +345,32 @@ export function Home() {
       return;
     }
 
+    let cancelled = false;
+
     async function translateHomePage() {
       try {
         setIsTranslating(true);
         localStorage.setItem("home-language", selectedLanguage);
 
-        await autoTranslate("English", selectedLanguage);
+        const { autoTranslate } = await loadAutoTranslate();
+
+        if (!cancelled) {
+          await autoTranslate("English", selectedLanguage);
+        }
       } catch (error) {
         console.error("Auto translation error:", error);
       } finally {
-        setIsTranslating(false);
+        if (!cancelled) {
+          setIsTranslating(false);
+        }
       }
     }
 
     translateHomePage();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     selectedLanguage,
     visibleRecommendations,
