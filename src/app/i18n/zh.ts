@@ -129,11 +129,11 @@ export const zh = {
     waterHardness: "水硬度",
 
     years: "年",
-    cm: "cm",
-    kg: "kg",
+    cm: "厘米",
+    kg: "公斤",
 
     minimumSetup: "最低饲养配置：",
-    petPriceRm: "宠物价格（RM）",
+    petPriceRm: "宠物价格（令吉）",
     tankSizeGallons: "鱼缸大小（加仑）",
     experience: "经验",
   },
