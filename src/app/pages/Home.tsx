@@ -50,18 +50,18 @@ type LocalizedLabelMap = Record<string, Record<Language, string>>;
 const careLevelLabels: LocalizedLabelMap = {
   Beginner: {
     en: "Beginner Care",
-    ms: "Pemula",
-    zh: "新手",
+    ms: "Pemula Penjagaan",
+    zh: "新手养护",
   },
   Intermediate: {
     en: "Intermediate Care",
-    ms: "Pertengahan",
-    zh: "中级",
+    ms: "Pertengahan Penjagaan",
+    zh: "中级养护",
   },
   Advanced: {
     en: "Advanced Care",
-    ms: "Lanjutan",
-    zh: "高级",
+    ms: "Lanjutan Penjagaan",
+    zh: "高级养护",
   },
 };
 
@@ -105,17 +105,17 @@ const nativeStatusLabels: LocalizedLabelMap = {
   Native: {
     en: "Native",
     ms: "Asli",
-    zh: "本地",
+    zh: "本地物种",
   },
   "Not Native": {
     en: "Not Native",
     ms: "Bukan Asli",
-    zh: "非本地",
+    zh: "非本地物种",
   },
   Invasive: {
     en: "Invasive",
     ms: "Invasif",
-    zh: "入侵",
+    zh: "入侵物种",
   },
 };
 
