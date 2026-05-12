@@ -37,9 +37,16 @@ import {
   formatPetBodyShape,
   formatPetTraits,
   formatCurrencyMYR,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+  budgetLabels,
+  nativeStatusLabels,
+  dangerLabels,
 } from "../utils/petDisplay";
 import { useCompare } from "../context/CompareContext";
 import { useUser } from "../context/UserContext";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * =========================
@@ -149,6 +156,11 @@ export function SpeciesProfile() {
   const { answers } = useUser();
 
   /**
+   * Language context for localization
+   */
+  const { t, language } = useLanguage();
+
+  /**
    * =========================
    * Suitability Calculation
    * =========================
@@ -170,22 +182,22 @@ export function SpeciesProfile() {
 
     // Hard stop: illegal species
     if (pet.pet_banned) {
-      reasons.push("This species is banned in Malaysia");
+      reasons.push("speciesProfile.bannedReason");
     }
 
     // Risk evaluation
     if (petRiskLevel === "high") {
-      reasons.push("Higher ecological risk");
+      reasons.push("speciesProfile.higherEcologicalRisk");
     } else if (petRiskLevel === "low") {
-      fits.push("Low ecological risk");
+      fits.push("speciesProfile.lowEcologicalRisk");
     }
 
     // Experience vs care difficulty comparison
     if (petCareLevel) {
       if (experienceRank[answers.experience] >= experienceRank[petCareLevel]) {
-        fits.push("Manageable care level");
+        fits.push("speciesProfile.manageableCareLevel");
       } else {
-        reasons.push("High care difficulty for your experience level");
+        reasons.push("speciesProfile.highCareDifficulty");
       }
     }
 
@@ -278,7 +290,7 @@ export function SpeciesProfile() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
         <div className="mx-auto max-w-6xl">
-          <p className="text-stone-600">Loading pet profile...</p>
+          <p className="text-stone-600">{t("speciesProfile.loading")}</p>
         </div>
       </div>
     );
@@ -295,12 +307,13 @@ export function SpeciesProfile() {
         <div className="mx-auto max-w-3xl rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="mb-4 flex items-center gap-3 text-amber-700">
             <AlertTriangle className="h-6 w-6" />
-            <h1 className="text-2xl font-bold">Species Not Found</h1>
+            <h1 className="text-2xl font-bold">
+              {t("speciesProfile.notFoundTitle")}
+            </h1>
           </div>
 
           <p className="mb-6 text-stone-600">
-            The pet you are looking for might not be in the database yet, or the
-            link may be incorrect.
+            {t("speciesProfile.notFoundDescription")}
           </p>
 
           {error && (
@@ -314,7 +327,7 @@ export function SpeciesProfile() {
             className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
           >
             <ArrowLeft className="h-4 w-4" />
-            Return Home
+            {t("speciesProfile.returnHome")}
           </Link>
         </div>
       </div>
@@ -338,8 +351,7 @@ export function SpeciesProfile() {
         <div className="border-b border-red-200 bg-red-50 px-4 py-3 text-red-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
             <AlertTriangle className="h-5 w-5" />
-            Warning: this pet may pose a higher danger risk. Review handling and
-            safety information carefully.
+            {t("speciesProfile.highDangerWarning")}
           </div>
         </div>
       )}
@@ -351,9 +363,7 @@ export function SpeciesProfile() {
         <div className="border-b border-red-200 bg-red-50 px-4 py-3 text-red-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
             <AlertTriangle className="h-5 w-5" />
-            Warning: this species is prohibited in Malaysia. If you are caught
-            importing, selling, or keeping it, you can face a hefty fine or even
-            jail time.
+            {t("speciesProfile.legalWarning")}
           </div>
         </div>
       )}
@@ -365,8 +375,7 @@ export function SpeciesProfile() {
         <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
           <div className="mx-auto flex max-w-6xl items-center gap-2 font-medium">
             <AlertTriangle className="h-5 w-5" />
-            Notice: this species is considered invasive. Avoid release into
-            local waterways and follow regional regulations.
+            {t("speciesProfile.invasiveWarning")}
           </div>
         </div>
       )}
@@ -390,7 +399,7 @@ export function SpeciesProfile() {
               className="bg-white/20 hover:bg-white/40 backdrop-blur-md text-emerald-500 px-3 py-3 rounded-full transition-all flex items-center gap-2 shadow-lg group"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Back</span>
+              <span>{t("speciesProfile.back")}</span>
             </button>
 
             {/* Compare button */}
@@ -412,10 +421,10 @@ export function SpeciesProfile() {
               )}
               <span>
                 {inCompare
-                  ? "Added to Compare"
+                  ? t("speciesProfile.addedToCompare")
                   : compareDisabled
-                    ? "Compare Full"
-                    : "Add to Compare"}
+                    ? t("speciesProfile.compareFull")
+                    : t("speciesProfile.addToCompare")}
               </span>
             </button>
           </div>
@@ -456,7 +465,11 @@ export function SpeciesProfile() {
                 )}
               >
                 <ShieldAlert className="w-4 h-4" />
-                {pet?.pet_invasive_risk || "Unknown"} Biodiversity Risk
+                {getLocalizedPetLabel(
+                  invasiveRiskLabels,
+                  pet.pet_invasive_risk,
+                  language,
+                )}
               </span>
 
               <span
@@ -465,7 +478,11 @@ export function SpeciesProfile() {
                 )}
               >
                 <HandHeart className="w-4 h-4" />
-                {pet?.pet_care_level || "Unknown"} Care
+                {getLocalizedPetLabel(
+                  careLevelLabels,
+                  pet.pet_care_level,
+                  language,
+                )}
               </span>
 
               <span
@@ -474,13 +491,13 @@ export function SpeciesProfile() {
                 )}
               >
                 <Skull className="w-4 h-4" />
-                {dangerLevel || "Unknown"} Danger
+                {getLocalizedPetLabel(dangerLabels, dangerLevel, language)}
               </span>
 
               {pet.pet_banned && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-4 py-1.5 text-sm font-semibold text-red-700">
                   <Ban className="w-4 h-4" />
-                  Banned in Malaysia
+                  {t("speciesProfile.bannedInMalaysia")}
                 </span>
               )}
             </motion.div>
@@ -521,7 +538,9 @@ export function SpeciesProfile() {
                     transition={{ duration: 0.5, delay: 0.45 }}
                     className="text-lg md:text-xl text-stone-200 font-serif"
                   >
-                    <span className="font-semibold">A.K.A:</span>{" "}
+                    <span className="font-semibold">
+                      {t("speciesProfile.aka")}
+                    </span>{" "}
                     {otherCommonNames.join(", ")}
                   </motion.p>
                 )}
@@ -536,7 +555,7 @@ export function SpeciesProfile() {
                   className="shrink-0 self-start md:self-end rounded-2xl border border-white/20 bg-white/15 px-6 py-5 backdrop-blur-md shadow-lg min-w-[180px]"
                 >
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-300">
-                    Estimated Price
+                    {t("speciesProfile.estimatedPrice")}
                   </p>
                   <p className="mt-1 text-3xl md:text-4xl font-extrabold text-white leading-none">
                     {formatCurrencyMYR(pet.pet_cost)}
@@ -581,8 +600,8 @@ export function SpeciesProfile() {
                       <AlertTriangle className="h-8 w-8 text-rose-600" />
                     )}
                     {suitability.isSuitable
-                      ? "Why it fits you"
-                      : "Why this may not fit you"}
+                      ? t("speciesProfile.whyItFitsYou")
+                      : t("speciesProfile.whyThisMayNotFitYou")}
                   </h2>
 
                   {/* Fit / Reason grid */}
@@ -595,7 +614,7 @@ export function SpeciesProfile() {
                           >
                             <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" />
                             <span className="text-lg font-semibold text-emerald-900">
-                              {fit}
+                              {t(fit)}
                             </span>
                           </div>
                         ))
@@ -606,7 +625,7 @@ export function SpeciesProfile() {
                           >
                             <AlertTriangle className="h-6 w-6 shrink-0 text-rose-500" />
                             <span className="text-lg font-semibold text-rose-900">
-                              {reason}
+                              {t(reason)}
                             </span>
                           </div>
                         ))}
@@ -622,7 +641,7 @@ export function SpeciesProfile() {
                 <div className="mb-5 flex items-center gap-2 text-emerald-800">
                   <Fish className="h-5 w-5" />
                   <h2 className="text-2xl font-bold">
-                    Recommended Alternatives
+                    {t("speciesProfile.recommendedAlternatives")}
                   </h2>
                 </div>
 
@@ -638,14 +657,14 @@ export function SpeciesProfile() {
                         {item.hasLowerRisk && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
                             <ShieldAlert className="h-3.5 w-3.5" />
-                            Lower Risk
+                            {t("speciesProfile.lowerRisk")}
                           </span>
                         )}
 
                         {item.hasLowerCare && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800">
                             <HandHeart className="h-3.5 w-3.5" />
-                            Easier Care
+                            {t("speciesProfile.easierCare")}
                           </span>
                         )}
                       </div>
@@ -655,7 +674,7 @@ export function SpeciesProfile() {
                           item.pet_vernacular_name,
                           item.pet_scientific_name
                             ? item.pet_scientific_name
-                            : "Unknown Species",
+                            : t("speciesProfile.unknownSpecies"),
                         )}
                       </h3>
 
@@ -672,7 +691,11 @@ export function SpeciesProfile() {
                             )}
                           >
                             <ShieldAlert className="w-3 h-3" />
-                            {item.pet_invasive_risk} Risk
+                            {getLocalizedPetLabel(
+                              invasiveRiskLabels,
+                              item.pet_invasive_risk,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -681,7 +704,11 @@ export function SpeciesProfile() {
                             className={getCareBadgeClasses(item.pet_care_level)}
                           >
                             <HandHeart className="w-3 h-3" />
-                            {item.pet_care_level} Care
+                            {getLocalizedPetLabel(
+                              careLevelLabels,
+                              item.pet_care_level,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
@@ -697,14 +724,16 @@ export function SpeciesProfile() {
             <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-emerald-800">
                 <Info className="h-5 w-5" />
-                <h2 className="text-2xl font-bold">About this pet</h2>
+                <h2 className="text-2xl font-bold">
+                  {t("speciesProfile.aboutThisPet")}
+                </h2>
               </div>
 
               {/* Grid of biological attributes */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                    Vernacular name
+                    {t("speciesProfile.vernacularName")}
                   </p>
                   <p className="mt-1 text-stone-800">
                     {displayText(pet.pet_vernacular_name)}
@@ -713,7 +742,7 @@ export function SpeciesProfile() {
 
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                    Scientific name
+                    {t("speciesProfile.scientificName")}
                   </p>
                   <p className="mt-1 text-stone-800">
                     {displayText(pet.pet_scientific_name)}
@@ -722,7 +751,7 @@ export function SpeciesProfile() {
 
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                    Genus
+                    {t("speciesProfile.genus")}
                   </p>
                   <p className="mt-1 text-stone-800">
                     {displayText(pet.pet_genus)}
@@ -731,7 +760,7 @@ export function SpeciesProfile() {
 
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                    Family
+                    {t("speciesProfile.family")}
                   </p>
                   <p className="mt-1 text-stone-800">
                     {displayText(pet.pet_family)}
@@ -741,7 +770,7 @@ export function SpeciesProfile() {
                 {pet.pet_body_shape && (
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                      Body shape
+                      {t("speciesProfile.bodyShape")}
                     </p>
                     <p className="mt-1 text-stone-800">
                       {formatPetBodyShape(pet.pet_body_shape)}
@@ -752,7 +781,7 @@ export function SpeciesProfile() {
                 {pet.pet_migration_type && (
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                      Migration type
+                      {t("speciesProfile.migrationType")}
                     </p>
                     <p className="mt-1 text-stone-800">
                       {displayText(pet.pet_migration_type)}
@@ -769,7 +798,9 @@ export function SpeciesProfile() {
               <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
                 <div className="mb-4 flex items-center gap-2 text-emerald-800">
                   <Dna className="h-5 w-5" />
-                  <h2 className="text-2xl font-bold">Traits</h2>
+                  <h2 className="text-2xl font-bold">
+                    {t("speciesProfile.traits")}
+                  </h2>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
@@ -788,7 +819,9 @@ export function SpeciesProfile() {
                 <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
                   <div className="mb-4 flex items-center gap-2 text-emerald-800">
                     <Leaf className="h-5 w-5" />
-                    <h2 className="text-2xl font-bold">Diet</h2>
+                    <h2 className="text-2xl font-bold">
+                      {t("speciesProfile.diet")}
+                    </h2>
                   </div>
 
                   <div className="space-y-4">
@@ -796,7 +829,7 @@ export function SpeciesProfile() {
                     {pet.pet_diet.main_type && (
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                          Main diet type
+                          {t("speciesProfile.mainDietType")}
                         </p>
                         <div className="mt-2 flex flex-wrap gap-2">
                           <span className="inline-flex items-center rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-800">
@@ -810,7 +843,7 @@ export function SpeciesProfile() {
                     {pet.pet_diet.remarks && (
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
-                          Feeding notes
+                          {t("speciesProfile.feedingNotes")}
                         </p>
                         <p className="mt-1 leading-7 text-stone-700">
                           {displayText(pet.pet_diet.remarks)}
@@ -827,13 +860,15 @@ export function SpeciesProfile() {
             <div className="rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-emerald-800">
                 <MessageSquareText className="h-5 w-5" />
-                <h2 className="text-2xl font-bold">Notes</h2>
+                <h2 className="text-2xl font-bold">
+                  {t("speciesProfile.notes")}
+                </h2>
               </div>
 
               <p className="leading-7 text-stone-700">
                 {displayText(
                   pet.pet_comments,
-                  "No additional comments are available for this pet.",
+                  t("speciesProfile.noAdditionalComments"),
                 )}
               </p>
             </div>
@@ -847,14 +882,16 @@ export function SpeciesProfile() {
             <div className="rounded-3xl border border-rose-800 bg-gradient-to-br from-rose-950 via-red-950 to-stone-950 p-6 text-white shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-rose-100">
                 <ShieldAlert className="h-5 w-5 text-rose-300" />
-                <h3 className="text-xl font-bold">Safety Summary</h3>
+                <h3 className="text-xl font-bold">
+                  {t("speciesProfile.safetySummary")}
+                </h3>
               </div>
 
               <div className="space-y-4">
                 {/* Danger level */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
-                    Danger
+                    {t("speciesProfile.danger")}
                   </p>
                   <p className="mt-1 text-rose-50">
                     {displayText(pet.pet_danger)}
@@ -864,38 +901,44 @@ export function SpeciesProfile() {
                 {/* Native status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
-                    Native Status
+                    {t("speciesProfile.nativeStatus")}
                   </p>
                   <p className="mt-1 text-rose-50">
-                    {displayText(pet.pet_is_native)}
+                    {getLocalizedPetLabel(
+                      nativeStatusLabels,
+                      pet.pet_is_native,
+                      language,
+                    ) || displayText(pet.pet_is_native)}
                   </p>
                 </div>
 
                 {/* Legal status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
-                    Legal Status
+                    {t("speciesProfile.legalStatus")}
                   </p>
                   <p className="mt-1 text-rose-50">
-                    {pet.pet_banned ? "Banned" : "Not banned"}
+                    {pet.pet_banned
+                      ? t("speciesProfile.banned")
+                      : t("speciesProfile.notBanned")}
                   </p>
                 </div>
 
                 {/* Aquarium status */}
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
-                    Common Aquarium Species
+                    {t("speciesProfile.commonAquariumSpecies")}
                   </p>
                   <div className="mt-1 flex items-center gap-2 text-rose-50">
                     {pet.pet_aquarium ? (
                       <>
                         <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                        Yes
+                        {t("speciesProfile.yes")}
                       </>
                     ) : (
                       <>
                         <XCircle className="h-4 w-4 text-rose-300" />
-                        No / unknown
+                        {t("speciesProfile.noOrUnknown")}
                       </>
                     )}
                   </div>
@@ -908,7 +951,8 @@ export function SpeciesProfile() {
                 ========================= */}
             <div className="bg-emerald-900 text-white rounded-3xl p-8 shadow-sm sticky top-24">
               <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-emerald-50">
-                <Leaf className="w-6 h-6 text-emerald-400" /> Quick Facts
+                <Leaf className="w-6 h-6 text-emerald-400" />{" "}
+                {t("speciesProfile.quickFacts")}
               </h3>
 
               <div className="space-y-6">
@@ -918,12 +962,16 @@ export function SpeciesProfile() {
                     <div className="rounded-2xl border border-emerald-700 bg-emerald-800/40 p-4 flex flex-col items-center justify-center text-center">
                       <div className="mb-3 flex items-center gap-2 text-emerald-200">
                         <Ruler className="h-4 w-4" />
-                        <h4 className="text-sm font-semibold">Max Length</h4>
+                        <h4 className="text-sm font-semibold">
+                          {t("speciesProfile.maxLength")}
+                        </h4>
                       </div>
                       <p className="text-2xl font-bold text-white">
                         {pet.pet_max_length}
                       </p>
-                      <p className="mt-1 text-sm text-emerald-300">cm</p>
+                      <p className="mt-1 text-sm text-emerald-300">
+                        {t("speciesProfile.cm")}
+                      </p>
                     </div>
                   )}
 
@@ -931,12 +979,16 @@ export function SpeciesProfile() {
                     <div className="rounded-2xl border border-emerald-700 bg-emerald-800/40 p-4 flex flex-col items-center justify-center text-center">
                       <div className="mb-2 flex items-center gap-2 text-emerald-200">
                         <Scale className="h-4 w-4" />
-                        <h4 className="text-sm font-semibold">Max Weight</h4>
+                        <h4 className="text-sm font-semibold">
+                          {t("speciesProfile.maxWeight")}
+                        </h4>
                       </div>
                       <p className="text-2xl font-bold text-white">
                         {pet.pet_max_weight}
                       </p>
-                      <p className="mt-1 text-sm text-emerald-300">kg</p>
+                      <p className="mt-1 text-sm text-emerald-300">
+                        {t("speciesProfile.kg")}
+                      </p>
                     </div>
                   )}
 
@@ -944,12 +996,16 @@ export function SpeciesProfile() {
                     <div className="rounded-2xl border border-emerald-700 bg-emerald-800/40 p-4 flex flex-col items-center justify-center text-center">
                       <div className="mb-2 flex items-center gap-2 text-emerald-200">
                         <Clock className="h-4 w-4" />
-                        <h4 className="text-sm font-semibold">Longevity</h4>
+                        <h4 className="text-sm font-semibold">
+                          {t("speciesProfile.longevity")}
+                        </h4>
                       </div>
                       <p className="text-2xl font-bold text-white">
                         {pet.pet_longevity}
                       </p>
-                      <p className="mt-1 text-sm text-emerald-300">years</p>
+                      <p className="mt-1 text-sm text-emerald-300">
+                        {t("speciesProfile.years")}
+                      </p>
                     </div>
                   )}
 
@@ -957,7 +1013,9 @@ export function SpeciesProfile() {
                     <div className="rounded-2xl border border-emerald-700 bg-emerald-800/40 p-4 flex flex-col items-center justify-center text-center">
                       <div className="mb-2 flex items-center gap-2 text-emerald-200">
                         <Thermometer className="h-4 w-4" />
-                        <h4 className="text-sm font-semibold">Temperature</h4>
+                        <h4 className="text-sm font-semibold">
+                          {t("speciesProfile.temperature")}
+                        </h4>
                       </div>
                       <p className="text-2xl font-bold text-white">
                         {displayText(pet.pet_temperature)}
@@ -982,7 +1040,7 @@ export function SpeciesProfile() {
                       <div className="mb-2 flex items-center gap-2 text-emerald-200">
                         <Droplet className="h-4 w-4" />
                         <h4 className="text-sm font-semibold">
-                          Water Hardness
+                          {t("speciesProfile.waterHardness")}
                         </h4>
                       </div>
                       <p className="text-2xl font-bold text-white">
@@ -998,12 +1056,14 @@ export function SpeciesProfile() {
                   pet.pet_care_level) && (
                   <div className="bg-emerald-950 p-5 rounded-2xl border border-emerald-700 space-y-3">
                     <h4 className="font-bold text-emerald-100 mb-2 border-b border-emerald-800 pb-2">
-                      Minimum Setup:
+                      {t("speciesProfile.minimumSetup")}
                     </h4>
 
                     {pet.pet_cost != null && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-emerald-400">Pet Price (RM)</span>
+                        <span className="text-emerald-400">
+                          {t("speciesProfile.petPriceRm")}
+                        </span>
                         <span className="font-semibold text-white capitalize">
                           {pet.pet_cost}
                         </span>
@@ -1013,7 +1073,7 @@ export function SpeciesProfile() {
                     {pet.pet_tank_size && (
                       <div className="flex justify-between text-sm">
                         <span className="text-emerald-400">
-                          Tank Size (Gallons)
+                          {t("speciesProfile.tankSizeGallons")}
                         </span>
                         <span className="font-semibold text-white capitalize">
                           {pet.pet_tank_size}
@@ -1023,9 +1083,15 @@ export function SpeciesProfile() {
 
                     {pet.pet_care_level && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-emerald-400">Experience</span>
+                        <span className="text-emerald-400">
+                          {t("speciesProfile.experience")}
+                        </span>
                         <span className="font-semibold text-white capitalize">
-                          {pet.pet_care_level}
+                          {getLocalizedPetLabel(
+                            careLevelLabels,
+                            pet.pet_care_level,
+                            language,
+                          )}
                         </span>
                       </div>
                     )}

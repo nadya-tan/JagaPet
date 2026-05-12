@@ -10,16 +10,51 @@ import { translations, languageLabels, type Language } from "../i18n";
 
 const STORAGE_KEY = "shell-fin-language";
 
-type TranslationKey = keyof typeof translations.en;
+type TranslationValue = string | TranslationDictionary;
+
+type TranslationDictionary = {
+  readonly [key: string]: TranslationValue;
+};
 
 type LanguageContextValue = {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: string) => string;
   languageLabels: Record<Language, string>;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
+
+function getNestedTranslation(
+  dictionary: TranslationDictionary,
+  key: string,
+): string | undefined {
+  // Supports old flat style, for example:
+  // { "home.alert": "Never Release Pets Into the Wild" }
+  const exactValue = dictionary[key];
+
+  if (typeof exactValue === "string") {
+    return exactValue;
+  }
+
+  // Supports new nested style, for example:
+  // { home: { alert: "Never Release Pets Into the Wild" } }
+  const nestedValue = key
+    .split(".")
+    .reduce<TranslationValue | undefined>((current, part) => {
+      if (
+        current == null ||
+        typeof current !== "object" ||
+        !(part in current)
+      ) {
+        return undefined;
+      }
+
+      return current[part];
+    }, dictionary);
+
+  return typeof nestedValue === "string" ? nestedValue : undefined;
+}
 
 function getInitialLanguage(): Language {
   const savedLanguage = localStorage.getItem(STORAGE_KEY);
@@ -44,7 +79,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       language,
       setLanguage: setLanguageState,
       languageLabels,
-      t: (key) => translations[language][key] ?? translations.en[key] ?? key,
+      t: (key) =>
+        getNestedTranslation(
+          translations[language] as TranslationDictionary,
+          key,
+        ) ??
+        getNestedTranslation(translations.en as TranslationDictionary, key) ??
+        key,
     };
   }, [language]);
 

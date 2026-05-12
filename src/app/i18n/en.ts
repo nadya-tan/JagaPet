@@ -1,77 +1,173 @@
 export const en = {
-  "language.label": "Language",
+  language: {
+    label: "Language",
+  },
 
-  "nav.home": "Home",
-  "nav.identify": "Identify Pet",
-  "nav.health": "Health Screening",
-  "nav.quiz": "Compatibility Quiz",
-  "nav.rehome": "Need to Rehome?",
-  "nav.profile": "Profile",
-  "nav.compare": "Compare",
-  "nav.compareWishlist": "Compare Wishlist",
+  nav: {
+    home: "Home",
+    identify: "Identify Pet",
+    health: "Health Screening",
+    quiz: "Compatibility Quiz",
+    rehome: "Need to Rehome?",
+    profile: "Profile",
+    compare: "Compare",
+    compareWishlist: "Compare Wishlist",
+  },
 
-  "home.alert": "Never Release Pets Into the Wild",
-  "home.heroTitle": "Responsible Pet Ownership Starts Here",
-  "home.heroDescription":
-    "Explore species profiles, check lifestyle compatibility, and learn how to safely manage your ornamental fish and pet turtles in Malaysia.",
+  home: {
+    alert: "Never Release Pets Into the Wild",
+    heroTitle: "Responsible Pet Ownership Starts Here",
+    heroDescription:
+      "Explore species profiles, check lifestyle compatibility, and learn how to safely manage your ornamental fish and pet turtles in Malaysia.",
 
-  "home.quizTitle": "Pre-Purchase Quiz",
-  "home.quizDescription":
-    "Find out if you have the budget, space, and time for that specific pet.",
-  "home.identifyTitle": "Identify a Pet",
-  "home.identifyDescription":
-    "Snap a photo to identify a species and view its biodiversity risk.",
-  "home.healthTitle": "Health Screening",
-  "home.healthDescription":
-    "Upload a fish photo to screen for possible visible disease signs.",
-  "home.rehomeTitle": "Need to Rehome?",
-  "home.rehomeDescription":
-    "Can't keep your pet anymore? Learn how to exit safely without releasing.",
+    quizTitle: "Pre-Purchase Quiz",
+    quizDescription:
+      "Find out if you have the budget, space, and time for that specific pet.",
+    identifyTitle: "Identify a Pet",
+    identifyDescription:
+      "Snap a photo to identify a species and view its biodiversity risk.",
+    healthTitle: "Health Screening",
+    healthDescription:
+      "Upload a fish photo to screen for possible visible disease signs.",
+    rehomeTitle: "Need to Rehome?",
+    rehomeDescription:
+      "Can't keep your pet anymore? Learn how to exit safely without releasing.",
 
-  "home.recommendedTitle": "Recommended for Beginners",
-  "home.recommendedDescription":
-    "Great starter species that are easier to care for and pose lower ecological risks.",
-  "home.notMyType": "Not my type",
-  "home.noRecommendations": "No recommendations found.",
+    recommendedTitle: "Recommended for Beginners",
+    recommendedDescription:
+      "Great starter species that are easier to care for and pose lower ecological risks.",
+    notMyType: "Not my type",
+    noRecommendations: "No recommendations found.",
 
-  "home.highRiskTitle": "High Biodiversity Risk Alert",
-  "home.highRiskDescription":
-    "Commonly bought pets that pose threats to local ecosystems if released.",
-  "home.showMore": "Show more",
-  "home.noHighRisk": "No high risk species found.",
+    highRiskTitle: "High Biodiversity Risk Alert",
+    highRiskDescription:
+      "Commonly bought pets that pose threats to local ecosystems if released.",
+    showMore: "Show more",
+    noHighRisk: "No high risk species found.",
 
-  "home.risk": "Risk",
-  "home.recommended": "Recommended",
-  "home.care": "Care",
-  "home.budget": "Budget",
-  "home.viewProfile": "View Profile & Care Guide →",
+    risk: "Risk",
+    recommended: "Recommended",
+    care: "Care",
+    budget: "Budget",
+    viewProfile: "View Profile & Care Guide →",
 
-  "home.educationTitle": "Why shouldn't I set my pet free?",
-  "home.educationDescription":
-    "Pets like the Red-Eared Slider or Suckermouth Catfish (Pleco) aren't native to Malaysia. When released into our rivers and lakes, they aggressively outcompete local wildlife for food, destroy habitats, and spread foreign diseases. Our local species suffer immensely.",
-  "home.findRehoming": "Find Alternative Rehoming",
+    educationTitle: "Why shouldn't I set my pet free?",
+    educationDescription:
+      "Pets like the Red-Eared Slider or Suckermouth Catfish (Pleco) aren't native to Malaysia. When released into our rivers and lakes, they aggressively outcompete local wildlife for food, destroy habitats, and spread foreign diseases. Our local species suffer immensely.",
+    findRehoming: "Find Alternative Rehoming",
+  },
 
-  "footer.description":
-    "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
-  "footer.quickLinks": "Quick Links",
-  "footer.quiz": "Pre-purchase Quiz",
-  "footer.identify": "Identify Your Pet",
-  "footer.compare": "Compare Species",
-  "footer.safeRehoming": "Safe Rehoming Options",
-  "footer.emergencyLegal": "Emergency & Legal",
-  "footer.hotline": "PERHILITAN Hotline: 1-800-88-5151",
-  "footer.dof": "Department of Fisheries Malaysia",
-  "footer.legal":
-    "Releasing non-native species into public waterways is illegal under Malaysian law.",
+  speciesProfile: {
+    loading: "Loading pet profile...",
+    notFoundTitle: "Species Not Found",
+    notFoundDescription:
+      "The pet you are looking for might not be in the database yet, or the link may be incorrect.",
+    returnHome: "Return Home",
 
-  "chat.title": "Shell & Fin MY Assistant",
-  "chat.welcome":
-    "Hi! I'm your Shell & Fin MY Assistant. Do you have questions about caring for a specific species, or need advice on rehoming a pet you can no longer keep?",
-  "chat.exampleQuestion": "What size tank does a red-eared slider need?",
-  "chat.exampleAnswer":
-    "A baby slider can start in a 20-gallon tank, but they grow fast! An adult needs a minimum of 100 gallons, about 380 liters, or a large outdoor pond, plus a dry basking area with UV light. Are you thinking of getting one?",
-  "chat.placeholder": "Type a message...",
-  "chat.openLabel": "Open AI Assistant",
-  "chat.closeLabel": "Close AI Assistant",
-  "chat.sendLabel": "Send message",
+    highDangerWarning:
+      "Warning: this pet may pose a higher danger risk. Review handling and safety information carefully.",
+    legalWarning:
+      "Warning: this species is prohibited in Malaysia. If you are caught importing, selling, or keeping it, you can face a hefty fine or even jail time.",
+    invasiveWarning:
+      "Notice: this species is considered invasive. Avoid release into local waterways and follow regional regulations.",
+
+    back: "Back",
+    addedToCompare: "Added to Compare",
+    compareFull: "Compare Full",
+    addToCompare: "Add to Compare",
+
+    biodiversityRisk: "Biodiversity Risk",
+    care: "Care",
+    danger: "Danger",
+    bannedInMalaysia: "Banned in Malaysia",
+
+    aka: "A.K.A:",
+    estimatedPrice: "Estimated Price",
+
+    whyItFitsYou: "Why it fits you",
+    whyThisMayNotFitYou: "Why this may not fit you",
+    bannedReason: "This species is banned in Malaysia",
+    higherEcologicalRisk: "Higher ecological risk",
+    lowEcologicalRisk: "Low ecological risk",
+    manageableCareLevel: "Manageable care level",
+    highCareDifficulty: "High care difficulty for your experience level",
+
+    recommendedAlternatives: "Recommended Alternatives",
+    lowerRisk: "Lower Risk",
+    easierCare: "Easier Care",
+    risk: "Risk",
+
+    unknownSpecies: "Unknown Species",
+
+    aboutThisPet: "About this pet",
+    vernacularName: "Vernacular name",
+    scientificName: "Scientific name",
+    genus: "Genus",
+    family: "Family",
+    bodyShape: "Body shape",
+    migrationType: "Migration type",
+
+    traits: "Traits",
+
+    diet: "Diet",
+    mainDietType: "Main diet type",
+    feedingNotes: "Feeding notes",
+
+    notes: "Notes",
+    noAdditionalComments: "No additional comments are available for this pet.",
+
+    safetySummary: "Safety Summary",
+    nativeStatus: "Native Status",
+    legalStatus: "Legal Status",
+    banned: "Banned",
+    notBanned: "Not banned",
+    commonAquariumSpecies: "Common Aquarium Species",
+    yes: "Yes",
+    noOrUnknown: "No / unknown",
+
+    quickFacts: "Quick Facts",
+    maxLength: "Max Length",
+    maxWeight: "Max Weight",
+    longevity: "Longevity",
+    temperature: "Temperature",
+    ph: "pH",
+    waterHardness: "Water Hardness",
+
+    years: "years",
+    cm: "cm",
+    kg: "kg",
+
+    minimumSetup: "Minimum Setup:",
+    petPriceRm: "Pet Price (RM)",
+    tankSizeGallons: "Tank Size (Gallons)",
+    experience: "Experience",
+  },
+
+  footer: {
+    description:
+      "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
+    quickLinks: "Quick Links",
+    quiz: "Pre-purchase Quiz",
+    identify: "Identify Your Pet",
+    compare: "Compare Species",
+    safeRehoming: "Safe Rehoming Options",
+    emergencyLegal: "Emergency & Legal",
+    hotline: "PERHILITAN Hotline: 1-800-88-5151",
+    dof: "Department of Fisheries Malaysia",
+    legal:
+      "Releasing non-native species into public waterways is illegal under Malaysian law.",
+  },
+
+  chat: {
+    title: "Shell & Fin MY Assistant",
+    welcome:
+      "Hi! I'm your Shell & Fin MY Assistant. Do you have questions about caring for a specific species, or need advice on rehoming a pet you can no longer keep?",
+    exampleQuestion: "What size tank does a red-eared slider need?",
+    exampleAnswer:
+      "A baby slider can start in a 20-gallon tank, but they grow fast! An adult needs a minimum of 100 gallons, about 380 liters, or a large outdoor pond, plus a dry basking area with UV light. Are you thinking of getting one?",
+    placeholder: "Type a message...",
+    openLabel: "Open AI Assistant",
+    closeLabel: "Close AI Assistant",
+    sendLabel: "Send message",
+  },
 } as const;

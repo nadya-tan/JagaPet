@@ -27,6 +27,11 @@ export const careLevelLabels: LocalizedLabelMap = {
     ms: "Lanjutan Penjagaan",
     zh: "高级养护",
   },
+  Unknown: {
+    en: "Unknown Care",
+    ms: "Penjagaan Tidak Diketahui",
+    zh: "养护未知",
+  },
 };
 
 export const invasiveRiskLabels: LocalizedLabelMap = {
@@ -44,6 +49,11 @@ export const invasiveRiskLabels: LocalizedLabelMap = {
     en: "High Risk",
     ms: "Risiko Tinggi",
     zh: "高风险",
+  },
+  Unknown: {
+    en: "Unknown Risk",
+    ms: "Risiko Tidak Diketahui",
+    zh: "风险未知",
   },
 };
 
@@ -63,6 +73,11 @@ export const budgetLabels: LocalizedLabelMap = {
     ms: "Kos Tinggi",
     zh: "高预算",
   },
+  Unknown: {
+    en: "Unknown Budget",
+    ms: "Anggaran Tidak Diketahui",
+    zh: "预算未知",
+  },
 };
 
 export const nativeStatusLabels: LocalizedLabelMap = {
@@ -80,6 +95,29 @@ export const nativeStatusLabels: LocalizedLabelMap = {
     en: "Invasive",
     ms: "Invasif",
     zh: "入侵物种",
+  },
+  Unknown: {
+    en: "Unknown Status",
+    ms: "Status Tidak Diketahui",
+    zh: "状态未知",
+  },
+};
+
+export const dangerLabels: LocalizedLabelMap = {
+  High: {
+    en: "High Danger",
+    ms: "Bahaya Tinggi",
+    zh: "高危险",
+  },
+  Low: {
+    en: "Low Danger",
+    ms: "Bahaya Rendah",
+    zh: "低危险",
+  },
+  Unknown: {
+    en: "Unknown Danger",
+    ms: "Bahaya Tidak Diketahui",
+    zh: "危险未知",
   },
 };
 

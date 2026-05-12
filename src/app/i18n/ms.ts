@@ -1,77 +1,175 @@
 export const ms = {
-  "language.label": "Bahasa",
+  language: {
+    label: "Bahasa",
+  },
 
-  "nav.home": "Utama",
-  "nav.identify": "Kenal Pasti",
-  "nav.health": "Saringan",
-  "nav.quiz": "Kuiz Keserasian",
-  "nav.rehome": "Cari Rumah Baharu?",
-  "nav.profile": "Profil",
-  "nav.compare": "Banding",
-  "nav.compareWishlist": "Senarai Perbandingan",
+  nav: {
+    home: "Utama",
+    identify: "Kenal Pasti",
+    health: "Saringan",
+    quiz: "Kuiz Keserasian",
+    rehome: "Cari Rumah Baharu?",
+    profile: "Profil",
+    compare: "Banding",
+    compareWishlist: "Senarai Perbandingan",
+  },
 
-  "home.alert": "Jangan Lepaskan Haiwan Peliharaan Ke Alam Liar",
-  "home.heroTitle": "Pemilikan Haiwan Bertanggungjawab Bermula Di Sini",
-  "home.heroDescription":
-    "Terokai profil spesies, semak keserasian gaya hidup, dan pelajari cara mengurus ikan hiasan serta kura-kura peliharaan dengan selamat di Malaysia.",
+  home: {
+    alert: "Jangan Lepaskan Haiwan Peliharaan Ke Alam Liar",
+    heroTitle: "Pemilikan Haiwan Bertanggungjawab Bermula Di Sini",
+    heroDescription:
+      "Terokai profil spesies, semak keserasian gaya hidup, dan pelajari cara mengurus ikan hiasan serta kura-kura peliharaan dengan selamat di Malaysia.",
 
-  "home.quizTitle": "Kuiz Sebelum Membeli",
-  "home.quizDescription":
-    "Ketahui sama ada anda mempunyai bajet, ruang, dan masa untuk haiwan peliharaan tertentu.",
-  "home.identifyTitle": "Kenal Pasti Haiwan",
-  "home.identifyDescription":
-    "Ambil gambar untuk mengenal pasti spesies dan melihat risiko biodiversitinya.",
-  "home.healthTitle": "Saringan Kesihatan",
-  "home.healthDescription":
-    "Muat naik gambar ikan untuk menyaring tanda-tanda penyakit yang mungkin kelihatan.",
-  "home.rehomeTitle": "Perlu Cari Rumah Baharu?",
-  "home.rehomeDescription":
-    "Tidak boleh menjaga haiwan lagi? Ketahui cara keluar dengan selamat tanpa melepaskannya.",
+    quizTitle: "Kuiz Sebelum Membeli",
+    quizDescription:
+      "Ketahui sama ada anda mempunyai bajet, ruang, dan masa untuk haiwan peliharaan tertentu.",
+    identifyTitle: "Kenal Pasti Haiwan",
+    identifyDescription:
+      "Ambil gambar untuk mengenal pasti spesies dan melihat risiko biodiversitinya.",
+    healthTitle: "Saringan Kesihatan",
+    healthDescription:
+      "Muat naik gambar ikan untuk menyaring tanda-tanda penyakit yang mungkin kelihatan.",
+    rehomeTitle: "Perlu Cari Rumah Baharu?",
+    rehomeDescription:
+      "Tidak boleh menjaga haiwan lagi? Ketahui cara keluar dengan selamat tanpa melepaskannya.",
 
-  "home.recommendedTitle": "Disyorkan Untuk Pemula",
-  "home.recommendedDescription":
-    "Spesies permulaan yang lebih mudah dijaga dan mempunyai risiko ekologi yang lebih rendah.",
-  "home.notMyType": "Bukan pilihan saya",
-  "home.noRecommendations": "Tiada cadangan ditemui.",
+    recommendedTitle: "Disyorkan Untuk Pemula",
+    recommendedDescription:
+      "Spesies permulaan yang lebih mudah dijaga dan mempunyai risiko ekologi yang lebih rendah.",
+    notMyType: "Bukan pilihan saya",
+    noRecommendations: "Tiada cadangan ditemui.",
 
-  "home.highRiskTitle": "Amaran Risiko Biodiversiti Tinggi",
-  "home.highRiskDescription":
-    "Haiwan yang biasa dibeli tetapi boleh mengancam ekosistem tempatan jika dilepaskan.",
-  "home.showMore": "Tunjuk lagi",
-  "home.noHighRisk": "Tiada spesies berisiko tinggi ditemui.",
+    highRiskTitle: "Amaran Risiko Biodiversiti Tinggi",
+    highRiskDescription:
+      "Haiwan yang biasa dibeli tetapi boleh mengancam ekosistem tempatan jika dilepaskan.",
+    showMore: "Tunjuk lagi",
+    noHighRisk: "Tiada spesies berisiko tinggi ditemui.",
 
-  "home.risk": "Risiko",
-  "home.recommended": "Disyorkan",
-  "home.care": "Penjagaan",
-  "home.budget": "Bajet",
-  "home.viewProfile": "Lihat Profil & Panduan Penjagaan →",
+    risk: "Risiko",
+    recommended: "Disyorkan",
+    care: "Penjagaan",
+    budget: "Bajet",
+    viewProfile: "Lihat Profil & Panduan Penjagaan →",
 
-  "home.educationTitle": "Mengapa saya tidak boleh melepaskan haiwan saya?",
-  "home.educationDescription":
-    "Haiwan seperti kura-kura telinga merah atau ikan bandaraya bukan spesies natif Malaysia. Jika dilepaskan ke sungai dan tasik, ia boleh bersaing dengan hidupan tempatan untuk makanan, merosakkan habitat, dan menyebarkan penyakit asing. Spesies tempatan kita akan terjejas.",
-  "home.findRehoming": "Cari Pilihan Penempatan Semula",
+    educationTitle: "Mengapa saya tidak boleh melepaskan haiwan saya?",
+    educationDescription:
+      "Haiwan seperti kura-kura telinga merah atau ikan bandaraya bukan spesies natif Malaysia. Jika dilepaskan ke sungai dan tasik, ia boleh bersaing dengan hidupan tempatan untuk makanan, merosakkan habitat, dan menyebarkan penyakit asing. Spesies tempatan kita akan terjejas.",
+    findRehoming: "Cari Pilihan Penempatan Semula",
+  },
 
-  "footer.description":
-    "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",
-  "footer.quickLinks": "Pautan Pantas",
-  "footer.quiz": "Kuiz Sebelum Membeli",
-  "footer.identify": "Kenal Pasti Haiwan Anda",
-  "footer.compare": "Bandingkan Spesies",
-  "footer.safeRehoming": "Pilihan Penempatan Semula Selamat",
-  "footer.emergencyLegal": "Kecemasan & Undang-undang",
-  "footer.hotline": "Talian PERHILITAN: 1-800-88-5151",
-  "footer.dof": "Jabatan Perikanan Malaysia",
-  "footer.legal":
-    "Melepaskan spesies bukan natif ke perairan awam adalah salah di sisi undang-undang Malaysia.",
+  speciesProfile: {
+    loading: "Memuatkan profil haiwan peliharaan...",
 
-  "chat.title": "Pembantu Shell & Fin MY",
-  "chat.welcome":
-    "Hai! Saya Pembantu Shell & Fin MY. Ada soalan tentang penjagaan spesies tertentu, atau perlukan nasihat untuk mencari rumah baharu bagi haiwan peliharaan anda?",
-  "chat.exampleQuestion": "Apakah saiz tangki untuk kura-kura telinga merah?",
-  "chat.exampleAnswer":
-    "Anak kura-kura boleh bermula dengan tangki 20 gelen, tetapi ia membesar dengan cepat! Kura-kura dewasa memerlukan sekurang-kurangnya 100 gelen, iaitu kira-kira 380 liter, atau kolam luar yang besar, bersama kawasan berjemur kering dengan lampu UV.",
-  "chat.placeholder": "Taip mesej...",
-  "chat.openLabel": "Buka Pembantu AI",
-  "chat.closeLabel": "Tutup Pembantu AI",
-  "chat.sendLabel": "Hantar mesej",
+    notFoundTitle: "Spesies Tidak Dijumpai",
+    notFoundDescription:
+      "Haiwan peliharaan yang anda cari mungkin belum ada dalam pangkalan data, atau pautan tersebut mungkin tidak betul.",
+    returnHome: "Kembali ke Laman Utama",
+
+    highDangerWarning:
+      "Amaran: haiwan peliharaan ini mungkin mempunyai tahap bahaya yang lebih tinggi. Semak maklumat pengendalian dan keselamatan dengan teliti.",
+    legalWarning:
+      "Amaran: spesies ini dilarang di Malaysia. Jika anda ditangkap mengimport, menjual, atau memeliharanya, anda boleh dikenakan denda yang berat atau hukuman penjara.",
+    invasiveWarning:
+      "Notis: spesies ini dianggap invasif. Elakkan melepaskannya ke dalam saluran air tempatan dan patuhi peraturan setempat.",
+
+    back: "Kembali",
+    addedToCompare: "Ditambah untuk Perbandingan",
+    compareFull: "Perbandingan Penuh",
+    addToCompare: "Tambah untuk Perbandingan",
+
+    biodiversityRisk: "Risiko Biodiversiti",
+    care: "Penjagaan",
+    danger: "Bahaya",
+    bannedInMalaysia: "Dilarang di Malaysia",
+
+    aka: "Juga dikenali sebagai:",
+    estimatedPrice: "Anggaran Harga",
+
+    whyItFitsYou: "Mengapa ia sesuai untuk anda",
+    whyThisMayNotFitYou: "Mengapa ia mungkin tidak sesuai untuk anda",
+    bannedReason: "Spesies ini dilarang di Malaysia",
+    higherEcologicalRisk: "Risiko ekologi yang lebih tinggi",
+    lowEcologicalRisk: "Risiko ekologi rendah",
+    manageableCareLevel: "Tahap penjagaan yang boleh diurus",
+    highCareDifficulty: "Tahap penjagaan terlalu sukar untuk pengalaman anda",
+
+    recommendedAlternatives: "Alternatif yang Disyorkan",
+    lowerRisk: "Risiko Lebih Rendah",
+    easierCare: "Penjagaan Lebih Mudah",
+    risk: "Risiko",
+
+    unknownSpecies: "Spesies Tidak Diketahui",
+
+    aboutThisPet: "Tentang haiwan peliharaan ini",
+    vernacularName: "Nama umum",
+    scientificName: "Nama saintifik",
+    genus: "Genus",
+    family: "Famili",
+    bodyShape: "Bentuk badan",
+    migrationType: "Jenis migrasi",
+
+    traits: "Ciri-ciri",
+
+    diet: "Diet",
+    mainDietType: "Jenis diet utama",
+    feedingNotes: "Nota pemakanan",
+
+    notes: "Nota",
+    noAdditionalComments:
+      "Tiada komen tambahan tersedia untuk haiwan peliharaan ini.",
+
+    safetySummary: "Ringkasan Keselamatan",
+    nativeStatus: "Status Asal",
+    legalStatus: "Status Undang-undang",
+    banned: "Dilarang",
+    notBanned: "Tidak dilarang",
+    commonAquariumSpecies: "Spesies Akuarium Biasa",
+    yes: "Ya",
+    noOrUnknown: "Tidak / tidak diketahui",
+
+    quickFacts: "Fakta Ringkas",
+    maxLength: "Panjang Maksimum",
+    maxWeight: "Berat Maksimum",
+    longevity: "Jangka Hayat",
+    temperature: "Suhu",
+    ph: "pH",
+    waterHardness: "Kekerasan Air",
+
+    years: "tahun",
+    cm: "cm",
+    kg: "kg",
+
+    minimumSetup: "Keperluan Minimum:",
+    petPriceRm: "Harga Haiwan (RM)",
+    tankSizeGallons: "Saiz Tangki (Gelen)",
+    experience: "Pengalaman",
+  },
+
+  footer: {
+    description:
+      "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",
+    quickLinks: "Pautan Pantas",
+    quiz: "Kuiz Sebelum Membeli",
+    identify: "Kenal Pasti Haiwan Anda",
+    compare: "Bandingkan Spesies",
+    safeRehoming: "Pilihan Penempatan Semula Selamat",
+    emergencyLegal: "Kecemasan & Undang-undang",
+    hotline: "Talian PERHILITAN: 1-800-88-5151",
+    dof: "Jabatan Perikanan Malaysia",
+    legal:
+      "Melepaskan spesies bukan natif ke perairan awam adalah salah di sisi undang-undang Malaysia.",
+  },
+
+  chat: {
+    title: "Pembantu Shell & Fin MY",
+    welcome:
+      "Hai! Saya Pembantu Shell & Fin MY. Ada soalan tentang penjagaan spesies tertentu, atau perlukan nasihat untuk mencari rumah baharu bagi haiwan peliharaan anda?",
+    exampleQuestion: "Apakah saiz tangki untuk kura-kura telinga merah?",
+    exampleAnswer:
+      "Anak kura-kura boleh bermula dengan tangki 20 gelen, tetapi ia membesar dengan cepat! Kura-kura dewasa memerlukan sekurang-kurangnya 100 gelen, iaitu kira-kira 380 liter, atau kolam luar yang besar, bersama kawasan berjemur kering dengan lampu UV.",
+    placeholder: "Taip mesej...",
+    openLabel: "Buka Pembantu AI",
+    closeLabel: "Tutup Pembantu AI",
+    sendLabel: "Hantar mesej",
+  },
 } as const;
