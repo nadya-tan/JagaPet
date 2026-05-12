@@ -14,7 +14,7 @@ import {
   ScanHeart,
   X,
   Maximize2,
-  Move,
+  Minus,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SearchAutocomplete } from "../components/SearchAutocomplete";
@@ -819,9 +819,9 @@ export function Home() {
           <div
             onPointerDown={handleMiniPlayerDragStart}
             onPointerMove={handleMiniPlayerDragMove}
-            className="flex cursor-grab select-none items-center justify-between bg-stone-900 px-3 py-2 text-xs text-white active:cursor-grabbing"
+            className="flex cursor-grab select-none items-center justify-center bg-stone-900 px-3 text-xs text-white active:cursor-grabbing"
           >
-            <Move className="h-4 w-4" />
+            <Minus className="h-4 w-4" />
           </div>
 
           <div className="relative aspect-video w-full bg-black">
