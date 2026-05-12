@@ -451,6 +451,55 @@ export const ms = {
     },
   },
 
+  healthScreening: {
+    title: "Saringan Kesihatan Haiwan Peliharaan",
+    description:
+      "Muat naik foto ikan untuk menyaring tanda-tanda penyakit yang boleh dilihat menggunakan model saringan kesihatan Shell & Fin.",
+
+    uploadTitle: "Muat naik foto kesihatan haiwan peliharaan",
+    uploadDescription: "Pilih foto ikan yang jelas untuk saringan kesihatan.",
+    selectPhoto: "Pilih Foto",
+    supportedFormats: "Disokong: JPG, PNG, HEIC",
+
+    screeningAlt: "Sedang menyaring",
+    uploadedAlt: "Dimuat naik",
+    screeningPhoto: "Sedang Menyaring Foto...",
+    screeningDescription:
+      "Menghantar imej anda kepada model saringan kesihatan.",
+
+    restoredResultNoPreview:
+      "Keputusan saringan sebelumnya dipulihkan. Pratonton imej tidak disimpan.",
+    tryAnother: "Cuba foto lain",
+
+    healthScreeningUnavailable: "Saringan kesihatan tidak tersedia",
+    resultTitle: "Keputusan Saringan Kesihatan",
+
+    noDiseaseClassDetected: "Tiada kelas penyakit dikesan",
+    possibleDiseaseClassDetected: "Kemungkinan kelas penyakit dikesan",
+    aiScreeningDisclaimer:
+      "Ini hanyalah keputusan saringan AI. Gunakannya sebagai amaran awal, bukan sebagai diagnosis muktamad.",
+
+    viewCareGuide: "Lihat Panduan Penjagaan",
+    noMatchingCareGuide:
+      "Tiada panduan penjagaan yang sepadan ditemui dalam pangkalan data Shell & Fin MY untuk foto ini. Kami akan terus menambah baik dan memperluas liputan panduan penjagaan untuk keputusan saringan kesihatan.",
+
+    results: {
+      healthy: "Sihat",
+    },
+
+    errors: {
+      screeningRequestFailed:
+        "Gagal menyaring imej kesihatan haiwan peliharaan.",
+      emptyScreeningResult:
+        "Pelayan mengembalikan keputusan saringan yang kosong.",
+      screeningFailed:
+        "Kami tidak dapat menyaring imej ini buat masa ini. Sila cuba lagi.",
+      invalidFileType: "Sila pilih fail imej seperti JPG, PNG, atau HEIC.",
+      readFileFailed: "Tidak dapat membaca fail imej.",
+      loadSpeciesFailed: "Gagal memuatkan pangkalan data spesies.",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

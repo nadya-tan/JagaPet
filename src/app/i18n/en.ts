@@ -444,6 +444,52 @@ export const en = {
     },
   },
 
+  healthScreening: {
+    title: "Pet Health Screening",
+    description:
+      "Upload a fish photo to screen for visible disease signs using the Shell & Fin health screening model.",
+
+    uploadTitle: "Upload a pet health photo",
+    uploadDescription: "Choose a clear fish photo for health screening.",
+    selectPhoto: "Select Photo",
+    supportedFormats: "Supported: JPG, PNG, HEIC",
+
+    screeningAlt: "Screening",
+    uploadedAlt: "Uploaded",
+    screeningPhoto: "Screening Photo...",
+    screeningDescription: "Sending your image to the health screening model.",
+
+    restoredResultNoPreview:
+      "Previous screening result restored. Image preview is not saved.",
+    tryAnother: "Try another photo",
+
+    healthScreeningUnavailable: "Health screening unavailable",
+    resultTitle: "Health Screening Result",
+
+    noDiseaseClassDetected: "No disease class detected",
+    possibleDiseaseClassDetected: "Possible disease class detected",
+    aiScreeningDisclaimer:
+      "This is an AI screening result only. Use it as an early warning, not as a final diagnosis.",
+
+    viewCareGuide: "View Care Guide",
+    noMatchingCareGuide:
+      "No matching care guide was found in Shell & Fin MY database for this photo. We will continue improving and expanding care guide coverage for health screening results.",
+
+    results: {
+      healthy: "Healthy",
+    },
+
+    errors: {
+      screeningRequestFailed: "Failed to screen the pet health image.",
+      emptyScreeningResult: "The server returned an empty screening result.",
+      screeningFailed:
+        "We couldn't screen this image right now. Please try again.",
+      invalidFileType: "Please choose an image file such as JPG, PNG, or HEIC.",
+      readFileFailed: "Could not read image file.",
+      loadSpeciesFailed: "Failed to load species database.",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

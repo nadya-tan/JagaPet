@@ -427,6 +427,50 @@ export const zh = {
     },
   },
 
+  healthScreening: {
+    title: "宠物健康筛查",
+    description:
+      "上传鱼类照片，使用 Shell & Fin 健康筛查模型检测可见的疾病迹象。",
+
+    uploadTitle: "上传宠物健康照片",
+    uploadDescription: "请选择清晰的鱼类照片进行健康筛查。",
+    selectPhoto: "选择照片",
+    supportedFormats: "支持格式：JPG、PNG、HEIC",
+
+    screeningAlt: "正在筛查",
+    uploadedAlt: "已上传",
+    screeningPhoto: "正在筛查照片...",
+    screeningDescription: "正在将您的图片发送至健康筛查模型。",
+
+    restoredResultNoPreview: "已恢复之前的筛查结果。图片预览未被保存。",
+    tryAnother: "尝试另一张照片",
+
+    healthScreeningUnavailable: "健康筛查暂时不可用",
+    resultTitle: "健康筛查结果",
+
+    noDiseaseClassDetected: "未检测到疾病类别",
+    possibleDiseaseClassDetected: "可能检测到疾病类别",
+    aiScreeningDisclaimer:
+      "这只是 AI 筛查结果。请将其作为早期提醒，而不是最终诊断。",
+
+    viewCareGuide: "查看护理指南",
+    noMatchingCareGuide:
+      "Shell & Fin MY 数据库中未找到与此照片匹配的护理指南。我们会继续改进并扩展健康筛查结果的护理指南覆盖范围。",
+
+    results: {
+      healthy: "健康",
+    },
+
+    errors: {
+      screeningRequestFailed: "无法筛查宠物健康图片。",
+      emptyScreeningResult: "服务器返回了空的筛查结果。",
+      screeningFailed: "我们目前无法筛查这张图片。请稍后再试。",
+      invalidFileType: "请选择 JPG、PNG 或 HEIC 等图片文件。",
+      readFileFailed: "无法读取图片文件。",
+      loadSpeciesFailed: "无法加载物种数据库。",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",
