@@ -30,6 +30,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
+import { autoTranslate } from "js-auto-translate";
 
 /**
  * Utility function:
@@ -63,6 +64,12 @@ export function Home() {
 
   // Reference to hidden file input (used for image upload identification)
   const identifyFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    return localStorage.getItem("home-language") ?? "English";
+  });
+
+  const [isTranslating, setIsTranslating] = useState(false);
 
   /**
    * Deck system:
@@ -332,6 +339,34 @@ export function Home() {
     sessionStorage.setItem("home-high-risk-cursor", String(nextCursor));
   }
 
+  useEffect(() => {
+    if (selectedLanguage === "English") {
+      localStorage.removeItem("home-language");
+      return;
+    }
+
+    async function translateHomePage() {
+      try {
+        setIsTranslating(true);
+        localStorage.setItem("home-language", selectedLanguage);
+
+        await autoTranslate("English", selectedLanguage);
+      } catch (error) {
+        console.error("Auto translation error:", error);
+      } finally {
+        setIsTranslating(false);
+      }
+    }
+
+    translateHomePage();
+  }, [
+    selectedLanguage,
+    visibleRecommendations,
+    visibleHighRiskSpecies,
+    loading,
+    highRiskLoading,
+  ]);
+
   return (
     <div className="flex flex-col gap-12 pb-24 font-sans bg-stone-50 text-stone-900 overflow-hidden">
       {/* Hero Section */}
@@ -344,6 +379,28 @@ export function Home() {
         />
 
         <div className="relative z-20 max-w-4xl mx-auto px-4 text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="inline-flex items-center gap-3 rounded-full bg-white/90 px-4 py-2 shadow-lg backdrop-blur">
+              <span className="text-sm font-semibold text-stone-700">
+                Language
+              </span>
+
+              <select
+                value={selectedLanguage}
+                onChange={(event) => setSelectedLanguage(event.target.value)}
+                disabled={isTranslating}
+                className="rounded-full border border-stone-200 bg-white px-3 py-1 text-sm font-medium text-stone-700 outline-none focus:border-emerald-500"
+              >
+                <option value="en">English</option>
+                <option value="ms">Malay</option>
+                <option value="zh-Cn">Mandarin Chinese</option>
+              </select>
+
+              {isTranslating && (
+                <span className="text-xs text-stone-500">Translating...</span>
+              )}
+            </div>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
