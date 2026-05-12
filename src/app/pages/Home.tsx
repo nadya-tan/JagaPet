@@ -423,7 +423,7 @@ export function Home() {
   return (
     <div className="flex flex-col gap-12 pb-24 font-sans bg-stone-50 text-stone-900 overflow-hidden">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[600px] pb-32 flex items-center justify-center">
+      <section className="relative w-full min-h-[680px] pt-16 md:pt-20 pb-32 flex items-start justify-center">
         <div className="absolute inset-0 bg-emerald-900/60 z-10 overflow-hidden"></div>
         <img
           src="https://images.unsplash.com/photo-1764175760954-e99714c7dd98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWF1dGlmdWwlMjBwbGFudGVkJTIwYXF1YXJpdW0lMjB0YW5rfGVufDF8fHx8MTc3NDcxODU3Mnww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -431,7 +431,7 @@ export function Home() {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        <div className="relative z-20 max-w-4xl mx-auto px-4 text-center">
+        <div className="relative z-20 max-w-5xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -446,7 +446,7 @@ export function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mx-auto max-w-5xl text-balance text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-md leading-[1.1]"
+            className="text-balance text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-md leading-tight"
           >
             {t("home.heroTitle")}
           </motion.h1>
