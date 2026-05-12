@@ -30,6 +30,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * Utility function:
@@ -51,6 +52,7 @@ function shuffleArray<T>(items: T[]) {
  * - Provides navigation and interactive features
  */
 export function Home() {
+  const { t } = useLanguage(); // Translation function from LanguageContext
   const { recommendations, loading, error } = usePetRecommendationPool(); // Fetch recommended pets from API/hook
   const navigate = useNavigate(); // Navigation hook for routing
 
@@ -332,7 +334,6 @@ export function Home() {
     sessionStorage.setItem("home-high-risk-cursor", String(nextCursor));
   }
 
-
   return (
     <div className="flex flex-col gap-12 pb-24 font-sans bg-stone-50 text-stone-900 overflow-hidden">
       {/* Hero Section */}
@@ -352,7 +353,8 @@ export function Home() {
             className="bg-rose-600 text-white px-4 py-2 rounded-full inline-flex items-center gap-2 text-sm font-semibold mb-6 shadow-lg uppercase tracking-wider"
           >
             <AlertTriangle className="w-4 h-4" />
-            Never Release Pets Into the Wild
+            {/* Never Release Pets Into the Wild */}
+            {t("home.alert")}
           </motion.div>
 
           <motion.h1
@@ -361,7 +363,8 @@ export function Home() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-md leading-tight"
           >
-            Responsible Pet Ownership Starts Here
+            {t("home.heroTitle")}
+            {/* Responsible Pet Ownership Starts Here */}
           </motion.h1>
 
           <motion.p

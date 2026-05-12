@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useCompare } from "../context/CompareContext";
 import logoImage from "../../imports/image-0.jpg";
+import { Languages } from "lucide-react";
+import { useLanguage, type Language } from "../context/LanguageContext";
 
 export function MainLayout() {
   // Control mobile navigation menu visibility
@@ -24,14 +26,25 @@ export function MainLayout() {
   // Get compare list state from global context
   const { comparePets } = useCompare();
 
+  // Get language context for translations
+  const { language, setLanguage, t, languageLabels } = useLanguage();
+
   // Main navigation links used in desktop + mobile menus
+  // const navLinks = [
+  //   { name: "Home", path: "/" },
+  //   { name: "Identify Pet", path: "/identify" },
+  //   { name: "Health Screening", path: "/health-screening" },
+  //   { name: "Compatibility Quiz", path: "/quiz" },
+  //   { name: "Need to Rehome?", path: "/safe-exit" },
+  //   { name: "Profile", path: "/profile" },
+  // ];
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Identify Pet", path: "/identify" },
-    { name: "Health Screening", path: "/health-screening" },
-    { name: "Compatibility Quiz", path: "/quiz" },
-    { name: "Need to Rehome?", path: "/safe-exit" },
-    { name: "Profile", path: "/profile" },
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.identify"), path: "/identify" },
+    { name: t("nav.health"), path: "/health-screening" },
+    { name: t("nav.quiz"), path: "/quiz" },
+    { name: t("nav.rehome"), path: "/safe-exit" },
+    { name: t("nav.profile"), path: "/profile" },
   ];
 
   return (
@@ -81,8 +94,27 @@ export function MainLayout() {
                 }`}
               >
                 <Scale className="w-4 h-4" />
-                Compare ({comparePets.length})
+                {/* Compare ({comparePets.length}) */}
+                {t("nav.compare")} ({comparePets.length})
               </Link>
+
+              {/* Language Selector */}
+              <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
+                <Languages className="h-4 w-4 text-emerald-700" />
+
+                <select
+                  value={language}
+                  onChange={(event) =>
+                    setLanguage(event.target.value as Language)
+                  }
+                  className="bg-transparent outline-none cursor-pointer"
+                  aria-label="Select language"
+                >
+                  <option value="en">{languageLabels.en}</option>
+                  <option value="ms">{languageLabels.ms}</option>
+                  <option value="zh">{languageLabels.zh}</option>
+                </select>
+              </div>
             </nav>
 
             {/* ===================== Mobile Menu Button ===================== */}
@@ -116,6 +148,27 @@ export function MainLayout() {
                 {link.name}
               </Link>
             ))}
+
+            {/* language selector */}
+            <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
+              <span className="flex items-center gap-2">
+                <Languages className="h-4 w-4 text-emerald-700" />
+                {t("language.label")}
+              </span>
+
+              <select
+                value={language}
+                onChange={(event) =>
+                  setLanguage(event.target.value as Language)
+                }
+                className="bg-transparent outline-none cursor-pointer"
+                aria-label="Select language"
+              >
+                <option value="en">{languageLabels.en}</option>
+                <option value="ms">{languageLabels.ms}</option>
+                <option value="zh">{languageLabels.zh}</option>
+              </select>
+            </div>
 
             {/* Mobile Compare Button */}
             <Link
@@ -153,33 +206,38 @@ export function MainLayout() {
             </div>
 
             <p className="text-emerald-200 text-sm leading-relaxed max-w-xs">
-              Empowering Malaysians to make safe, responsible choices for
-              non-native pets. Protect our biodiversity, one pet at a time.
+              {/* Empowering Malaysians to make safe, responsible choices for
+              non-native pets. Protect our biodiversity, one pet at a time. */}
+              {t("footer.description")}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
-              Quick Links
+              {/* Quick Links */}
+              {t("footer.quickLinks")}
             </h3>
 
             <ul className="space-y-2 text-sm text-emerald-200">
               <li>
                 <Link to="/quiz" className="hover:text-white transition">
-                  Pre-purchase Quiz
+                  {/* Pre-purchase Quiz */}
+                  {t("footer.quiz")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/identify" className="hover:text-white transition">
-                  Identify Your Pet
+                  {/* Identify Your Pet */}
+                  {t("footer.identify")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/compare" className="hover:text-white transition">
-                  Compare Species
+                  {/* Compare Species */}
+                  {t("footer.compare")}
                 </Link>
               </li>
 
@@ -188,7 +246,8 @@ export function MainLayout() {
                   to="/safe-exit"
                   className="hover:text-white transition text-rose-300 font-medium"
                 >
-                  Safe Rehoming Options
+                  {/* Safe Rehoming Options */}
+                  {t("footer.safeRehoming")}
                 </Link>
               </li>
             </ul>
@@ -197,17 +256,19 @@ export function MainLayout() {
           {/* Legal / Emergency Information */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
-              Emergency & Legal
+              {/* Emergency & Legal */}
+              {t("footer.emergencyLegal")}
             </h3>
 
             <ul className="space-y-2 text-sm text-emerald-200">
-              <li>PERHILITAN Hotline: 1-800-88-5151</li>
-              <li>Department of Fisheries Malaysia</li>
+              {/* PERHILITAN Hotline: 1-800-88-5151 */}
+              <li>{t("footer.hotline")}</li>
+              {/* Department of Fisheries Malaysia */}
+              <li>{t("footer.dof")}</li>
 
-              <li className="text-xs mt-4 opacity-70">
-                Releasing non-native species into public waterways is illegal
-                under Malaysian law.
-              </li>
+              {/* Releasing non-native species into public waterways is illegal
+                under Malaysian law. */}
+              <li className="text-xs mt-4 opacity-70">{t("footer.legal")}</li>
             </ul>
           </div>
         </div>
