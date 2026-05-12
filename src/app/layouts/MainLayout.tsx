@@ -74,7 +74,7 @@ export function MainLayout() {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`shrink-0 whitespace-nowrap border-b-2 px-1 py-5 text-sm font-medium transition ${
+                  className={`shrink-0 whitespace-nowrap border-b-2 px-1 text-sm font-medium transition ${
                     location.pathname === link.path
                       ? "border-emerald-700 text-emerald-700"
                       : "border-transparent text-stone-600 hover:text-emerald-600"
