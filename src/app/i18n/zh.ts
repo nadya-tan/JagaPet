@@ -138,6 +138,33 @@ export const zh = {
     experience: "经验",
   },
 
+  comparePage: {
+    emptyTitle: "你还没有添加任何宠物",
+    emptyDescription:
+      "将宠物加入比较列表，即可并排查看它们的养护等级、生物多样性风险、危险等级和饲养需求。",
+    browseSpecies: "浏览物种",
+
+    title: "比较宠物",
+    description: "在做决定前，并排比较真实的宠物资料。",
+    clearList: "清空列表",
+
+    removeFromCompare: "从比较中移除",
+
+    banned: "被禁止",
+    maxLength: "最大长度",
+    longevity: "寿命",
+    cost: "费用",
+    tankSize: "鱼缸大小",
+    nativeStatus: "本地状态",
+    unknown: "未知",
+
+    cm: "cm",
+    years: "年",
+
+    viewFullProfile: "查看完整资料",
+    addAnotherSpecies: "添加另一个物种",
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",

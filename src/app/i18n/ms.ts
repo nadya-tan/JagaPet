@@ -145,6 +145,34 @@ export const ms = {
     experience: "Pengalaman",
   },
 
+  comparePage: {
+    emptyTitle: "Anda belum menambah haiwan peliharaan",
+    emptyDescription:
+      "Tambah haiwan peliharaan ke senarai perbandingan untuk melihat tahap penjagaan, risiko biodiversiti, tahap bahaya, dan keperluan persediaan secara sebelah-menyebelah.",
+    browseSpecies: "Lihat Spesies",
+
+    title: "Bandingkan Haiwan",
+    description:
+      "Bandingkan data haiwan sebenar secara sebelah-menyebelah sebelum membuat keputusan.",
+    clearList: "Kosongkan Senarai",
+
+    removeFromCompare: "Buang daripada perbandingan",
+
+    banned: "Dilarang",
+    maxLength: "Panjang Maksimum",
+    longevity: "Jangka Hayat",
+    cost: "Kos",
+    tankSize: "Saiz Tangki",
+    nativeStatus: "Status Asal",
+    unknown: "Tidak diketahui",
+
+    cm: "cm",
+    years: "tahun",
+
+    viewFullProfile: "Lihat Profil Penuh",
+    addAnotherSpecies: "Tambah spesies lain",
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

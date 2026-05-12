@@ -143,6 +143,33 @@ export const en = {
     experience: "Experience",
   },
 
+  comparePage: {
+    emptyTitle: "You haven't added any pets yet",
+    emptyDescription:
+      "Add pets to your compare list to view their care level, biodiversity risk, danger level, and setup requirements side-by-side.",
+    browseSpecies: "Browse Species",
+
+    title: "Compare Pets",
+    description: "Compare real pet data side-by-side before making a decision.",
+    clearList: "Clear List",
+
+    removeFromCompare: "Remove from compare",
+
+    banned: "Banned",
+    maxLength: "Max Length",
+    longevity: "Longevity",
+    cost: "Cost",
+    tankSize: "Tank Size",
+    nativeStatus: "Native Status",
+    unknown: "Unknown",
+
+    cm: "cm",
+    years: "years",
+
+    viewFullProfile: "View Full Profile",
+    addAnotherSpecies: "Add another species",
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
