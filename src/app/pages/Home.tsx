@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SearchAutocomplete } from "../components/SearchAutocomplete";
-import { usePetRecommendationPool } from "../hooks/usePetRecommendations";
-import { useHighRiskSpecies } from "../hooks/useHighRiskSpecies";
+import { useHomeSpecies } from "../hooks/useHomeSpecies";
 import {
   getPetCommonNames,
   getDangerBadgeClasses,
@@ -47,6 +46,7 @@ function shuffleArray<T>(items: T[]) {
 
 type LocalizedLabelMap = Record<string, Record<Language, string>>;
 
+// Localized labels for pet attributes
 const careLevelLabels: LocalizedLabelMap = {
   Beginner: {
     en: "Beginner Care",
@@ -139,15 +139,10 @@ function getLocalizedPetLabel(
  */
 export function Home() {
   const { t, language } = useLanguage(); // Translation function from LanguageContext
-  const { recommendations, loading, error } = usePetRecommendationPool(); // Fetch recommended pets from API/hook
+  const { recommendations, highRiskSpecies, loading, error } = useHomeSpecies();
+  const highRiskLoading = loading;
+  const highRiskError = error; // Fetch recommended pets from API/hook
   const navigate = useNavigate(); // Navigation hook for routing
-
-  // Fetch high risk species list
-  const {
-    highRiskSpecies,
-    loading: highRiskLoading,
-    error: highRiskError,
-  } = useHighRiskSpecies();
 
   // Reference to hidden file input (used for image upload identification)
   const identifyFileInputRef = useRef<HTMLInputElement | null>(null);
