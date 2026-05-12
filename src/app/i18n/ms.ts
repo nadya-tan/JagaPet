@@ -293,6 +293,41 @@ export const ms = {
     },
   },
 
+  quiz: {
+    loading: "Memuatkan kuiz...",
+    title: "Saringan Keserasian Gaya Hidup",
+    description: "Mari cari haiwan akuatik yang sesuai untuk anda.",
+    back: "Kembali",
+    continue: "Teruskan",
+    seeResults: "Lihat Keputusan",
+    identifyHelp:
+      "Tidak tahu nama haiwan anda? Klik untuk mengenal pastinya dahulu.",
+
+    questions: {
+      age: "Apakah kumpulan umur anda?",
+      time: "Berapa banyak masa lapang yang boleh anda luangkan untuk penjagaan haiwan setiap minggu?",
+      budget: "Apakah bajet anda untuk persediaan dan penjagaan berterusan?",
+      space: "Apakah saiz habitat maksimum yang boleh anda sediakan?",
+      lifespan: "Apakah komitmen jangka hayat haiwan yang anda inginkan?",
+      experience: "Apakah tahap pengalaman anda dalam menjaga haiwan akuatik?",
+    },
+
+    options: {
+      space: {
+        small: "Meja kecil / Desktop (Kecil)",
+        medium: "Sudut khas / Rak tangki (Sederhana)",
+        large: "Bilik besar / Kolam luar (Besar)",
+      },
+      lifespan: {
+        long: "15+ tahun (Jangka panjang)",
+      },
+      experience: {
+        intermediate:
+          "Pernah memelihara beberapa haiwan sebelum ini (Pertengahan)",
+      },
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

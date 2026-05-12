@@ -290,6 +290,39 @@ export const en = {
     },
   },
 
+  quiz: {
+    loading: "Loading quiz...",
+    title: "Lifestyle Compatibility Screening",
+    description: "Let's find the right aquatic pet for you.",
+    back: "Back",
+    continue: "Continue",
+    seeResults: "See Results",
+    identifyHelp: "Don't know your pet's name? Click to identify it first.",
+
+    questions: {
+      age: "What is your age group?",
+      time: "How much free time can you dedicate to pet care weekly?",
+      budget: "What is your available budget for setup and ongoing care?",
+      space: "What is the maximum habitat size you can accommodate?",
+      lifespan: "What is your desired pet lifespan commitment?",
+      experience: "What is your care experience level with aquatic pets?",
+    },
+
+    options: {
+      space: {
+        small: "Small table / Desktop (Small)",
+        medium: "Dedicated corner / Stand (Medium)",
+        large: "Large room / Outdoor pond (Large)",
+      },
+      lifespan: {
+        long: "15+ years (Long term)",
+      },
+      experience: {
+        intermediate: "Have kept some before (Intermediate)",
+      },
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

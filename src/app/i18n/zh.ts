@@ -18,7 +18,7 @@ export const zh = {
     alert: "不要把宠物放生到野外",
     heroTitle: "负责任的宠物饲养，从这里开始",
     heroDescription:
-      "探索物种资料，检查生活方式适配度，并学习如何在马来西亚安全管理观赏鱼和宠物龟。",
+      "探索物种资料，检查生活方式适配度，并学习如何在马来西亚安全饲养观赏鱼和宠物龟。",
 
     quizTitle: "购买前测验",
     quizDescription: "了解你是否有足够的预算、空间和时间照顾该宠物。",
@@ -180,12 +180,12 @@ export const zh = {
     notAnswered: "未回答",
 
     rows: {
-      age: "年龄组",
+      age: "用户年龄组",
       time: "空闲时间",
       budget: "预算",
       space: "饲养空间",
-      lifespan: "寿命",
-      experience: "经验",
+      lifespan: "宠物寿命",
+      experience: "饲养经验",
     },
 
     answers: {
@@ -281,6 +281,39 @@ export const zh = {
         months: "个月",
         year: "年",
         years: "年",
+      },
+    },
+  },
+
+  quiz: {
+    loading: "正在加载测验...",
+    title: "生活方式适配筛查",
+    description: "让我们帮你找到适合你的水生宠物。",
+    back: "返回",
+    continue: "继续",
+    seeResults: "查看结果",
+    identifyHelp: "不知道宠物的名字？点击先进行识别。",
+
+    questions: {
+      age: "你的年龄组是？",
+      time: "你每周可以花多少空闲时间照顾宠物？",
+      budget: "你可用于初始设置和日常护理的预算是多少？",
+      space: "你最多可以提供多大的饲养空间？",
+      lifespan: "你希望承担多长的宠物寿命承诺？",
+      experience: "你照顾水生宠物的经验水平如何？",
+    },
+
+    options: {
+      space: {
+        small: "小桌面 / 桌上空间（小）",
+        medium: "专用角落 / 鱼缸架（中）",
+        large: "大房间 / 户外池塘（大）",
+      },
+      lifespan: {
+        long: "15 年以上（长期）",
+      },
+      experience: {
+        intermediate: "曾经养过一些水生宠物（中级）",
       },
     },
   },
