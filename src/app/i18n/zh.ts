@@ -165,6 +165,126 @@ export const zh = {
     addAnotherSpecies: "添加另一个物种",
   },
 
+  profile: {
+    loading: "正在加载...",
+    title: "我的个人资料",
+    signedInAs: "已登录为",
+    quizProfile: "测验资料",
+    myPets: "我的宠物",
+
+    savedQuizAnswers: "已保存的适配测验答案",
+    noQuizAnswers: "你还没有保存任何测验答案。",
+    takeQuiz: "进行测验",
+    retakeQuiz: "重新测验",
+    logOut: "登出",
+    notAnswered: "未回答",
+
+    rows: {
+      age: "年龄组",
+      time: "空闲时间",
+      budget: "预算",
+      space: "饲养空间",
+      lifespan: "寿命",
+      experience: "经验",
+    },
+
+    answers: {
+      age: {
+        under_18: "18 岁以下",
+        "18_35": "18 - 35",
+        "36_55": "36 - 55",
+        "56_plus": "56+",
+      },
+      time: {
+        low: "几分钟（低）",
+        medium: "几个小时（中）",
+        high: "每天投入时间（高）",
+      },
+      budget: {
+        low: "低于 RM 100（低）",
+        medium: "RM 100 - RM 500（中）",
+        high: "RM 500+（高）",
+      },
+      space: {
+        small: "小桌面 / 桌上空间",
+        medium: "专用角落 / 鱼缸架",
+        large: "大房间 / 户外池塘",
+      },
+      lifespan: {
+        short: "1 - 5 年",
+        medium: "5 - 15 年",
+        long: "15 年以上",
+      },
+      experience: {
+        beginner: "第一次饲养（新手）",
+        intermediate: "中级",
+        advanced: "有经验的爱好者（高级）",
+      },
+    },
+
+    addPet: "添加宠物",
+    addNewPet: "添加新宠物",
+    species: "物种",
+    selectSpecies: "选择物种...",
+    nickname: "昵称",
+    nicknamePlaceholder: "例如：Bubbles、Goldie、Pleccy",
+    ageOptional: "年龄，单位为年，可选",
+    agePlaceholder: "例如：1.5",
+    adding: "正在添加...",
+    cancel: "取消",
+
+    loadingPets: "正在加载你的宠物...",
+    noPets: "你还没有添加任何宠物。",
+    addFirstPet: "添加你的第一只宠物",
+
+    age: "年龄",
+    years: "年",
+    added: "添加于",
+
+    careSchedule: "护理日程",
+    noCareTasks: "此宠物尚未生成护理任务。",
+    completedToday: "今天已完成",
+    lastDone: "上次完成：",
+    recently: "最近",
+    daysAgo: "天前",
+    notCompletedYet: "尚未完成",
+    doneForToday: "今天已完成",
+    markAsDoneToday: "标记为今天完成",
+    fullGuide: "完整指南",
+
+    couldNotAddPet: "无法添加宠物。",
+    couldNotRemovePet: "无法移除宠物。",
+    couldNotUpdateTask: "无法更新任务。",
+
+    tasks: {
+      "water-change": "更换 25% 水",
+      feeding: "喂食",
+      "filter-clean": "清洗过滤器",
+      "health-check": "健康检查",
+      "temperature-check": "温度检查",
+    },
+
+    frequency: {
+      daily: "每天",
+      weekly: "每周",
+      monthly: "每月",
+      yearly: "每年",
+      timesPer: "次，每",
+      timesEvery: "次，每",
+      every: "每",
+      units: {
+        day: "天",
+        days: "天",
+        week: "周",
+        weeks: "周",
+        month: "个月",
+        months: "个月",
+        year: "年",
+        years: "年",
+      },
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",

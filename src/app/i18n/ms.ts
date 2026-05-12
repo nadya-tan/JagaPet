@@ -173,6 +173,126 @@ export const ms = {
     addAnotherSpecies: "Tambah spesies lain",
   },
 
+  profile: {
+    loading: "Memuatkan...",
+    title: "Profil Saya",
+    signedInAs: "Log masuk sebagai",
+    quizProfile: "Profil Kuiz",
+    myPets: "Haiwan Saya",
+
+    savedQuizAnswers: "Jawapan kuiz keserasian yang disimpan",
+    noQuizAnswers: "Anda belum menyimpan sebarang jawapan kuiz.",
+    takeQuiz: "Ambil kuiz",
+    retakeQuiz: "Ambil semula kuiz",
+    logOut: "Log keluar",
+    notAnswered: "Belum dijawab",
+
+    rows: {
+      age: "Kumpulan umur",
+      time: "Masa lapang",
+      budget: "Bajet",
+      space: "Ruang habitat",
+      lifespan: "Jangka hayat",
+      experience: "Pengalaman",
+    },
+
+    answers: {
+      age: {
+        under_18: "Bawah 18 tahun",
+        "18_35": "18 - 35",
+        "36_55": "36 - 55",
+        "56_plus": "56+",
+      },
+      time: {
+        low: "Beberapa minit sahaja (Rendah)",
+        medium: "Beberapa jam (Sederhana)",
+        high: "Komitmen harian (Tinggi)",
+      },
+      budget: {
+        low: "Bawah RM 100 (Rendah)",
+        medium: "RM 100 - RM 500 (Sederhana)",
+        high: "RM 500+ (Tinggi)",
+      },
+      space: {
+        small: "Meja kecil / Desktop",
+        medium: "Sudut khas / Rak tangki",
+        large: "Bilik besar / Kolam luar",
+      },
+      lifespan: {
+        short: "1 - 5 tahun",
+        medium: "5 - 15 tahun",
+        long: "15+ tahun",
+      },
+      experience: {
+        beginner: "Pemilik kali pertama (Pemula)",
+        intermediate: "Tahap pertengahan",
+        advanced: "Penghobi berpengalaman (Lanjutan)",
+      },
+    },
+
+    addPet: "Tambah Haiwan",
+    addNewPet: "Tambah Haiwan Baharu",
+    species: "Spesies",
+    selectSpecies: "Pilih spesies...",
+    nickname: "Nama panggilan",
+    nicknamePlaceholder: "cth., Bubbles, Goldie, Pleccy",
+    ageOptional: "Umur dalam tahun, pilihan",
+    agePlaceholder: "cth., 1.5",
+    adding: "Menambah...",
+    cancel: "Batal",
+
+    loadingPets: "Memuatkan haiwan anda...",
+    noPets: "Anda belum menambah sebarang haiwan.",
+    addFirstPet: "Tambah haiwan pertama anda",
+
+    age: "Umur",
+    years: "tahun",
+    added: "Ditambah",
+
+    careSchedule: "Jadual Penjagaan",
+    noCareTasks: "Tiada tugasan penjagaan dijana untuk haiwan ini lagi.",
+    completedToday: "Selesai hari ini",
+    lastDone: "Kali terakhir dibuat:",
+    recently: "Baru-baru ini",
+    daysAgo: "hari yang lalu",
+    notCompletedYet: "Belum diselesaikan",
+    doneForToday: "Selesai untuk Hari Ini",
+    markAsDoneToday: "Tanda Selesai Hari Ini",
+    fullGuide: "Panduan Penuh",
+
+    couldNotAddPet: "Tidak dapat menambah haiwan.",
+    couldNotRemovePet: "Tidak dapat membuang haiwan.",
+    couldNotUpdateTask: "Tidak dapat mengemas kini tugasan.",
+
+    tasks: {
+      "water-change": "Tukar 25% Air",
+      feeding: "Memberi Makan",
+      "filter-clean": "Bersihkan Penapis",
+      "health-check": "Pemeriksaan Kesihatan",
+      "temperature-check": "Pemeriksaan Suhu",
+    },
+
+    frequency: {
+      daily: "setiap hari",
+      weekly: "setiap minggu",
+      monthly: "setiap bulan",
+      yearly: "setiap tahun",
+      timesPer: "kali setiap",
+      timesEvery: "kali setiap",
+      every: "setiap",
+      units: {
+        day: "hari",
+        days: "hari",
+        week: "minggu",
+        weeks: "minggu",
+        month: "bulan",
+        months: "bulan",
+        year: "tahun",
+        years: "tahun",
+      },
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

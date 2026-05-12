@@ -170,6 +170,126 @@ export const en = {
     addAnotherSpecies: "Add another species",
   },
 
+  profile: {
+    loading: "Loading...",
+    title: "My Profile",
+    signedInAs: "Signed in as",
+    quizProfile: "Quiz Profile",
+    myPets: "My Pets",
+
+    savedQuizAnswers: "Saved compatibility quiz answers",
+    noQuizAnswers: "You have not saved any quiz answers yet.",
+    takeQuiz: "Take quiz",
+    retakeQuiz: "Retake quiz",
+    logOut: "Log out",
+    notAnswered: "Not answered",
+
+    rows: {
+      age: "Age group",
+      time: "Free time",
+      budget: "Budget",
+      space: "Habitat space",
+      lifespan: "Lifespan",
+      experience: "Experience",
+    },
+
+    answers: {
+      age: {
+        under_18: "Under 18",
+        "18_35": "18 - 35",
+        "36_55": "36 - 55",
+        "56_plus": "56+",
+      },
+      time: {
+        low: "A few minutes (Low)",
+        medium: "A few hours (Medium)",
+        high: "Daily dedication (High)",
+      },
+      budget: {
+        low: "Under RM 100 (Low)",
+        medium: "RM 100 - RM 500 (Medium)",
+        high: "RM 500+ (High)",
+      },
+      space: {
+        small: "Small table / Desktop",
+        medium: "Dedicated corner / Stand",
+        large: "Large room / Outdoor pond",
+      },
+      lifespan: {
+        short: "1 - 5 years",
+        medium: "5 - 15 years",
+        long: "15+ years",
+      },
+      experience: {
+        beginner: "First-time owner (Beginner)",
+        intermediate: "Intermediate",
+        advanced: "Experienced hobbyist (Advanced)",
+      },
+    },
+
+    addPet: "Add Pet",
+    addNewPet: "Add a New Pet",
+    species: "Species",
+    selectSpecies: "Select a species...",
+    nickname: "Nickname",
+    nicknamePlaceholder: "e.g., Bubbles, Goldie, Pleccy",
+    ageOptional: "Age in years, optional",
+    agePlaceholder: "e.g., 1.5",
+    adding: "Adding...",
+    cancel: "Cancel",
+
+    loadingPets: "Loading your pets...",
+    noPets: "You have not added any pets yet.",
+    addFirstPet: "Add your first pet",
+
+    age: "Age",
+    years: "years",
+    added: "Added",
+
+    careSchedule: "Care Schedule",
+    noCareTasks: "No care tasks were generated for this pet yet.",
+    completedToday: "Completed today",
+    lastDone: "Last done:",
+    recently: "Recently",
+    daysAgo: "days ago",
+    notCompletedYet: "Not completed yet",
+    doneForToday: "Done for Today",
+    markAsDoneToday: "Mark as Done Today",
+    fullGuide: "Full Guide",
+
+    couldNotAddPet: "Could not add pet.",
+    couldNotRemovePet: "Could not remove pet.",
+    couldNotUpdateTask: "Could not update task.",
+
+    tasks: {
+      "water-change": "25% Water Change",
+      feeding: "Feeding",
+      "filter-clean": "Clean Filter",
+      "health-check": "Health Check",
+      "temperature-check": "Temperature Check",
+    },
+
+    frequency: {
+      daily: "daily",
+      weekly: "weekly",
+      monthly: "monthly",
+      yearly: "yearly",
+      timesPer: "times per",
+      timesEvery: "times every",
+      every: "every",
+      units: {
+        day: "day",
+        days: "days",
+        week: "week",
+        weeks: "weeks",
+        month: "month",
+        months: "months",
+        year: "year",
+        years: "years",
+      },
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
