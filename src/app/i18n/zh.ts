@@ -586,6 +586,27 @@ export const zh = {
     },
   },
 
+  auth: {
+    loginTitle: "登录",
+    registerTitle: "创建个人资料",
+    description: "将你的兼容性测验答案保存到个人资料中。",
+
+    username: "用户名",
+    usernamePlaceholder: "请输入用户名",
+    password: "密码",
+    passwordPlaceholder: "请输入密码",
+
+    loginButton: "登录",
+    registerButton: "创建个人资料",
+
+    switchToRegister: "还没有账号？创建个人资料",
+    switchToLogin: "已有账号？登录",
+
+    errors: {
+      generic: "出现了一些问题。",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",

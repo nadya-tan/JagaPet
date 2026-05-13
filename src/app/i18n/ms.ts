@@ -617,6 +617,27 @@ export const ms = {
     },
   },
 
+  auth: {
+    loginTitle: "Log masuk",
+    registerTitle: "Cipta profil",
+    description: "Simpan jawapan kuiz keserasian anda ke dalam profil anda.",
+
+    username: "Nama pengguna",
+    usernamePlaceholder: "Masukkan nama pengguna anda",
+    password: "Kata laluan",
+    passwordPlaceholder: "Masukkan kata laluan anda",
+
+    loginButton: "Log masuk",
+    registerButton: "Cipta profil",
+
+    switchToRegister: "Perlukan akaun? Cipta profil",
+    switchToLogin: "Sudah mempunyai akaun? Log masuk",
+
+    errors: {
+      generic: "Sesuatu telah berlaku.",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

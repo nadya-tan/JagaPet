@@ -606,6 +606,27 @@ export const en = {
     },
   },
 
+  auth: {
+    loginTitle: "Log in",
+    registerTitle: "Create profile",
+    description: "Save your compatibility quiz answers to your profile.",
+
+    username: "Username",
+    usernamePlaceholder: "Enter your username",
+    password: "Password",
+    passwordPlaceholder: "Enter your password",
+
+    loginButton: "Log in",
+    registerButton: "Create profile",
+
+    switchToRegister: "Need an account? Create profile",
+    switchToLogin: "Already have an account? Log in",
+
+    errors: {
+      generic: "Something went wrong.",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
