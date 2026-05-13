@@ -528,6 +528,64 @@ export const zh = {
     },
   },
 
+  careGuideDetail: {
+    loading: "正在加载护理指南...",
+    back: "返回",
+
+    sections: {
+      basicInformation: "基本资料",
+      waterParameters: "水质参数",
+      feedingMaintenance: "喂食与维护",
+      tankSetupRequirements: "鱼缸设置与要求",
+      healthMonitoring: "健康监测",
+      commonIllnesses: "常见疾病",
+    },
+
+    fields: {
+      scientificName: "学名",
+      commonName: "俗名",
+      otherNames: "其他名称：",
+      maximumLength: "最大长度",
+      maximumWeight: "最大重量",
+      lifespan: "寿命",
+      careDifficulty: "护理难度",
+
+      waterTemperature: "水温",
+      baskingTemperature: "晒背温度",
+      phRange: "pH 范围",
+      waterDepth: "水深",
+      minimumTankSize: "最小鱼缸尺寸",
+      waterHardness: "水硬度",
+
+      feedingFrequency: "喂食频率",
+      waterChangeSchedule: "换水时间表",
+      dietDetails: "饮食详情",
+
+      essentialEquipment: "必要设备",
+      compatibleTankMates: "适合混养的伙伴",
+
+      signsOfGoodHealth: "健康良好的迹象",
+      warningSignsOfIllness: "疾病警告迹象",
+    },
+
+    emergencyNotice: {
+      title: "紧急护理提醒",
+      description:
+        "如果你的宠物出现严重症状，例如 3 天或更久不进食、呼吸困难、严重腹胀或无法游泳，请立即寻求兽医帮助。许多疾病若不及时处理可能会致命。",
+    },
+
+    fallbacks: {
+      unknownPet: "未知宠物",
+      notAvailable: "暂无资料",
+    },
+
+    errors: {
+      missingPetId: "缺少宠物 ID。",
+      requestFailed: "请求失败。",
+      loadFailed: "无法加载护理指南。",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",

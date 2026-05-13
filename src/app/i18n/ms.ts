@@ -559,6 +559,64 @@ export const ms = {
     },
   },
 
+  careGuideDetail: {
+    loading: "Memuatkan panduan penjagaan...",
+    back: "Kembali",
+
+    sections: {
+      basicInformation: "Maklumat Asas",
+      waterParameters: "Parameter Air",
+      feedingMaintenance: "Pemakanan & Penyelenggaraan",
+      tankSetupRequirements: "Persediaan & Keperluan Tangki",
+      healthMonitoring: "Pemantauan Kesihatan",
+      commonIllnesses: "Penyakit Biasa",
+    },
+
+    fields: {
+      scientificName: "Nama Saintifik",
+      commonName: "Nama Umum",
+      otherNames: "Nama lain:",
+      maximumLength: "Panjang Maksimum",
+      maximumWeight: "Berat Maksimum",
+      lifespan: "Jangka Hayat",
+      careDifficulty: "Tahap Kesukaran Penjagaan",
+
+      waterTemperature: "Suhu Air",
+      baskingTemperature: "Suhu Berjemur",
+      phRange: "Julat pH",
+      waterDepth: "Kedalaman Air",
+      minimumTankSize: "Saiz Tangki Minimum",
+      waterHardness: "Kekerasan Air",
+
+      feedingFrequency: "Kekerapan Memberi Makan",
+      waterChangeSchedule: "Jadual Penukaran Air",
+      dietDetails: "Butiran Diet",
+
+      essentialEquipment: "Peralatan Penting",
+      compatibleTankMates: "Rakan Tangki yang Sesuai",
+
+      signsOfGoodHealth: "Tanda-tanda Kesihatan Baik",
+      warningSignsOfIllness: "Tanda Amaran Penyakit",
+    },
+
+    emergencyNotice: {
+      title: "Notis Penjagaan Kecemasan",
+      description:
+        "Jika haiwan peliharaan anda menunjukkan gejala serius seperti tidak makan selama 3 hari atau lebih, kesukaran bernafas, kembung yang teruk, atau tidak mampu berenang, sila dapatkan rawatan veterinar dengan segera. Banyak keadaan boleh membawa maut jika tidak dirawat.",
+    },
+
+    fallbacks: {
+      unknownPet: "Haiwan Peliharaan Tidak Diketahui",
+      notAvailable: "Tidak tersedia",
+    },
+
+    errors: {
+      missingPetId: "ID haiwan peliharaan tiada.",
+      requestFailed: "Permintaan gagal.",
+      loadFailed: "Tidak dapat memuatkan panduan penjagaan.",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

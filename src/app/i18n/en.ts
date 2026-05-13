@@ -548,6 +548,64 @@ export const en = {
     },
   },
 
+  careGuideDetail: {
+    loading: "Loading care guide...",
+    back: "Back",
+
+    sections: {
+      basicInformation: "Basic Information",
+      waterParameters: "Water Parameters",
+      feedingMaintenance: "Feeding & Maintenance",
+      tankSetupRequirements: "Tank Setup & Requirements",
+      healthMonitoring: "Health Monitoring",
+      commonIllnesses: "Common Illnesses",
+    },
+
+    fields: {
+      scientificName: "Scientific Name",
+      commonName: "Common Name",
+      otherNames: "Other names:",
+      maximumLength: "Maximum Length",
+      maximumWeight: "Maximum Weight",
+      lifespan: "Lifespan",
+      careDifficulty: "Care Difficulty",
+
+      waterTemperature: "Water Temperature",
+      baskingTemperature: "Basking Temperature",
+      phRange: "pH Range",
+      waterDepth: "Water Depth",
+      minimumTankSize: "Minimum Tank Size",
+      waterHardness: "Water Hardness",
+
+      feedingFrequency: "Feeding Frequency",
+      waterChangeSchedule: "Water Change Schedule",
+      dietDetails: "Diet Details",
+
+      essentialEquipment: "Essential Equipment",
+      compatibleTankMates: "Compatible Tank Mates",
+
+      signsOfGoodHealth: "Signs of Good Health",
+      warningSignsOfIllness: "Warning Signs of Illness",
+    },
+
+    emergencyNotice: {
+      title: "Emergency Care Notice",
+      description:
+        "If your pet shows severe symptoms such as not eating for 3 or more days, difficulty breathing, severe bloating, or inability to swim, please seek veterinary care immediately. Many conditions are fatal if untreated.",
+    },
+
+    fallbacks: {
+      unknownPet: "Unknown Pet",
+      notAvailable: "Not available",
+    },
+
+    errors: {
+      missingPetId: "Missing pet id.",
+      requestFailed: "Request failed.",
+      loadFailed: "Could not load care guide.",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",
