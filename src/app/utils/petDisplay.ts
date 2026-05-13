@@ -109,6 +109,11 @@ export const dangerLabels: LocalizedLabelMap = {
     ms: "Bahaya Tinggi",
     zh: "高危险",
   },
+  Medium: {
+    en: "Medium Danger",
+    ms: "Bahaya Sederhana",
+    zh: "中危险",
+  },
   Low: {
     en: "Low Danger",
     ms: "Bahaya Rendah",

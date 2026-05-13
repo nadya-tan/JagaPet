@@ -526,36 +526,8 @@ export const en = {
     viewProfileCareGuide: "View Profile & Care Guide →",
 
     badges: {
-      biodiversityRisk: "Biodiversity Risk",
-      care: "Care",
-      danger: "Danger",
       common: "Common",
       bannedInMalaysia: "Banned in Malaysia",
-    },
-
-    labels: {
-      unknown: "Unknown",
-      risk: {
-        high: "High",
-        medium: "Medium",
-        low: "Low",
-      },
-      care: {
-        beginner: "Beginner",
-        intermediate: "Intermediate",
-        advanced: "Advanced",
-      },
-      danger: {
-        high: "High",
-        medium: "Medium",
-        low: "Low",
-        none: "No",
-      },
-      nativeStatus: {
-        native: "Native",
-        nonNative: "Non-native",
-        invasive: "Invasive",
-      },
     },
 
     pagination: {

@@ -507,36 +507,8 @@ export const zh = {
     viewProfileCareGuide: "查看资料与护理指南 →",
 
     badges: {
-      biodiversityRisk: "生物多样性风险",
-      care: "护理",
-      danger: "危险",
       common: "常见",
       bannedInMalaysia: "在马来西亚被禁止",
-    },
-
-    labels: {
-      unknown: "未知",
-      risk: {
-        high: "高",
-        medium: "中",
-        low: "低",
-      },
-      care: {
-        beginner: "新手",
-        intermediate: "中级",
-        advanced: "进阶",
-      },
-      danger: {
-        high: "高",
-        medium: "中",
-        low: "低",
-        none: "无",
-      },
-      nativeStatus: {
-        native: "原生",
-        nonNative: "非原生",
-        invasive: "入侵",
-      },
     },
 
     pagination: {

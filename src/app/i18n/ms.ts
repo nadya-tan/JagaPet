@@ -537,36 +537,8 @@ export const ms = {
     viewProfileCareGuide: "Lihat Profil & Panduan Penjagaan →",
 
     badges: {
-      biodiversityRisk: "Risiko Biodiversiti",
-      care: "Penjagaan",
-      danger: "Bahaya",
       common: "Biasa",
       bannedInMalaysia: "Dilarang di Malaysia",
-    },
-
-    labels: {
-      unknown: "Tidak diketahui",
-      risk: {
-        high: "Tinggi",
-        medium: "Sederhana",
-        low: "Rendah",
-      },
-      care: {
-        beginner: "Pemula",
-        intermediate: "Pertengahan",
-        advanced: "Lanjutan",
-      },
-      danger: {
-        high: "Tinggi",
-        medium: "Sederhana",
-        low: "Rendah",
-        none: "Tiada",
-      },
-      nativeStatus: {
-        native: "Natif",
-        nonNative: "Bukan natif",
-        invasive: "Invasif",
-      },
     },
 
     pagination: {

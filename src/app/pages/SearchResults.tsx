@@ -21,6 +21,11 @@ import {
   getDangerBadgeClasses,
   getCareBadgeClasses,
   getNativeBadgeClasses,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+  nativeStatusLabels,
+  dangerLabels,
 } from "../utils/petDisplay.ts";
 import { usePetSearch } from "../hooks/usePetSearch";
 import { useSortedPets } from "../hooks/useSortedPets";
@@ -43,7 +48,7 @@ export function SearchResults() {
    * =====================
    */
 
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   /**
    * =====================
@@ -96,83 +101,6 @@ export function SearchResults() {
     goNext,
     goPrevious,
   } = usePagination(sortedResults, 9, [query, sortBy]);
-
-  /**
-   * =====================
-   * Localized Label Helpers
-   * =====================
-   */
-
-  const normalizeLabel = (value: string | null | undefined) =>
-    String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[_-]+/g, " ");
-
-  const getLocalizedRiskLabel = (value: string | null | undefined) => {
-    switch (normalizeLabel(value)) {
-      case "high":
-        return t("searchResults.labels.risk.high");
-      case "medium":
-        return t("searchResults.labels.risk.medium");
-      case "low":
-        return t("searchResults.labels.risk.low");
-      default:
-        return displayText(value, t("searchResults.labels.unknown"));
-    }
-  };
-
-  const getLocalizedCareLabel = (value: string | null | undefined) => {
-    switch (normalizeLabel(value)) {
-      case "beginner":
-      case "easy":
-      case "low":
-        return t("searchResults.labels.care.beginner");
-      case "intermediate":
-      case "medium":
-        return t("searchResults.labels.care.intermediate");
-      case "advanced":
-      case "hard":
-      case "high":
-        return t("searchResults.labels.care.advanced");
-      default:
-        return displayText(value, t("searchResults.labels.unknown"));
-    }
-  };
-
-  const getLocalizedDangerLabel = (value: string | null | undefined) => {
-    switch (normalizeLabel(value)) {
-      case "high":
-        return t("searchResults.labels.danger.high");
-      case "medium":
-        return t("searchResults.labels.danger.medium");
-      case "low":
-        return t("searchResults.labels.danger.low");
-      case "none":
-      case "no":
-      case "no danger":
-        return t("searchResults.labels.danger.none");
-      default:
-        return displayText(value, t("searchResults.labels.unknown"));
-    }
-  };
-
-  const getLocalizedNativeLabel = (value: string | null | undefined) => {
-    switch (normalizeLabel(value)) {
-      case "native":
-        return t("searchResults.labels.nativeStatus.native");
-      case "non native":
-      case "non-native":
-      case "not native":
-        return t("searchResults.labels.nativeStatus.nonNative");
-      case "invasive":
-        return t("searchResults.labels.nativeStatus.invasive");
-      case "unknown":
-        return t("searchResults.labels.unknown");
-      default:
-        return displayText(value, t("searchResults.labels.unknown"));
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
@@ -355,10 +283,11 @@ export function SearchResults() {
                               )}
                             >
                               <ShieldAlert className="w-3 h-3" />
-                              {getLocalizedRiskLabel(
+                              {getLocalizedPetLabel(
+                                invasiveRiskLabels,
                                 pet.pet_invasive_risk,
-                              )}{" "}
-                              {t("searchResults.badges.biodiversityRisk")}
+                                language,
+                              )}
                             </span>
                           )}
 
@@ -370,8 +299,11 @@ export function SearchResults() {
                               )}
                             >
                               <HandHeart className="w-3 h-3" />
-                              {getLocalizedCareLabel(pet.pet_care_level)}{" "}
-                              {t("searchResults.badges.care")}
+                              {getLocalizedPetLabel(
+                                careLevelLabels,
+                                pet.pet_care_level,
+                                language,
+                              )}
                             </span>
                           )}
 
@@ -414,8 +346,11 @@ export function SearchResults() {
                           {/* Danger level */}
                           <span className={getDangerBadgeClasses(danger)}>
                             <Skull className="w-3 h-3" />
-                            {getLocalizedDangerLabel(danger)}{" "}
-                            {t("searchResults.badges.danger")}
+                            {getLocalizedPetLabel(
+                              dangerLabels,
+                              danger,
+                              language,
+                            )}
                           </span>
 
                           {/* Native status */}
@@ -426,7 +361,11 @@ export function SearchResults() {
                               )}
                             >
                               <Fish className="w-3 h-3" />
-                              {getLocalizedNativeLabel(pet.pet_is_native)}
+                              {getLocalizedPetLabel(
+                                nativeStatusLabels,
+                                pet.pet_is_native,
+                                language,
+                              )}
                             </span>
                           )}
 
