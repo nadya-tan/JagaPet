@@ -471,6 +471,91 @@ export const zh = {
     },
   },
 
+  searchResults: {
+    back: "返回",
+    title: "搜索结果",
+    searchingFor: "正在搜索：",
+    loading: "正在搜索宠物...",
+    searchError: "搜索错误",
+    matchingPets: "匹配的宠物",
+
+    summary: {
+      foundPrefix: "我们找到",
+      resultSingular: "个匹配结果",
+      resultPlural: "个匹配结果",
+      foundSuffix: "与你的搜索相关。",
+    },
+
+    sortBy: "排序方式：",
+    sortOptions: {
+      aquarium: "最常见",
+      alphabetAsc: "字母顺序：A 到 Z",
+      alphabetDesc: "字母顺序：Z 到 A",
+      invasiveRiskDesc: "入侵风险：从高到低",
+      invasiveRiskAsc: "入侵风险：从低到高",
+      careLevelDesc: "护理等级：从进阶到新手",
+      careLevelAsc: "护理等级：从新手到进阶",
+      nativeStatusDesc: "原生状态：从入侵到原生",
+      nativeStatusAsc: "原生状态：从原生到入侵",
+      costDesc: "费用：从高到低",
+      costAsc: "费用：从低到高",
+    },
+
+    petImagePlaceholder: "宠物图片占位图",
+    aka: "又称：",
+    noDescription: "目前还没有此宠物的描述。",
+    viewProfileCareGuide: "查看资料与护理指南 →",
+
+    badges: {
+      biodiversityRisk: "生物多样性风险",
+      care: "护理",
+      danger: "危险",
+      common: "常见",
+      bannedInMalaysia: "在马来西亚被禁止",
+    },
+
+    labels: {
+      unknown: "未知",
+      risk: {
+        high: "高",
+        medium: "中",
+        low: "低",
+      },
+      care: {
+        beginner: "新手",
+        intermediate: "中级",
+        advanced: "进阶",
+      },
+      danger: {
+        high: "高",
+        medium: "中",
+        low: "低",
+        none: "无",
+      },
+      nativeStatus: {
+        native: "原生",
+        nonNative: "非原生",
+        invasive: "入侵",
+      },
+    },
+
+    pagination: {
+      previous: "上一页",
+      next: "下一页",
+      pagePrefix: "第",
+      pageMiddle: "页，共",
+      pageSuffix: "页",
+    },
+
+    empty: {
+      title: "未找到宠物",
+      descriptionStart: "我们找不到与",
+      descriptionEnd: "匹配的宠物。请尝试科学名称、俗名、属名或科名。",
+      browseHome: "浏览首页",
+      goBack: "返回",
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",

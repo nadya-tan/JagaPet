@@ -500,6 +500,93 @@ export const ms = {
     },
   },
 
+  searchResults: {
+    back: "Kembali",
+    title: "Keputusan Carian",
+    searchingFor: "Mencari:",
+    loading: "Sedang mencari haiwan peliharaan...",
+    searchError: "Ralat carian",
+    matchingPets: "Haiwan peliharaan sepadan",
+
+    summary: {
+      foundPrefix: "Kami menjumpai",
+      resultSingular: "hasil sepadan",
+      resultPlural: "hasil sepadan",
+      foundSuffix: "untuk carian anda.",
+    },
+
+    sortBy: "Susun ikut:",
+    sortOptions: {
+      aquarium: "Paling Biasa",
+      alphabetAsc: "Abjad: A ke Z",
+      alphabetDesc: "Abjad: Z ke A",
+      invasiveRiskDesc: "Risiko invasif: Tinggi ke Rendah",
+      invasiveRiskAsc: "Risiko invasif: Rendah ke Tinggi",
+      careLevelDesc: "Tahap penjagaan: Lanjutan ke Pemula",
+      careLevelAsc: "Tahap penjagaan: Pemula ke Lanjutan",
+      nativeStatusDesc: "Status natif: Invasif ke Natif",
+      nativeStatusAsc: "Status natif: Natif ke Invasif",
+      costDesc: "Kos: Tinggi ke Rendah",
+      costAsc: "Kos: Rendah ke Tinggi",
+    },
+
+    petImagePlaceholder: "Imej gantian haiwan peliharaan",
+    aka: "Juga dikenali sebagai:",
+    noDescription:
+      "Tiada penerangan tersedia untuk haiwan peliharaan ini buat masa ini.",
+    viewProfileCareGuide: "Lihat Profil & Panduan Penjagaan →",
+
+    badges: {
+      biodiversityRisk: "Risiko Biodiversiti",
+      care: "Penjagaan",
+      danger: "Bahaya",
+      common: "Biasa",
+      bannedInMalaysia: "Dilarang di Malaysia",
+    },
+
+    labels: {
+      unknown: "Tidak diketahui",
+      risk: {
+        high: "Tinggi",
+        medium: "Sederhana",
+        low: "Rendah",
+      },
+      care: {
+        beginner: "Pemula",
+        intermediate: "Pertengahan",
+        advanced: "Lanjutan",
+      },
+      danger: {
+        high: "Tinggi",
+        medium: "Sederhana",
+        low: "Rendah",
+        none: "Tiada",
+      },
+      nativeStatus: {
+        native: "Natif",
+        nonNative: "Bukan natif",
+        invasive: "Invasif",
+      },
+    },
+
+    pagination: {
+      previous: "Sebelumnya",
+      next: "Seterusnya",
+      pagePrefix: "Halaman",
+      pageMiddle: "daripada",
+      pageSuffix: "",
+    },
+
+    empty: {
+      title: "Tiada haiwan peliharaan ditemui",
+      descriptionStart:
+        "Kami tidak dapat mencari mana-mana haiwan peliharaan yang sepadan dengan",
+      descriptionEnd: "Cuba nama saintifik, nama tempatan, genus, atau famili.",
+      browseHome: "Lihat Laman Utama",
+      goBack: "Kembali",
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

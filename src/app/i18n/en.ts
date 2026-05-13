@@ -490,6 +490,92 @@ export const en = {
     },
   },
 
+  searchResults: {
+    back: "Back",
+    title: "Search Results",
+    searchingFor: "Searching for:",
+    loading: "Searching pets...",
+    searchError: "Search error",
+    matchingPets: "Matching pets",
+
+    summary: {
+      foundPrefix: "We found",
+      resultSingular: "matching result",
+      resultPlural: "matching results",
+      foundSuffix: "for your search.",
+    },
+
+    sortBy: "Sort by:",
+    sortOptions: {
+      aquarium: "Most Common",
+      alphabetAsc: "Alphabet: A to Z",
+      alphabetDesc: "Alphabet: Z to A",
+      invasiveRiskDesc: "Invasive risk: High to Low",
+      invasiveRiskAsc: "Invasive risk: Low to High",
+      careLevelDesc: "Care level: Advanced to Beginner",
+      careLevelAsc: "Care level: Beginner to Advanced",
+      nativeStatusDesc: "Native status: Invasive to Native",
+      nativeStatusAsc: "Native status: Native to Invasive",
+      costDesc: "Cost: High to Low",
+      costAsc: "Cost: Low to High",
+    },
+
+    petImagePlaceholder: "Pet Image Placeholder",
+    aka: "A.K.A:",
+    noDescription: "No description is available for this pet yet.",
+    viewProfileCareGuide: "View Profile & Care Guide →",
+
+    badges: {
+      biodiversityRisk: "Biodiversity Risk",
+      care: "Care",
+      danger: "Danger",
+      common: "Common",
+      bannedInMalaysia: "Banned in Malaysia",
+    },
+
+    labels: {
+      unknown: "Unknown",
+      risk: {
+        high: "High",
+        medium: "Medium",
+        low: "Low",
+      },
+      care: {
+        beginner: "Beginner",
+        intermediate: "Intermediate",
+        advanced: "Advanced",
+      },
+      danger: {
+        high: "High",
+        medium: "Medium",
+        low: "Low",
+        none: "No",
+      },
+      nativeStatus: {
+        native: "Native",
+        nonNative: "Non-native",
+        invasive: "Invasive",
+      },
+    },
+
+    pagination: {
+      previous: "Previous",
+      next: "Next",
+      pagePrefix: "Page",
+      pageMiddle: "of",
+      pageSuffix: "",
+    },
+
+    empty: {
+      title: "No pets found",
+      descriptionStart: "We could not find any pets matching",
+      descriptionEnd:
+        "Try a scientific name, vernacular name, genus, or family.",
+      browseHome: "Browse Home",
+      goBack: "Go Back",
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

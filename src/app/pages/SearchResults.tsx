@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router";
 import {
   Search,
@@ -13,7 +13,7 @@ import {
   Ban,
 } from "lucide-react";
 import { motion } from "motion/react";
-import type { Pet, SortOption } from "../types/pet.types";
+import type { SortOption } from "../types/pet.types";
 import {
   getPetCommonNames,
   displayText,
@@ -25,6 +25,7 @@ import {
 import { usePetSearch } from "../hooks/usePetSearch";
 import { useSortedPets } from "../hooks/useSortedPets";
 import { usePagination } from "../hooks/usePagination";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * SearchResults Component
@@ -36,6 +37,14 @@ import { usePagination } from "../hooks/usePagination";
  * 4. Rendering search UI, loading/error states, and result cards
  */
 export function SearchResults() {
+  /**
+   * =====================
+   * Language Setup
+   * =====================
+   */
+
+  const { t } = useLanguage();
+
   /**
    * =====================
    * URL & Navigation Setup
@@ -88,6 +97,83 @@ export function SearchResults() {
     goPrevious,
   } = usePagination(sortedResults, 9, [query, sortBy]);
 
+  /**
+   * =====================
+   * Localized Label Helpers
+   * =====================
+   */
+
+  const normalizeLabel = (value: string | null | undefined) =>
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, " ");
+
+  const getLocalizedRiskLabel = (value: string | null | undefined) => {
+    switch (normalizeLabel(value)) {
+      case "high":
+        return t("searchResults.labels.risk.high");
+      case "medium":
+        return t("searchResults.labels.risk.medium");
+      case "low":
+        return t("searchResults.labels.risk.low");
+      default:
+        return displayText(value, t("searchResults.labels.unknown"));
+    }
+  };
+
+  const getLocalizedCareLabel = (value: string | null | undefined) => {
+    switch (normalizeLabel(value)) {
+      case "beginner":
+      case "easy":
+      case "low":
+        return t("searchResults.labels.care.beginner");
+      case "intermediate":
+      case "medium":
+        return t("searchResults.labels.care.intermediate");
+      case "advanced":
+      case "hard":
+      case "high":
+        return t("searchResults.labels.care.advanced");
+      default:
+        return displayText(value, t("searchResults.labels.unknown"));
+    }
+  };
+
+  const getLocalizedDangerLabel = (value: string | null | undefined) => {
+    switch (normalizeLabel(value)) {
+      case "high":
+        return t("searchResults.labels.danger.high");
+      case "medium":
+        return t("searchResults.labels.danger.medium");
+      case "low":
+        return t("searchResults.labels.danger.low");
+      case "none":
+      case "no":
+      case "no danger":
+        return t("searchResults.labels.danger.none");
+      default:
+        return displayText(value, t("searchResults.labels.unknown"));
+    }
+  };
+
+  const getLocalizedNativeLabel = (value: string | null | undefined) => {
+    switch (normalizeLabel(value)) {
+      case "native":
+        return t("searchResults.labels.nativeStatus.native");
+      case "non native":
+      case "non-native":
+      case "not native":
+        return t("searchResults.labels.nativeStatus.nonNative");
+      case "invasive":
+        return t("searchResults.labels.nativeStatus.invasive");
+      case "unknown":
+        return t("searchResults.labels.unknown");
+      default:
+        return displayText(value, t("searchResults.labels.unknown"));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50 px-4 py-10">
       <div className="mx-auto max-w-6xl">
@@ -106,7 +192,7 @@ export function SearchResults() {
           className="group mb-6 flex items-center gap-2 text-stone-600 transition hover:text-emerald-600"
         >
           <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
-          Back
+          {t("searchResults.back")}
         </button>
 
         {/* =====================
@@ -116,45 +202,51 @@ export function SearchResults() {
           <div className="mb-3 flex items-center gap-3">
             <Search className="h-7 w-7" />
             <h1 className="text-3xl font-black tracking-tight">
-              Search Results
+              {t("searchResults.title")}
             </h1>
           </div>
 
           {/* Display current query */}
           <p className="text-emerald-50">
-            Searching for: <span className="font-semibold">"{query}"</span>
+            {t("searchResults.searchingFor")}{" "}
+            <span className="font-semibold">"{query}"</span>
           </p>
         </div>
 
         {/* =====================
-            Loading State
+            Loading / Error / Results / Empty States
             ===================== */}
         {loading ? (
           <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
-            <p className="text-stone-600">Searching pets...</p>
+            <p className="text-stone-600">{t("searchResults.loading")}</p>
           </div>
         ) : error ? (
           <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm">
             <div className="mb-3 flex items-center gap-2 text-red-700">
               <AlertCircle className="h-5 w-5" />
-              <h2 className="text-xl font-bold">Search error</h2>
+              <h2 className="text-xl font-bold">
+                {t("searchResults.searchError")}
+              </h2>
             </div>
             <p className="text-red-800">{error}</p>
           </div>
         ) : results.length > 0 ? (
-          /* =====================
-            Results Available State
-            ===================== */
           <>
             {/* Results summary */}
             <div className="mb-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
               <div className="mb-2 flex items-center gap-2 text-emerald-700">
                 <Sparkles className="h-5 w-5" />
-                <h2 className="text-xl font-bold">Matching pets</h2>
+                <h2 className="text-xl font-bold">
+                  {t("searchResults.matchingPets")}
+                </h2>
               </div>
+
               <p className="text-stone-700">
-                We found {results.length} matching result
-                {results.length === 1 ? "" : "s"} for your search.
+                {t("searchResults.summary.foundPrefix")} {results.length}{" "}
+                {results.length === 1
+                  ? t("searchResults.summary.resultSingular")
+                  : t("searchResults.summary.resultPlural")}{" "}
+                {t("searchResults.summary.foundSuffix")}
               </p>
             </div>
 
@@ -166,7 +258,7 @@ export function SearchResults() {
                 htmlFor="sort"
                 className="text-xl font-semibold text-emerald-700"
               >
-                Sort by:
+                {t("searchResults.sortBy")}
               </label>
 
               {/* Dropdown controlling sort mode */}
@@ -176,29 +268,39 @@ export function SearchResults() {
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 className="rounded-full border border-stone-300 bg-white px-4 py-2 text-base font-medium text-stone-700 shadow-sm outline-none transition focus:border-emerald-500"
               >
-                <option value="aquarium">Most Common</option>
-                <option value="alphabet_asc">Alphabet: A to Z</option>
-                <option value="alphabet_desc">Alphabet: Z to A</option>
+                <option value="aquarium">
+                  {t("searchResults.sortOptions.aquarium")}
+                </option>
+                <option value="alphabet_asc">
+                  {t("searchResults.sortOptions.alphabetAsc")}
+                </option>
+                <option value="alphabet_desc">
+                  {t("searchResults.sortOptions.alphabetDesc")}
+                </option>
                 <option value="invasive_risk_desc">
-                  Invasive risk: High to Low
+                  {t("searchResults.sortOptions.invasiveRiskDesc")}
                 </option>
                 <option value="invasive_risk_asc">
-                  Invasive risk: Low to High
+                  {t("searchResults.sortOptions.invasiveRiskAsc")}
                 </option>
                 <option value="care_level_desc">
-                  Care level: Advanced to Beginner
+                  {t("searchResults.sortOptions.careLevelDesc")}
                 </option>
                 <option value="care_level_asc">
-                  Care level: Beginner to Advanced
+                  {t("searchResults.sortOptions.careLevelAsc")}
                 </option>
                 <option value="native_status_desc">
-                  Native status: Invasive to Native
+                  {t("searchResults.sortOptions.nativeStatusDesc")}
                 </option>
                 <option value="native_status_asc">
-                  Native status: Native to Invasive
+                  {t("searchResults.sortOptions.nativeStatusAsc")}
                 </option>
-                <option value="cost_desc">Cost: High to Low</option>
-                <option value="cost_asc">Cost: Low to High</option>
+                <option value="cost_desc">
+                  {t("searchResults.sortOptions.costDesc")}
+                </option>
+                <option value="cost_asc">
+                  {t("searchResults.sortOptions.costAsc")}
+                </option>
               </select>
             </div>
 
@@ -237,9 +339,10 @@ export function SearchResults() {
                               : "/pet_image/pet_placeholder.png"
                           }
                           alt={
-                            pet.pet_vernacular_name ?? "Pet Image Placeholder"
+                            pet.pet_vernacular_name ??
+                            t("searchResults.petImagePlaceholder")
                           }
-                          className="w-full h-full object-fit group-hover:scale1-105 transition duration-500"
+                          className="w-full h-full object-fit group-hover:scale-105 transition duration-500"
                         />
 
                         {/* Badges overlay */}
@@ -252,7 +355,10 @@ export function SearchResults() {
                               )}
                             >
                               <ShieldAlert className="w-3 h-3" />
-                              {pet.pet_invasive_risk} Biodiversity Risk
+                              {getLocalizedRiskLabel(
+                                pet.pet_invasive_risk,
+                              )}{" "}
+                              {t("searchResults.badges.biodiversityRisk")}
                             </span>
                           )}
 
@@ -264,7 +370,8 @@ export function SearchResults() {
                               )}
                             >
                               <HandHeart className="w-3 h-3" />
-                              {pet.pet_care_level} Care
+                              {getLocalizedCareLabel(pet.pet_care_level)}{" "}
+                              {t("searchResults.badges.care")}
                             </span>
                           )}
 
@@ -272,7 +379,7 @@ export function SearchResults() {
                           {pet.pet_banned && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
                               <Ban className="w-4 h-4" />
-                              Banned in Malaysia
+                              {t("searchResults.badges.bannedInMalaysia")}
                             </span>
                           )}
                         </div>
@@ -295,7 +402,9 @@ export function SearchResults() {
                         {/* Alternative names */}
                         {otherCommonNames.length > 0 && (
                           <p className="text-sm text-stone-500 mb-3">
-                            <span className="font-semibold">A.K.A:</span>{" "}
+                            <span className="font-semibold">
+                              {t("searchResults.aka")}
+                            </span>{" "}
                             {otherCommonNames.join(", ")}
                           </p>
                         )}
@@ -305,7 +414,8 @@ export function SearchResults() {
                           {/* Danger level */}
                           <span className={getDangerBadgeClasses(danger)}>
                             <Skull className="w-3 h-3" />
-                            {danger} Danger
+                            {getLocalizedDangerLabel(danger)}{" "}
+                            {t("searchResults.badges.danger")}
                           </span>
 
                           {/* Native status */}
@@ -316,7 +426,7 @@ export function SearchResults() {
                               )}
                             >
                               <Fish className="w-3 h-3" />
-                              {pet.pet_is_native}
+                              {getLocalizedNativeLabel(pet.pet_is_native)}
                             </span>
                           )}
 
@@ -324,7 +434,7 @@ export function SearchResults() {
                           {pet.pet_aquarium && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
                               <ScanEye className="w-3 h-3" />
-                              Common
+                              {t("searchResults.badges.common")}
                             </span>
                           )}
                         </div>
@@ -333,14 +443,14 @@ export function SearchResults() {
                         <p className="text-stone-600 text-sm mb-6 line-clamp-3">
                           {displayText(
                             pet.pet_comments,
-                            "No description is available for this pet yet.",
+                            t("searchResults.noDescription"),
                           )}
                         </p>
 
                         {/* CTA */}
                         <div className="mt-auto flex items-center justify-between">
                           <div className="text-emerald-700 font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                            View Profile & Care Guide →
+                            {t("searchResults.viewProfileCareGuide")}
                           </div>
                         </div>
                       </div>
@@ -361,7 +471,7 @@ export function SearchResults() {
                   disabled={currentPage === 1}
                   className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition disabled:cursor-not-allowed disabled:opacity-50 hover:border-emerald-500 hover:text-emerald-700"
                 >
-                  Previous
+                  {t("searchResults.pagination.previous")}
                 </button>
 
                 {/* Page number buttons */}
@@ -387,14 +497,16 @@ export function SearchResults() {
                   disabled={currentPage === totalPages}
                   className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition disabled:cursor-not-allowed disabled:opacity-50 hover:border-emerald-500 hover:text-emerald-700"
                 >
-                  Next
+                  {t("searchResults.pagination.next")}
                 </button>
               </div>
             )}
 
             {/* Page indicator */}
             <p className="mt-4 text-center text-base text-stone-600">
-              Page {currentPage} of {totalPages}
+              {t("searchResults.pagination.pagePrefix")} {currentPage}{" "}
+              {t("searchResults.pagination.pageMiddle")} {totalPages}
+              {t("searchResults.pagination.pageSuffix")}
             </p>
           </>
         ) : (
@@ -408,12 +520,14 @@ export function SearchResults() {
             </div>
 
             {/* Title */}
-            <h2 className="text-2xl font-bold text-stone-900">No pets found</h2>
+            <h2 className="text-2xl font-bold text-stone-900">
+              {t("searchResults.empty.title")}
+            </h2>
 
             {/* Description */}
             <p className="mx-auto mt-3 max-w-2xl text-stone-600">
-              We could not find any pets matching "{query}". Try a scientific
-              name, vernacular name, genus, or family.
+              {t("searchResults.empty.descriptionStart")} "{query}".{" "}
+              {t("searchResults.empty.descriptionEnd")}
             </p>
 
             {/* Action buttons */}
@@ -422,13 +536,13 @@ export function SearchResults() {
                 to="/"
                 className="rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
               >
-                Browse Home
+                {t("searchResults.empty.browseHome")}
               </Link>
               <button
                 onClick={() => navigate(-1)}
                 className="rounded-full border-2 border-stone-300 px-6 py-3 font-semibold text-stone-700 transition hover:border-emerald-600 hover:text-emerald-700"
               >
-                Go Back
+                {t("searchResults.empty.goBack")}
               </button>
             </div>
           </div>
