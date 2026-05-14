@@ -91,12 +91,11 @@ const findLocalSpecies = (
       const localCommon = normalizeName(species.name);
 
       return (
-        scientificName === localScientific ||
-        commonName === localCommon ||
-        Boolean(commonName && localCommon.includes(commonName)) ||
-        Boolean(commonName && commonName.includes(localCommon)) ||
-        Boolean(scientificName && localScientific.includes(scientificName)) ||
-        Boolean(scientificName && scientificName.includes(localScientific))
+        scientificName === localScientific || commonName === localCommon
+        // Boolean(commonName && localCommon.includes(commonName)) ||
+        // Boolean(commonName && commonName.includes(localCommon)) ||
+        // Boolean(scientificName && localScientific.includes(scientificName)) ||
+        // Boolean(scientificName && scientificName.includes(localScientific))
       );
     }) ?? null
   );
