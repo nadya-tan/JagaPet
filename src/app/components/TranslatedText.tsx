@@ -1,43 +1,24 @@
-// import { useEffect, useState } from "react";
-// import { useLanguage } from "../context/LanguageContext";
-// import { translateText } from "../utils/translateText";
+// src/components/TranslatedText.tsx
 
-// type TranslatedTextProps = {
-//   text: string | null | undefined;
-//   className?: string;
-// };
+import type { Language } from "../context/LanguageContext";
+import { useTranslatedText } from "../hooks/useTranslatedText";
 
-// export function TranslatedText({ text, className }: TranslatedTextProps) {
-//   const { language } = useLanguage();
-//   const [displayText, setDisplayText] = useState(text ?? "");
+type TranslatedTextProps = {
+  text: string | null | undefined;
+  language: Language;
+  className?: string;
+};
 
-//   useEffect(() => {
-//     const originalText = text ?? "";
+export function TranslatedText({
+  text,
+  language,
+  className,
+}: TranslatedTextProps) {
+  const translatedText = useTranslatedText(text, language);
 
-//     setDisplayText(originalText);
+  if (!text) {
+    return null;
+  }
 
-//     if (!originalText.trim() || language === "en") {
-//       return;
-//     }
-
-//     let isActive = true;
-
-//     translateText(originalText, language)
-//       .then((translatedText) => {
-//         if (isActive) {
-//           setDisplayText(translatedText);
-//         }
-//       })
-//       .catch(() => {
-//         if (isActive) {
-//           setDisplayText(originalText);
-//         }
-//       });
-
-//     return () => {
-//       isActive = false;
-//     };
-//   }, [text, language]);
-
-//   return <span className={className}>{displayText}</span>;
-// }
+  return <span className={className}>{translatedText}</span>;
+}

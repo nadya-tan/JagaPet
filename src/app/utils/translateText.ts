@@ -1,66 +1,70 @@
-// import type { Language } from "../context/LanguageContext";
+import type { Language } from "../context/LanguageContext";
 
-// type LingvaResponse = {
-//   translation?: string;
-//   error?: string;
-// };
+type LingvaResponse = {
+  translation?: string;
+  error?: string;
+};
 
-// const memoryCache = new Map<string, string>();
+const memoryCache = new Map<string, string>();
 
-// const LINGVA_API_BASE =
-//   (import.meta.env.VITE_LINGVA_API_BASE as string | undefined) ??
-//   "https://lingva.ml";
+const LINGVA_API_BASE = "https://lingva.ml";
 
-// function getCacheKey(text: string, targetLanguage: Language) {
-//   return `translation:${targetLanguage}:${text}`;
-// }
+function getCacheKey(text: string, targetLanguage: Language) {
+  return `translation:${targetLanguage}:${text}`;
+}
 
-// export async function translateText(
-//   text: string | null | undefined,
-//   targetLanguage: Language,
-// ) {
-//   const originalText = text?.trim();
+export async function translateText(
+  text: string | null | undefined,
+  targetLanguage: Language,
+) {
+  const originalText = text?.trim();
 
-//   if (!originalText) {
-//     return "";
-//   }
+  if (!originalText) {
+    return "";
+  }
 
-//   if (targetLanguage === "en") {
-//     return originalText;
-//   }
+  if (targetLanguage === "en") {
+    return originalText;
+  }
 
-//   const cacheKey = getCacheKey(originalText, targetLanguage);
+  const cacheKey = getCacheKey(originalText, targetLanguage);
 
-//   const memoryCached = memoryCache.get(cacheKey);
-//   if (memoryCached) {
-//     return memoryCached;
-//   }
+  const memoryCached = memoryCache.get(cacheKey);
+  if (memoryCached) {
+    return memoryCached;
+  }
 
-//   const localCached = localStorage.getItem(cacheKey);
-//   if (localCached) {
-//     memoryCache.set(cacheKey, localCached);
-//     return localCached;
-//   }
+  try {
+    const localCached = localStorage.getItem(cacheKey);
+    if (localCached) {
+      memoryCache.set(cacheKey, localCached);
+      return localCached;
+    }
+  } catch {
+    // Ignore localStorage access errors.
+  }
 
-//   const cleanBaseUrl = LINGVA_API_BASE.replace(/\/$/, "");
-//   const url = `${cleanBaseUrl}/api/v1/en/${targetLanguage}/${encodeURIComponent(
-//     originalText,
-//   )}`;
+  const cleanBaseUrl = LINGVA_API_BASE.replace(/\/$/, "");
 
-//   const response = await fetch(url);
-//   const data = (await response.json()) as LingvaResponse;
+  const url = `${cleanBaseUrl}/api/v1/en/${targetLanguage}/${encodeURIComponent(
+    originalText,
+  )}`;
 
-//   if (!response.ok || data.error || !data.translation) {
-//     throw new Error(data.error || "Translation failed.");
-//   }
+  const response = await fetch(url);
 
-//   memoryCache.set(cacheKey, data.translation);
+  const data = (await response.json()) as LingvaResponse;
 
-//   try {
-//     localStorage.setItem(cacheKey, data.translation);
-//   } catch {
-//     // Ignore localStorage quota errors.
-//   }
+  if (!response.ok || data.error || !data.translation) {
+    throw new Error(data.error || "Translation failed.");
+  }
 
-//   return data.translation;
-// }
+  memoryCache.set(cacheKey, data.translation);
+
+  try {
+    localStorage.setItem(cacheKey, data.translation);
+  } catch {
+    // Ignore localStorage quota errors.
+  }
+
+  return data.translation;
+}

@@ -35,6 +35,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * Utility function:
@@ -553,7 +554,10 @@ export function Home() {
 
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-stone-900 mb-1">
-                        {primaryCommonName}
+                        <TranslatedText
+                          text={primaryCommonName}
+                          language={language}
+                        />
                       </h3>
 
                       <p className="text-sm text-stone-500 italic mb-4 font-serif">
@@ -605,7 +609,10 @@ export function Home() {
 
                       {pet.pet_comments && (
                         <p className="text-stone-600 text-sm line-clamp-3 mb-6 flex-1">
-                          {pet.pet_comments}
+                          <TranslatedText
+                            text={pet.pet_comments}
+                            language={language}
+                          />
                         </p>
                       )}
 
