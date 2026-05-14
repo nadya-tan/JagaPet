@@ -11,6 +11,7 @@ import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
 import { getLocalizedPetLabel, invasiveRiskLabels } from "../utils/petDisplay";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * AI model identification result structure
@@ -394,7 +395,7 @@ export function IdentifyPet() {
                 </p>
                 {error && (
                   <p className="mt-4 text-sm text-rose-600 font-medium">
-                    {error}
+                    <TranslatedText text={error} language={language} />
                   </p>
                 )}
               </motion.div>
@@ -466,7 +467,12 @@ export function IdentifyPet() {
                             <h4 className="font-bold mb-1">
                               {t("identify.identificationUnavailable")}
                             </h4>
-                            <p className="text-sm opacity-90">{error}</p>
+                            <p className="text-sm opacity-90">
+                              <TranslatedText
+                                text={error}
+                                language={language}
+                              />
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -483,7 +489,14 @@ export function IdentifyPet() {
                             </span>
                           </div>
                           <h2 className="text-3xl font-extrabold text-stone-900">
-                            {result.common_name || t("identify.unknown")}
+                            {result.common_name ? (
+                              <TranslatedText
+                                text={result.common_name}
+                                language={language}
+                              />
+                            ) : (
+                              t("identify.unknown")
+                            )}
                           </h2>
                           <p className="text-stone-500 italic font-serif">
                             {result.scientific_name || t("identify.unknown")}
@@ -495,7 +508,14 @@ export function IdentifyPet() {
                             {t("identify.notes")}
                           </h3>
                           <p className="text-stone-700 text-sm leading-relaxed">
-                            {result.notes || t("identify.noNotes")}
+                            {result.notes ? (
+                              <TranslatedText
+                                text={result.notes}
+                                language={language}
+                              />
+                            ) : (
+                              t("identify.noNotes")
+                            )}
                           </p>
                         </div>
 

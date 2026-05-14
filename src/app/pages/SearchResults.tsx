@@ -31,6 +31,7 @@ import { usePetSearch } from "../hooks/usePetSearch";
 import { useSortedPets } from "../hooks/useSortedPets";
 import { usePagination } from "../hooks/usePagination";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText.tsx";
 
 /**
  * SearchResults Component
@@ -323,7 +324,10 @@ export function SearchResults() {
                       <div className="p-6 flex-1 flex flex-col">
                         {/* Primary name */}
                         <h3 className="text-xl font-bold text-stone-900 mb-1 group-hover:text-emerald-700 transition">
-                          {primaryCommonName}
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
                         </h3>
 
                         {/* Scientific name */}
@@ -337,7 +341,10 @@ export function SearchResults() {
                             <span className="font-semibold">
                               {t("searchResults.aka")}
                             </span>{" "}
-                            {otherCommonNames.join(", ")}
+                            <TranslatedText
+                              text={otherCommonNames.join(", ")}
+                              language={language}
+                            />
                           </p>
                         )}
 
@@ -380,10 +387,13 @@ export function SearchResults() {
 
                         {/* Description text */}
                         <p className="text-stone-600 text-sm mb-6 line-clamp-3">
-                          {displayText(
-                            pet.pet_comments,
-                            t("searchResults.noDescription"),
-                          )}
+                          <TranslatedText
+                            text={displayText(
+                              pet.pet_comments,
+                              t("searchResults.noDescription"),
+                            )}
+                            language={language}
+                          />
                         </p>
 
                         {/* CTA */}

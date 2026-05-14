@@ -13,6 +13,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useHealthScreening } from "../context/HealthScreeningContext";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Type Definitions ===================== */
 
@@ -184,7 +185,7 @@ async function fetchJson<T>(
 
 export function HealthScreening() {
   // Language context for localization
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Drag state for upload UI
   const [dragActive, setDragActive] = useState(false);
@@ -490,7 +491,7 @@ export function HealthScreening() {
                 {/* Upload error */}
                 {error && (
                   <p className="mt-4 text-sm text-rose-600 font-medium">
-                    {error}
+                    <TranslatedText text={error} language={language} />
                   </p>
                 )}
               </motion.div>
@@ -584,7 +585,12 @@ export function HealthScreening() {
                             <h4 className="font-bold mb-1">
                               {t("healthScreening.healthScreeningUnavailable")}
                             </h4>
-                            <p className="text-sm opacity-90">{error}</p>
+                            <p className="text-sm opacity-90">
+                              <TranslatedText
+                                text={error}
+                                language={language}
+                              />
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -603,7 +609,10 @@ export function HealthScreening() {
                           </div>
 
                           <h2 className="text-3xl font-extrabold text-stone-900">
-                            {displayResult}
+                            <TranslatedText
+                              text={displayResult}
+                              language={language}
+                            />
                           </h2>
                         </div>
 

@@ -47,6 +47,7 @@ import {
 import { useCompare } from "../context/CompareContext";
 import { useUser } from "../context/UserContext";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * =========================
@@ -513,7 +514,10 @@ export function SpeciesProfile() {
                   transition={{ duration: 0.5, delay: 0.3 }}
                   className="text-4xl md:text-6xl font-extrabold text-white mb-2 drop-shadow-xl"
                 >
-                  {primaryCommonName}
+                  <TranslatedText
+                    text={primaryCommonName}
+                    language={language}
+                  />
                 </motion.h1>
 
                 {/* Scientific name */}
@@ -541,7 +545,10 @@ export function SpeciesProfile() {
                     <span className="font-semibold">
                       {t("speciesProfile.aka")}
                     </span>{" "}
-                    {otherCommonNames.join(", ")}
+                    <TranslatedText
+                      text={otherCommonNames.join(", ")}
+                      language={language}
+                    />
                   </motion.p>
                 )}
               </div>
@@ -670,12 +677,15 @@ export function SpeciesProfile() {
                       </div>
 
                       <h3 className="font-bold text-stone-900">
-                        {displayText(
-                          item.pet_vernacular_name,
-                          item.pet_scientific_name
-                            ? item.pet_scientific_name
-                            : t("speciesProfile.unknownSpecies"),
-                        )}
+                        <TranslatedText
+                          text={displayText(
+                            item.pet_vernacular_name,
+                            item.pet_scientific_name
+                              ? item.pet_scientific_name
+                              : t("speciesProfile.unknownSpecies"),
+                          )}
+                          language={language}
+                        />
                       </h3>
 
                       <p className="mt-1 text-sm italic text-stone-600">
@@ -736,7 +746,10 @@ export function SpeciesProfile() {
                     {t("speciesProfile.vernacularName")}
                   </p>
                   <p className="mt-1 text-stone-800">
-                    {displayText(pet.pet_vernacular_name)}
+                    <TranslatedText
+                      text={pet.pet_vernacular_name}
+                      language={language}
+                    />
                   </p>
                 </div>
 
@@ -773,7 +786,10 @@ export function SpeciesProfile() {
                       {t("speciesProfile.bodyShape")}
                     </p>
                     <p className="mt-1 text-stone-800">
-                      {formatPetBodyShape(pet.pet_body_shape)}
+                      <TranslatedText
+                        text={formatPetBodyShape(pet.pet_body_shape)}
+                        language={language}
+                      />
                     </p>
                   </div>
                 )}
@@ -784,7 +800,10 @@ export function SpeciesProfile() {
                       {t("speciesProfile.migrationType")}
                     </p>
                     <p className="mt-1 text-stone-800">
-                      {displayText(pet.pet_migration_type)}
+                      <TranslatedText
+                        text={displayText(pet.pet_migration_type)}
+                        language={language}
+                      />
                     </p>
                   </div>
                 )}
@@ -805,7 +824,10 @@ export function SpeciesProfile() {
 
                 <div className="flex flex-wrap gap-3">
                   <span className="leading-7 text-stone-700">
-                    {formatPetTraits(pet.pet_traits)}
+                    <TranslatedText
+                      text={formatPetTraits(pet.pet_traits)}
+                      language={language}
+                    />
                   </span>
                 </div>
               </div>
@@ -833,7 +855,10 @@ export function SpeciesProfile() {
                         </p>
                         <div className="mt-2 flex flex-wrap gap-2">
                           <span className="inline-flex items-center rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-800">
-                            {displayText(pet.pet_diet.main_type)}
+                            <TranslatedText
+                              text={displayText(pet.pet_diet.main_type)}
+                              language={language}
+                            />
                           </span>
                         </div>
                       </div>
@@ -846,7 +871,10 @@ export function SpeciesProfile() {
                           {t("speciesProfile.feedingNotes")}
                         </p>
                         <p className="mt-1 leading-7 text-stone-700">
-                          {displayText(pet.pet_diet.remarks)}
+                          <TranslatedText
+                            text={displayText(pet.pet_diet.remarks)}
+                            language={language}
+                          />
                         </p>
                       </div>
                     )}
@@ -866,10 +894,13 @@ export function SpeciesProfile() {
               </div>
 
               <p className="leading-7 text-stone-700">
-                {displayText(
-                  pet.pet_comments,
-                  t("speciesProfile.noAdditionalComments"),
-                )}
+                <TranslatedText
+                  text={displayText(
+                    pet.pet_comments,
+                    t("speciesProfile.noAdditionalComments"),
+                  )}
+                  language={language}
+                />
               </p>
             </div>
           </div>
@@ -894,7 +925,10 @@ export function SpeciesProfile() {
                     {t("speciesProfile.danger")}
                   </p>
                   <p className="mt-1 text-rose-50">
-                    {displayText(pet.pet_danger)}
+                    <TranslatedText
+                      text={displayText(pet.pet_danger)}
+                      language={language}
+                    />
                   </p>
                 </div>
 

@@ -36,6 +36,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 // Import translation hook for internationalization
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 // ===================== Scoring Conversion Tables =====================
 // Convert user answers into numerical scales for comparison logic
@@ -585,7 +586,14 @@ export function QuizResults() {
                     {/* Content section */}
                     <div className="p-6 flex flex-col flex-1">
                       <h3 className="text-2xl font-bold mb-1">
-                        {primaryCommonName ?? pet.pet_scientific_name}
+                        {primaryCommonName ? (
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
+                        ) : (
+                          pet.pet_scientific_name
+                        )}
                       </h3>
 
                       <p className="text-stone-500 text-sm mb-4">
@@ -687,7 +695,14 @@ export function QuizResults() {
                         className="w-full h-40 object-fit rounded-2xl shadow-sm"
                       />
                       <h4 className="font-bold text-xl text-stone-900 mt-3">
-                        {primaryCommonName ?? pet.pet_scientific_name}
+                        {primaryCommonName ? (
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
+                        ) : (
+                          pet.pet_scientific_name
+                        )}
                       </h4>
                     </div>
 

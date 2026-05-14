@@ -27,6 +27,7 @@ import {
   nativeStatusLabels,
 } from "../utils/petDisplay";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Main Compare Component ===================== */
 
@@ -143,7 +144,10 @@ export function Compare() {
                       {/* Pet name text */}
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-2xl font-bold leading-tight text-white drop-shadow-md">
-                          {primaryCommonName}
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
                         </h3>
 
                         <p className="mt-1 text-sm italic text-stone-200">

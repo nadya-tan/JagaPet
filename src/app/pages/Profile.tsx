@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * Species option structure
@@ -517,7 +518,12 @@ export function Profile() {
                           <h3 className="text-2xl font-bold text-stone-900">
                             {pet.nickname}
                           </h3>
-                          <p className="text-stone-600">{pet.speciesName}</p>
+                          <p className="text-stone-600">
+                            <TranslatedText
+                              text={pet.speciesName}
+                              language={language}
+                            />
+                          </p>
                           {pet.scientificName && (
                             <p className="text-sm italic text-stone-500">
                               {pet.scientificName}
