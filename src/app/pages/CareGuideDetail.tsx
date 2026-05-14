@@ -27,6 +27,7 @@ import {
   careLevelLabels,
 } from "../utils/petDisplay";
 import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Type Definitions ===================== */
 
@@ -280,14 +281,17 @@ export function CareGuideDetail() {
           {/* Pet title section */}
           <div className="text-right">
             <h1 className="text-3xl md:text-4xl font-extrabold text-stone-900">
-              {primaryDisplayName}
+              <TranslatedText text={primaryDisplayName} language={language} />
             </h1>
 
             <p className="text-stone-600 italic text-sm">{scientificName}</p>
 
             {commonNames.otherCommonNames.length > 0 && (
               <p className="text-emerald-700 font-semibold text-sm">
-                {commonNames.otherCommonNames.join(", ")}
+                <TranslatedText
+                  text={commonNames.otherCommonNames.join(", ")}
+                  language={language}
+                />
               </p>
             )}
           </div>
@@ -320,12 +324,18 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.commonName")}
                     </td>
                     <td className="py-3 px-4 text-stone-900 font-medium">
-                      {primaryDisplayName}
+                      <TranslatedText
+                        text={primaryDisplayName}
+                        language={language}
+                      />
 
                       {commonNames.otherCommonNames.length > 0 && (
                         <span className="block text-sm text-stone-500 mt-1">
                           {t("careGuideDetail.fields.otherNames")}{" "}
-                          {commonNames.otherCommonNames.join(", ")}
+                          <TranslatedText
+                            text={commonNames.otherCommonNames.join(", ")}
+                            language={language}
+                          />
                         </span>
                       )}
                     </td>
@@ -363,7 +373,10 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.lifespan")}
                     </td>
                     <td className="py-3 px-4 text-stone-900 font-medium">
-                      {careGuide.longevity}
+                      <TranslatedText
+                        text={careGuide.longevity}
+                        language={language}
+                      />
                     </td>
                   </tr>
                 )}
@@ -445,7 +458,10 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.waterDepth")}
                     </td>
                     <td className="py-3 px-4 text-stone-900">
-                      {careGuide.waterDepth}
+                      <TranslatedText
+                        text={careGuide.waterDepth}
+                        language={language}
+                      />
                     </td>
                   </tr>
                 )}
@@ -495,8 +511,14 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.feedingFrequency")}
                     </td>
                     <td className="py-3 px-4 text-stone-900">
-                      {careGuide.feedingFreq ||
-                        t("careGuideDetail.fallbacks.notAvailable")}
+                      {careGuide.feedingFreq ? (
+                        <TranslatedText
+                          text={careGuide.feedingFreq}
+                          language={language}
+                        />
+                      ) : (
+                        t("careGuideDetail.fallbacks.notAvailable")
+                      )}
                     </td>
                   </tr>
 
@@ -506,8 +528,14 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.waterChangeSchedule")}
                     </td>
                     <td className="py-3 px-4 text-stone-900">
-                      {careGuide.waterChangeFreq ||
-                        t("careGuideDetail.fallbacks.notAvailable")}
+                      {careGuide.waterChangeFreq ? (
+                        <TranslatedText
+                          text={careGuide.waterChangeFreq}
+                          language={language}
+                        />
+                      ) : (
+                        t("careGuideDetail.fallbacks.notAvailable")
+                      )}
                     </td>
                   </tr>
                 </tbody>
@@ -523,7 +551,10 @@ export function CareGuideDetail() {
 
                 <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                   <p className="text-stone-700 leading-relaxed">
-                    {careGuide.dietDetails}
+                    <TranslatedText
+                      text={careGuide.dietDetails}
+                      language={language}
+                    />
                   </p>
                 </div>
               </div>
@@ -546,8 +577,14 @@ export function CareGuideDetail() {
 
               <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
                 <p className="text-stone-700 leading-relaxed">
-                  {careGuide.tankRequirements ||
-                    t("careGuideDetail.fallbacks.notAvailable")}
+                  {careGuide.tankRequirements ? (
+                    <TranslatedText
+                      text={careGuide.tankRequirements}
+                      language={language}
+                    />
+                  ) : (
+                    t("careGuideDetail.fallbacks.notAvailable")
+                  )}
                 </p>
               </div>
             </div>
@@ -560,8 +597,14 @@ export function CareGuideDetail() {
 
               <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
                 <p className="text-stone-700 leading-relaxed">
-                  {careGuide.tankMates ||
-                    t("careGuideDetail.fallbacks.notAvailable")}
+                  {careGuide.tankMates ? (
+                    <TranslatedText
+                      text={careGuide.tankMates}
+                      language={language}
+                    />
+                  ) : (
+                    t("careGuideDetail.fallbacks.notAvailable")
+                  )}
                 </p>
               </div>
             </div>
@@ -591,7 +634,9 @@ export function CareGuideDetail() {
                     className="flex gap-2 items-start bg-emerald-50 p-3 rounded-lg border border-emerald-200"
                   >
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span className="text-stone-700 text-sm">{sign}</span>
+                    <span className="text-stone-700 text-sm">
+                      <TranslatedText text={sign} language={language} />
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -613,7 +658,9 @@ export function CareGuideDetail() {
                     className="flex gap-2 items-start bg-rose-50 p-3 rounded-lg border border-rose-200"
                   >
                     <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                    <span className="text-stone-700 text-sm">{sign}</span>
+                    <span className="text-stone-700 text-sm">
+                      <TranslatedText text={sign} language={language} />
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -637,7 +684,7 @@ export function CareGuideDetail() {
                   <span className="bg-rose-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0">
                     {index + 1}
                   </span>
-                  {illness.name}
+                  <TranslatedText text={illness.name} language={language} />
                 </h4>
               </div>
             ))}
