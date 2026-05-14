@@ -36,6 +36,7 @@ export async function translateText(
 
   try {
     const localCached = localStorage.getItem(cacheKey);
+
     if (localCached) {
       memoryCache.set(cacheKey, localCached);
       return localCached;
@@ -51,7 +52,6 @@ export async function translateText(
   )}`;
 
   const response = await fetch(url);
-
   const data = (await response.json()) as LingvaResponse;
 
   if (!response.ok || data.error || !data.translation) {

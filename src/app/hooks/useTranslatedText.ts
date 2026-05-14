@@ -1,5 +1,3 @@
-// src/hooks/useTranslatedText.ts
-
 import { useEffect, useState } from "react";
 import type { Language } from "../context/LanguageContext";
 import { translateText } from "../utils/translateText";
