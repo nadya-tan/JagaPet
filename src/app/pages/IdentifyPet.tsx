@@ -76,7 +76,6 @@ const parseModelResult = (resultText: string): IdentificationResult => {
 
 /**
  * Match AI result to local species database
- * - Uses fuzzy matching between scientific and common names
  */
 const findLocalSpecies = (
   analysis: IdentificationResult,
@@ -90,13 +89,7 @@ const findLocalSpecies = (
       const localScientific = normalizeName(species.scientificName);
       const localCommon = normalizeName(species.name);
 
-      return (
-        scientificName === localScientific || commonName === localCommon
-        // Boolean(commonName && localCommon.includes(commonName)) ||
-        // Boolean(commonName && commonName.includes(localCommon)) ||
-        // Boolean(scientificName && localScientific.includes(scientificName)) ||
-        // Boolean(scientificName && scientificName.includes(localScientific))
-      );
+      return scientificName === localScientific || commonName === localCommon;
     }) ?? null
   );
 };
