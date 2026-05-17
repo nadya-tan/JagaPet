@@ -574,19 +574,21 @@ export function HealthScreening() {
                             </span>
                           </div>
                           <div className="space-y-3">
-                            {result.map((item) => (
-                              <div
-                                key={item.disease}
-                                className="p-4 rounded-xl bg-stone-50 border border-stone-200"
-                              >
-                                <h2 className="text-2xl font-extrabold text-stone-900">
-                                  {item.disease}
-                                </h2>
-                                <p className="text-sm text-stone-500">
-                                  Confidence: {(item.confidence * 100).toFixed(1)}%
-                                </p>
-                              </div>
-                            ))}
+                            {Array.isArray(result) &&
+                              result.map((item) => (
+                                <div
+                                  key={item.disease}
+                                  className="p-4 rounded-xl bg-stone-50 border border-stone-200"
+                                >
+                                  <h2 className="text-2xl font-extrabold text-stone-900">
+                                    {item.disease}
+                                  </h2>
+
+                                  <p className="text-sm text-stone-500">
+                                    Confidence: {(item.confidence * 100).toFixed(1)}%
+                                  </p>
+                                </div>
+                              ))} 
                           </div>
                         </div>
 
