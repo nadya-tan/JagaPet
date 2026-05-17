@@ -14,10 +14,16 @@ import { motion, AnimatePresence } from "motion/react";
 import { useHealthScreening } from "../context/HealthScreeningContext";
 
 /* ===================== Type Definitions ===================== */
-
 // Response format from health screening API
+type HealthPrediction = {
+  disease: string;
+  confidence: number;
+};
+
+// Response format for frontend from health screening API
 type HealthScreenResponse = {
-  result?: string;
+  status?: "healthy" | "single_disease" | "possible_multiple";
+  result?: HealthPrediction[];
   error?: string;
 };
 
@@ -218,11 +224,14 @@ export function HealthScreening() {
       throw new Error(data.error || "Failed to screen the pet health image.");
     }
 
-    if (!data.result) {
+    if (!data.result || data.result.length === 0) {
       throw new Error("The server returned an empty screening result.");
     }
 
-    return data.result;
+    return {
+      status: data.status || "unknown",
+      result: data.result,
+    };
   };
 
   // Identify pet species from image and match with database
@@ -376,7 +385,7 @@ export function HealthScreening() {
 
   /* ===================== Derived State ===================== */
 
-  const isHealthy = result === "Healthy";
+  const isHealthy = result?.[0]?.disease === "Healthy";
 
   /* ===================== UI ===================== */
 
@@ -494,7 +503,7 @@ export function HealthScreening() {
             )}
 
             {/* ===================== Result State ===================== */}
-            {selectedImage && !isScreening && (result || error) && (
+            {selectedImage && !isScreening && ((result && result.length > 0) || error) && (
               <motion.div
                 key="result"
                 initial={{ opacity: 0, y: 20 }}
@@ -564,10 +573,21 @@ export function HealthScreening() {
                               Health Screening Result
                             </span>
                           </div>
-
-                          <h2 className="text-3xl font-extrabold text-stone-900">
-                            {result}
-                          </h2>
+                          <div className="space-y-3">
+                            {result.map((item) => (
+                              <div
+                                key={item.disease}
+                                className="p-4 rounded-xl bg-stone-50 border border-stone-200"
+                              >
+                                <h2 className="text-2xl font-extrabold text-stone-900">
+                                  {item.disease}
+                                </h2>
+                                <p className="text-sm text-stone-500">
+                                  Confidence: {(item.confidence * 100).toFixed(1)}%
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
 
                         {/* Interpretation box */}

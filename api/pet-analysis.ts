@@ -41,7 +41,7 @@ const allowedPredictions = new Set([
   "Bacterial gill disease",
   "Winter fungus/Cotton wool disease",
   "Healthy",
-  "Parasitesic diseases",
+  "Parasitic diseases",
   "Fin rot",
 ]);
 
@@ -286,39 +286,54 @@ const handleScreenHealth = async (req: any, res: any) => {
     });
   }
 
-  // Default prediction cleanup
-  let prediction = responseText.trim().replace(/^"|"$/g, "");
+  let parsed: any;
 
-  // Try parsing structured JSON response
   try {
-    const parsed = JSON.parse(responseText);
-
-    if (typeof parsed === "string") {
-      prediction = parsed;
-    } else {
-      prediction =
-        parsed.result ||
-        parsed.prediction ||
-        parsed.class ||
-        parsed.label ||
-        prediction;
-    }
+    parsed = JSON.parse(responseText);
   } catch {
-    // If parsing fails, keep raw prediction string
-  }
-
-  // Validate prediction against allowed list
-  if (!allowedPredictions.has(prediction)) {
-    console.error("Unexpected health model prediction:", prediction);
+    console.error("Invalid JSON from health model:", responseText);
 
     return res.status(502).json({
-      error: "The health screening model returned an unknown result.",
+      error: "The health screening model returned an invalid response.",
     });
   }
 
-  // Return final prediction
+  const status = parsed.status;
+  const results = parsed.result;
+
+  if (!Array.isArray(results) || results.length === 0) {
+    console.error("Invalid health model result format:", parsed);
+
+    return res.status(502).json({
+      error: "The health screening model returned an invalid result format.",
+    });
+  }
+
+  for (const item of results) {
+    if (
+      !item ||
+      typeof item.disease !== "string" ||
+      typeof item.confidence !== "number"
+    ) {
+      console.error("Invalid prediction item:", item);
+
+      return res.status(502).json({
+        error: "The health screening model returned malformed predictions.",
+      });
+    }
+
+    if (!allowedPredictions.has(item.disease)) {
+      console.error("Unexpected health model prediction:", item.disease);
+
+      return res.status(502).json({
+        error: "The health screening model returned an unknown result.",
+      });
+    }
+  }
+
   return res.status(200).json({
-    result: prediction,
+    status,
+    result: results,
   });
 };
 
