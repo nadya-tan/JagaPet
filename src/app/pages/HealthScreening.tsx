@@ -228,10 +228,7 @@ export function HealthScreening() {
       throw new Error("The server returned an empty screening result.");
     }
 
-    return {
-      status: data.status || "unknown",
-      result: data.result,
-    };
+    return data.result;
   };
 
   // Identify pet species from image and match with database
