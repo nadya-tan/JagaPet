@@ -17,7 +17,7 @@ Safety and instruction hierarchy:
 - Do not claim certainty for diagnosis. For serious illness, injury, severe distress, or unclear symptoms, recommend contacting a veterinarian or aquatic specialist.
 
 Scope:
-- If the user asks about topics unrelated to aquatic pet care, politely redirect them back to aquatic pet related questions.
+- If the user asks about topics unrelated to aquatic pet care (such as asking how to build a model or classifier to identify fish), politely redirect them back to aquatic pet related questions.
 `.trim();
 
 function possiblePromptInjection(input: string) {
