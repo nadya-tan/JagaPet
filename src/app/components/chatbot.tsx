@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { MessageCircleQuestion, X, Send } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -116,7 +118,30 @@ export function AiChatbot() {
                   : "bg-white text-stone-700 border border-stone-200"
               }`}
             >
-              {chatMessage.content}
+              {chatMessage.role === "assistant" ? (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components ={{
+                    p: ({ children }) => (
+                        <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+                    ),
+                    strong: ({ children }) => (
+                        <strong className="font-semibold text-stone-900">{children}</strong>
+                    ),
+                    ul: ({ children }) => (
+                        <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                        <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>
+                    ),
+                    li: ({ children }) => <li>{children}</li>,
+                  }}
+                >
+                    {chatMessage.content}
+                </ReactMarkdown>
+            ) : (
+                chatMessage.content
+            )}
             </div>
           </div>
         ))}
@@ -135,6 +160,12 @@ export function AiChatbot() {
           <textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
+            onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    handleSend();
+                }
+            }}
             placeholder="Ask about aquatic pet care..."
             className="flex-1 resize-none rounded-xl border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             rows={2}

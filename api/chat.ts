@@ -36,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         {
           role: 'system',
           content:
-            'You are a helpful assistant for an aquatic pet care web app. Give clear, safe, and beginner-friendly answers. If the user asks for medical certainty, remind them that a vet or aquatic specialist should confirm serious issues.',
+            'You are a helpful assistant for an aquatic pet care web app. Give clear, safe, and beginner-friendly answers. If the user asks for medical certainty, remind them that a vet or aquatic specialist should confirm serious issues. If the user asks questions not relating to aquatic pet care, respond politely that you can only assist with aquatic pet-related questions.',
         },
         {
           role: 'user',
