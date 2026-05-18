@@ -266,7 +266,7 @@ Intent rules:
 - If the user asks about giving away, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
 - If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
 - If the user compares species, intent must be "compare".
-- Use "identify" only when the user's main goal is to identify what species or pet they have.
+- Use "identify" only when the user's main goal is to identify what species or pet they have; otherwise do not use "identify" even if they mention species or visible traits.
 - Do NOT use "identify" just because the message mentions fish, turtle, pet, species, colour, spots, fins, shell, or visible appearance.
 - If a visible description is about a health problem, such as "white stuff growing", "white spots", "red patches", "bloated", or "cloudy eye", classify it as "sickness", not "identify".
 
@@ -280,7 +280,8 @@ Identification description rules:
 
 Output rules:
 - For sickness, rehome, recommendation, compare, and general intents, likelyScientificNames must be [].
-- For sickness, hasIdentificationDescription must be false even if the user describes visible symptoms.
+- Do not attempt or bring up species identification in any context other than the identify intent.
+- For sickness, rehome, recommendation, compare, and general intents, hasIdentificationDescription must be false even if the user describes visible symptoms.
 
 Language rules:
 - If the user writes in Malay or Chinese, translate the useful content into English in englishDescription.
