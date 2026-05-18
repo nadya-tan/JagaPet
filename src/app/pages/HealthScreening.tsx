@@ -414,11 +414,11 @@ export function HealthScreening() {
   };
 
   /* ===================== Derived State ===================== */
-
-  const isHealthy = normalizeText(result) === "healthy";
-  const displayResult = isHealthy
-    ? t("healthScreening.results.healthy")
-    : result;
+  const healthPredictions = Array.isArray(result) ? result : [];
+  
+  const isHealthy = healthPredictions.some(
+    (item) => normalizeText(item.disease) === "healthy",
+  );
 
   /* ===================== UI ===================== */
 
@@ -603,7 +603,7 @@ export function HealthScreening() {
                     )}
 
                     {/* Result display */}
-                    {result && (
+                    {healthPredictions.length > 0 && (
                       <>
                         {/* Result header */}
                         <div>
@@ -614,12 +614,23 @@ export function HealthScreening() {
                             </span>
                           </div>
 
-                          <h2 className="text-3xl font-extrabold text-stone-900">
-                            <TranslatedText
-                              text={displayResult}
-                              language={language}
-                            />
-                          </h2>
+                          <div className="space-y-3">
+                            {healthPredictions.map((item) => (
+                              <div
+                                key={item.disease}
+                                className="p-4 rounded-xl bg-stone-50 border border-stone-200"
+                              >
+                                <h2 className="text-2xl font-extrabold text-stone-900">
+                                  <TranslatedText text={item.disease} language={language} />
+                                </h2>
+
+                                <p className="text-sm text-stone-500">
+                                  {t("healthScreening.confidence")}:{" "}
+                                  {(item.confidence * 100).toFixed(1)}%
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
 
                         {/* Interpretation box */}
