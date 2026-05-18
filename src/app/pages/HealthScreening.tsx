@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useHealthScreening } from "../context/HealthScreeningContext";
+import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Type Definitions ===================== */
 // Response format from health screening API
@@ -81,12 +83,10 @@ function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    // Resolve when file is successfully read
     reader.onload = () => {
       resolve(String(reader.result));
     };
 
-    // Reject on read error
     reader.onerror = () => {
       reject(new Error("Could not read image file."));
     };
@@ -108,7 +108,12 @@ function parseIdentificationResult(
 
   // Attempt JSON parsing if string
   try {
-    return JSON.parse(rawResult) as PetIdentificationResult;
+    const cleanedResult = rawResult
+      .trim()
+      .replace(/^```json\s*|```$/gim, "")
+      .trim();
+
+    return JSON.parse(cleanedResult) as PetIdentificationResult;
   } catch {
     return null;
   }
@@ -158,12 +163,25 @@ function findMatchingSpeciesId(
 }
 
 // Generic fetch wrapper with JSON parsing and error handling
-async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url);
-  const data = await response.json().catch(() => null);
+async function fetchJson<T>(
+  url: string,
+  fallbackErrorMessage: string,
+  options?: RequestInit,
+): Promise<T> {
+  const response = await fetch(url, options);
+  const data = (await response.json().catch(() => null)) as
+    | T
+    | {
+        error?: string;
+      }
+    | null;
 
   if (!response.ok) {
-    throw new Error(data?.error || "Request failed");
+    throw new Error(
+      data && typeof data === "object" && "error" in data && data.error
+        ? data.error
+        : fallbackErrorMessage,
+    );
   }
 
   return data as T;
@@ -172,6 +190,9 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 /* ===================== Main Component ===================== */
 
 export function HealthScreening() {
+  // Language context for localization
+  const { t, language } = useLanguage();
+
   // Drag state for upload UI
   const [dragActive, setDragActive] = useState(false);
 
@@ -221,7 +242,9 @@ export function HealthScreening() {
     const data = (await response.json()) as HealthScreenResponse;
 
     if (!response.ok) {
-      throw new Error(data.error || "Failed to screen the pet health image.");
+      throw new Error(
+        data.error || t("healthScreening.errors.screeningRequestFailed"),
+      );
     }
 
     if (!data.result || data.result.length === 0) {
@@ -264,7 +287,10 @@ export function HealthScreening() {
       }
 
       // Fetch species database
-      const speciesOptions = await fetchJson<SpeciesOption[]>("/api/species");
+      const speciesOptions = await fetchJson<SpeciesOption[]>(
+        "/api/species",
+        t("healthScreening.errors.loadSpeciesFailed"),
+      );
 
       // Match result to internal database
       return findMatchingSpeciesId(identifiedPet, speciesOptions);
@@ -310,7 +336,7 @@ export function HealthScreening() {
       const message =
         screeningError instanceof Error
           ? screeningError.message
-          : "We couldn't screen this image right now. Please try again.";
+          : t("healthScreening.errors.screeningFailed");
 
       setScreening((previous) => ({
         ...previous,
@@ -333,26 +359,33 @@ export function HealthScreening() {
     if (!file.type.startsWith("image/")) {
       setScreening((previous) => ({
         ...previous,
-        error: "Please choose an image file such as JPG, PNG, or HEIC.",
+        error: t("healthScreening.errors.invalidFileType"),
       }));
       return;
     }
 
-    // Convert image for preview
-    const imageDataUrl = await fileToDataUrl(file);
+    try {
+      // Convert image for preview
+      const imageDataUrl = await fileToDataUrl(file);
 
-    // Store initial state
-    setScreening({
-      selectedImage: imageDataUrl,
-      selectedFileName: file.name,
-      result: null,
-      matchedCareGuidePetId: null,
-      careGuideLookupDone: false,
-      error: null,
-    });
+      // Store initial state
+      setScreening({
+        selectedImage: imageDataUrl,
+        selectedFileName: file.name,
+        result: null,
+        matchedCareGuidePetId: null,
+        careGuideLookupDone: false,
+        error: null,
+      });
 
-    // Run analysis
-    await handleImageAnalysis(file);
+      // Run analysis
+      await handleImageAnalysis(file);
+    } catch {
+      setScreening((previous) => ({
+        ...previous,
+        error: t("healthScreening.errors.readFileFailed"),
+      }));
+    }
   };
 
   /* ===================== Drag & Drop ===================== */
@@ -381,8 +414,11 @@ export function HealthScreening() {
   };
 
   /* ===================== Derived State ===================== */
-
-  const isHealthy = result?.[0]?.disease === "Healthy";
+  const healthPredictions = Array.isArray(result) ? result : [];
+  
+  const isHealthy = healthPredictions.some(
+    (item) => normalizeText(item.disease) === "healthy",
+  );
 
   /* ===================== UI ===================== */
 
@@ -392,12 +428,11 @@ export function HealthScreening() {
         {/* Page Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
-            Pet Health Screening
+            {t("healthScreening.title")}
           </h1>
 
           <p className="text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
-            Upload a fish photo to screen for visible disease signs using the
-            Shell &amp; Fin health screening model.
+            {t("healthScreening.description")}
           </p>
         </div>
 
@@ -437,11 +472,11 @@ export function HealthScreening() {
 
                 {/* Upload text */}
                 <h3 className="text-2xl font-bold text-stone-800 mb-2">
-                  Upload a pet health photo
+                  {t("healthScreening.uploadTitle")}
                 </h3>
 
                 <p className="text-stone-500 mb-8">
-                  Choose a clear fish photo for health screening.
+                  {t("healthScreening.uploadDescription")}
                 </p>
 
                 {/* File select button */}
@@ -450,18 +485,19 @@ export function HealthScreening() {
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1 inline-flex items-center gap-2"
                 >
-                  <Camera className="w-5 h-5" /> Select Photo
+                  <Camera className="w-5 h-5" />{" "}
+                  {t("healthScreening.selectPhoto")}
                 </button>
 
                 {/* Supported formats */}
                 <p className="text-xs text-stone-400 mt-4 uppercase tracking-widest font-semibold">
-                  Supported: JPG, PNG, HEIC
+                  {t("healthScreening.supportedFormats")}
                 </p>
 
                 {/* Upload error */}
                 {error && (
                   <p className="mt-4 text-sm text-rose-600 font-medium">
-                    {error}
+                    <TranslatedText text={error} language={language} />
                   </p>
                 )}
               </motion.div>
@@ -480,7 +516,7 @@ export function HealthScreening() {
                 <div className="relative w-64 h-64 mb-8 rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src={selectedImage}
-                    alt="Screening"
+                    alt={t("healthScreening.screeningAlt")}
                     className="w-full h-full object-fit"
                   />
                   <div className="absolute inset-0 bg-amber-500/20 scan-line"></div>
@@ -490,11 +526,11 @@ export function HealthScreening() {
                 <Loader2 className="w-10 h-10 text-amber-600 animate-spin mb-4" />
 
                 <h3 className="text-2xl font-bold text-stone-800">
-                  Screening Photo...
+                  {t("healthScreening.screeningPhoto")}
                 </h3>
 
                 <p className="text-stone-500">
-                  Sending your image to the health screening model.
+                  {t("healthScreening.screeningDescription")}
                 </p>
               </motion.div>
             )}
@@ -513,14 +549,15 @@ export function HealthScreening() {
                     {selectedImage ? (
                       <img
                         src={selectedImage}
-                        alt={selectedFileName || "Uploaded"}
+                        alt={
+                          selectedFileName || t("healthScreening.uploadedAlt")
+                        }
                         className="w-full aspect-square object-fit rounded-2xl shadow-md border-4 border-white mb-4"
                       />
                     ) : (
                       <div className="w-full aspect-square rounded-2xl border-2 border-dashed border-stone-200 bg-stone-50 flex items-center justify-center text-center px-4 mb-4">
                         <p className="text-sm text-stone-500">
-                          Previous screening result restored. Image preview is
-                          not saved.
+                          {t("healthScreening.restoredResultNoPreview")}
                         </p>
                       </div>
                     )}
@@ -538,7 +575,8 @@ export function HealthScreening() {
                       onClick={resetForm}
                       className="w-full py-3 text-stone-500 hover:text-stone-800 font-medium flex items-center justify-center gap-2 transition-colors border border-stone-200 rounded-xl hover:bg-stone-50"
                     >
-                      <ImageIcon className="w-4 h-4" /> Try another photo
+                      <ImageIcon className="w-4 h-4" />{" "}
+                      {t("healthScreening.tryAnother")}
                     </button>
                   </div>
 
@@ -551,41 +589,47 @@ export function HealthScreening() {
                           <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
                           <div>
                             <h4 className="font-bold mb-1">
-                              Health screening unavailable
+                              {t("healthScreening.healthScreeningUnavailable")}
                             </h4>
-                            <p className="text-sm opacity-90">{error}</p>
+                            <p className="text-sm opacity-90">
+                              <TranslatedText
+                                text={error}
+                                language={language}
+                              />
+                            </p>
                           </div>
                         </div>
                       </div>
                     )}
 
                     {/* Result display */}
-                    {result && (
+                    {healthPredictions.length > 0 && (
                       <>
                         {/* Result header */}
                         <div>
                           <div className="flex items-center gap-3 mb-2">
                             <CheckCircle className="text-amber-500 w-6 h-6" />
                             <span className="text-amber-700 font-bold uppercase tracking-wider text-sm">
-                              Health Screening Result
+                              {t("healthScreening.resultTitle")}
                             </span>
                           </div>
-                          <div className="space-y-3">
-                            {Array.isArray(result) &&
-                              result.map((item) => (
-                                <div
-                                  key={item.disease}
-                                  className="p-4 rounded-xl bg-stone-50 border border-stone-200"
-                                >
-                                  <h2 className="text-2xl font-extrabold text-stone-900">
-                                    {item.disease}
-                                  </h2>
 
-                                  <p className="text-sm text-stone-500">
-                                    Confidence: {(item.confidence * 100).toFixed(1)}%
-                                  </p>
-                                </div>
-                              ))} 
+                          <div className="space-y-3">
+                            {healthPredictions.map((item) => (
+                              <div
+                                key={item.disease}
+                                className="p-4 rounded-xl bg-stone-50 border border-stone-200"
+                              >
+                                <h2 className="text-2xl font-extrabold text-stone-900">
+                                  <TranslatedText text={item.disease} language={language} />
+                                </h2>
+
+                                <p className="text-sm text-stone-500">
+                                  {t("Confidence")}:{" "}
+                                  {(item.confidence * 100).toFixed(1)}%
+                                </p>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -602,12 +646,13 @@ export function HealthScreening() {
                             <div>
                               <h4 className="font-bold mb-1">
                                 {isHealthy
-                                  ? "No disease class detected"
-                                  : "Possible disease class detected"}
+                                  ? t("healthScreening.noDiseaseClassDetected")
+                                  : t(
+                                      "healthScreening.possibleDiseaseClassDetected",
+                                    )}
                               </h4>
                               <p className="text-sm opacity-90">
-                                This is an AI screening result only. Use it as
-                                an early warning, not as a final diagnosis.
+                                {t("healthScreening.aiScreeningDisclaimer")}
                               </p>
                             </div>
                           </div>
@@ -623,15 +668,12 @@ export function HealthScreening() {
                               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-bold text-center transition-colors inline-flex items-center justify-center gap-2 shadow-md"
                             >
                               <BookOpen className="w-5 h-5" />
-                              View Care Guide
+                              {t("healthScreening.viewCareGuide")}
                               <ArrowRight className="w-5 h-5" />
                             </Link>
                           ) : careGuideLookupDone ? (
                             <p className="text-sm text-stone-500 bg-stone-50 border border-stone-200 rounded-xl p-3">
-                              No matching care guide was found in Shell & Fin MY
-                              database for this photo. We will continue
-                              improving and expanding care guide coverage for
-                              health screening results.
+                              {t("healthScreening.noMatchingCareGuide")}
                             </p>
                           ) : null}
                         </div>

@@ -5,6 +5,139 @@ import type {
   RecommendedPet,
 } from "../types/pet.types";
 
+import type { Language } from "../context/LanguageContext";
+
+// ===================== Localized Labels =====================
+export type LocalizedLabelMap = Record<string, Record<Language, string>>;
+
+// Localized labels for pet attributes (care level, invasive risk, budget, native status)
+export const careLevelLabels: LocalizedLabelMap = {
+  Beginner: {
+    en: "Beginner Care",
+    ms: "Pemula Penjagaan",
+    zh: "新手养护",
+  },
+  Intermediate: {
+    en: "Intermediate Care",
+    ms: "Pertengahan Penjagaan",
+    zh: "中级养护",
+  },
+  Advanced: {
+    en: "Advanced Care",
+    ms: "Lanjutan Penjagaan",
+    zh: "高级养护",
+  },
+  Unknown: {
+    en: "Unknown Care",
+    ms: "Penjagaan Tidak Diketahui",
+    zh: "养护未知",
+  },
+};
+
+export const invasiveRiskLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Risk",
+    ms: "Risiko Rendah",
+    zh: "低风险",
+  },
+  Medium: {
+    en: "Medium Risk",
+    ms: "Risiko Sederhana",
+    zh: "中风险",
+  },
+  High: {
+    en: "High Risk",
+    ms: "Risiko Tinggi",
+    zh: "高风险",
+  },
+  Unknown: {
+    en: "Unknown Risk",
+    ms: "Risiko Tidak Diketahui",
+    zh: "风险未知",
+  },
+};
+
+export const budgetLabels: LocalizedLabelMap = {
+  Low: {
+    en: "Low Budget",
+    ms: "Kos Rendah",
+    zh: "低预算",
+  },
+  Medium: {
+    en: "Medium Budget",
+    ms: "Kos Sederhana",
+    zh: "中预算",
+  },
+  High: {
+    en: "High Budget",
+    ms: "Kos Tinggi",
+    zh: "高预算",
+  },
+  Unknown: {
+    en: "Unknown Budget",
+    ms: "Anggaran Tidak Diketahui",
+    zh: "预算未知",
+  },
+};
+
+export const nativeStatusLabels: LocalizedLabelMap = {
+  Native: {
+    en: "Native",
+    ms: "Asli",
+    zh: "本地物种",
+  },
+  "Not Native": {
+    en: "Not Native",
+    ms: "Bukan Asli",
+    zh: "非本地物种",
+  },
+  Invasive: {
+    en: "Invasive",
+    ms: "Invasif",
+    zh: "入侵物种",
+  },
+  Unknown: {
+    en: "Unknown Status",
+    ms: "Status Tidak Diketahui",
+    zh: "状态未知",
+  },
+};
+
+export const dangerLabels: LocalizedLabelMap = {
+  High: {
+    en: "High Danger",
+    ms: "Bahaya Tinggi",
+    zh: "高危险",
+  },
+  Medium: {
+    en: "Medium Danger",
+    ms: "Bahaya Sederhana",
+    zh: "中危险",
+  },
+  Low: {
+    en: "Low Danger",
+    ms: "Bahaya Rendah",
+    zh: "低危险",
+  },
+  Unknown: {
+    en: "Unknown Danger",
+    ms: "Bahaya Tidak Diketahui",
+    zh: "危险未知",
+  },
+};
+
+export function getLocalizedPetLabel(
+  labels: LocalizedLabelMap,
+  value: string | null | undefined,
+  language: Language,
+) {
+  if (!value) return "";
+
+  const key = value.trim();
+
+  return labels[key]?.[language] ?? key;
+}
+
 // ===================== Name / Display Utilities =====================
 
 /**

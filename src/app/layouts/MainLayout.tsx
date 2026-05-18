@@ -9,6 +9,8 @@ import {
 import { useCompare } from "../context/CompareContext";
 import logoImage from "../../imports/image-0.jpg";
 import { AiChatbot } from "../components/chatbot";
+import { Languages } from "lucide-react";
+import { useLanguage, type Language } from "../context/LanguageContext";
 
 export function MainLayout() {
   // Control mobile navigation menu visibility
@@ -20,14 +22,25 @@ export function MainLayout() {
   // Get compare list state from global context
   const { comparePets } = useCompare();
 
+  // Get language context for translations
+  const { language, setLanguage, t, languageLabels } = useLanguage();
+
   // Main navigation links used in desktop + mobile menus
+  // const navLinks = [
+  //   { name: "Home", path: "/" },
+  //   { name: "Identify Pet", path: "/identify" },
+  //   { name: "Health Screening", path: "/health-screening" },
+  //   { name: "Compatibility Quiz", path: "/quiz" },
+  //   { name: "Need to Rehome?", path: "/safe-exit" },
+  //   { name: "Profile", path: "/profile" },
+  // ];
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Identify Pet", path: "/identify" },
-    { name: "Health Screening", path: "/health-screening" },
-    { name: "Compatibility Quiz", path: "/quiz" },
-    { name: "Need to Rehome?", path: "/safe-exit" },
-    { name: "Profile", path: "/profile" },
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.identify"), path: "/identify" },
+    { name: t("nav.health"), path: "/health-screening" },
+    { name: t("nav.quiz"), path: "/quiz" },
+    { name: t("nav.rehome"), path: "/safe-exit" },
+    { name: t("nav.profile"), path: "/profile" },
   ];
 
   return (
@@ -35,32 +48,32 @@ export function MainLayout() {
       {/* ===================== Navigation Header ===================== */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex items-center justify-between gap-4 h-16 min-w-0">
             {/* Website Logo + Home Link */}
             <Link
               to="/"
-              className="flex items-center gap-3 hover:opacity-80 transition"
+              className="flex shrink-0 items-center gap-3 hover:opacity-80 transition"
             >
               <img
                 src={logoImage}
                 alt="Shell & Fin MY Logo"
                 className="h-12 w-12 object-cover rounded-full mix-blend-multiply"
               />
-              <span className="text-xl font-bold tracking-tight text-emerald-700">
+              <span className="whitespace-nowrap text-xl font-bold tracking-tight text-emerald-700">
                 Shell & Fin MY
               </span>
             </Link>
 
             {/* ===================== Desktop Navigation ===================== */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-end gap-3 xl:gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-sm font-medium transition ${
+                  className={`shrink-0 whitespace-nowrap border-b-2 px-1 text-sm font-medium transition ${
                     location.pathname === link.path
-                      ? "text-emerald-700 border-b-2 border-emerald-700"
-                      : "text-stone-600 hover:text-emerald-600"
+                      ? "border-emerald-700 text-emerald-700"
+                      : "border-transparent text-stone-600 hover:text-emerald-600"
                   }`}
                 >
                   {link.name}
@@ -70,20 +83,39 @@ export function MainLayout() {
               {/* Compare Wishlist Button */}
               <Link
                 to="/compare"
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
+                className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 xl:px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
                   comparePets.length > 0
                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
                     : "bg-stone-100 text-stone-400 hover:bg-stone-200 hover:text-stone-600"
                 }`}
               >
                 <Scale className="w-4 h-4" />
-                Compare ({comparePets.length})
+                {/* Compare ({comparePets.length}) */}
+                {t("nav.compare")} ({comparePets.length})
               </Link>
+
+              {/* Language Selector */}
+              <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
+                <Languages className="h-4 w-4 text-emerald-700" />
+
+                <select
+                  value={language}
+                  onChange={(event) =>
+                    setLanguage(event.target.value as Language)
+                  }
+                  className="bg-transparent outline-none cursor-pointer"
+                  aria-label="Select language"
+                >
+                  <option value="en">{languageLabels.en}</option>
+                  <option value="ms">{languageLabels.ms}</option>
+                  <option value="zh">{languageLabels.zh}</option>
+                </select>
+              </div>
             </nav>
 
             {/* ===================== Mobile Menu Button ===================== */}
             <button
-              className="md:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
+              className="lg:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? (
@@ -97,7 +129,7 @@ export function MainLayout() {
 
         {/* ===================== Mobile Navigation Panel ===================== */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
+          <div className="lg:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -112,6 +144,27 @@ export function MainLayout() {
                 {link.name}
               </Link>
             ))}
+
+            {/* language selector */}
+            <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
+              <span className="flex items-center gap-2">
+                <Languages className="h-4 w-4 text-emerald-700" />
+                {t("language.label")}
+              </span>
+
+              <select
+                value={language}
+                onChange={(event) =>
+                  setLanguage(event.target.value as Language)
+                }
+                className="bg-transparent outline-none cursor-pointer"
+                aria-label="Select language"
+              >
+                <option value="en">{languageLabels.en}</option>
+                <option value="ms">{languageLabels.ms}</option>
+                <option value="zh">{languageLabels.zh}</option>
+              </select>
+            </div>
 
             {/* Mobile Compare Button */}
             <Link
@@ -149,33 +202,38 @@ export function MainLayout() {
             </div>
 
             <p className="text-emerald-200 text-sm leading-relaxed max-w-xs">
-              Empowering Malaysians to make safe, responsible choices for
-              non-native pets. Protect our biodiversity, one pet at a time.
+              {/* Empowering Malaysians to make safe, responsible choices for
+              non-native pets. Protect our biodiversity, one pet at a time. */}
+              {t("footer.description")}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
-              Quick Links
+              {/* Quick Links */}
+              {t("footer.quickLinks")}
             </h3>
 
             <ul className="space-y-2 text-sm text-emerald-200">
               <li>
                 <Link to="/quiz" className="hover:text-white transition">
-                  Pre-purchase Quiz
+                  {/* Pre-purchase Quiz */}
+                  {t("footer.quiz")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/identify" className="hover:text-white transition">
-                  Identify Your Pet
+                  {/* Identify Your Pet */}
+                  {t("footer.identify")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/compare" className="hover:text-white transition">
-                  Compare Species
+                  {/* Compare Species */}
+                  {t("footer.compare")}
                 </Link>
               </li>
 
@@ -184,7 +242,8 @@ export function MainLayout() {
                   to="/safe-exit"
                   className="hover:text-white transition text-rose-300 font-medium"
                 >
-                  Safe Rehoming Options
+                  {/* Safe Rehoming Options */}
+                  {t("footer.safeRehoming")}
                 </Link>
               </li>
             </ul>
@@ -193,17 +252,19 @@ export function MainLayout() {
           {/* Legal / Emergency Information */}
           <div>
             <h3 className="font-semibold text-lg mb-4 text-emerald-100">
-              Emergency & Legal
+              {/* Emergency & Legal */}
+              {t("footer.emergencyLegal")}
             </h3>
 
             <ul className="space-y-2 text-sm text-emerald-200">
-              <li>PERHILITAN Hotline: 1-800-88-5151</li>
-              <li>Department of Fisheries Malaysia</li>
+              {/* PERHILITAN Hotline: 1-800-88-5151 */}
+              <li>{t("footer.hotline")}</li>
+              {/* Department of Fisheries Malaysia */}
+              <li>{t("footer.dof")}</li>
 
-              <li className="text-xs mt-4 opacity-70">
-                Releasing non-native species into public waterways is illegal
-                under Malaysian law.
-              </li>
+              {/* Releasing non-native species into public waterways is illegal
+                under Malaysian law. */}
+              <li className="text-xs mt-4 opacity-70">{t("footer.legal")}</li>
             </ul>
           </div>
         </div>

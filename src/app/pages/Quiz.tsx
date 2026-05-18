@@ -9,63 +9,77 @@ import { useUser, LifestyleAnswers } from "../context/UserContext";
 import { ArrowRight, ArrowLeft, HelpCircle } from "lucide-react";
 // Import animation utilities for smooth transitions
 import { motion, AnimatePresence } from "motion/react";
+// Import custom hook for accessing current language (for i18n)
+import { useLanguage } from "../context/LanguageContext";
 
 // ===================== Quiz Configuration Data =====================
 // Define all quiz questions, each with an id, title, and selectable options
-const questions = [
+type QuizQuestion = {
+  id: keyof LifestyleAnswers;
+  titleKey: string;
+  options: {
+    labelKey: string;
+    value: string;
+  }[];
+};
+
+const questions: QuizQuestion[] = [
   {
     id: "age",
-    title: "What is your age group?",
+    titleKey: "quiz.questions.age",
     options: [
-      { label: "Under 18", value: "under_18" },
-      { label: "18 - 35", value: "18_35" },
-      { label: "36 - 55", value: "36_55" },
-      { label: "56+", value: "56_plus" },
+      { labelKey: "profile.answers.age.under_18", value: "under_18" },
+      { labelKey: "profile.answers.age.18_35", value: "18_35" },
+      { labelKey: "profile.answers.age.36_55", value: "36_55" },
+      { labelKey: "profile.answers.age.56_plus", value: "56_plus" },
     ],
   },
   {
     id: "time",
-    title: "How much free time can you dedicate to pet care weekly?",
+    titleKey: "quiz.questions.time",
     options: [
-      { label: "A few minutes (Low)", value: "low" },
-      { label: "A few hours (Medium)", value: "medium" },
-      { label: "Daily dedication (High)", value: "high" },
+      { labelKey: "profile.answers.time.low", value: "low" },
+      { labelKey: "profile.answers.time.medium", value: "medium" },
+      { labelKey: "profile.answers.time.high", value: "high" },
     ],
   },
   {
     id: "budget",
-    title: "What is your available budget for setup and ongoing care?",
+    titleKey: "quiz.questions.budget",
     options: [
-      { label: "Under RM 100 (Low)", value: "low" },
-      { label: "RM 100 - RM 500 (Medium)", value: "medium" },
-      { label: "RM 500+ (High)", value: "high" },
+      { labelKey: "profile.answers.budget.low", value: "low" },
+      { labelKey: "profile.answers.budget.medium", value: "medium" },
+      { labelKey: "profile.answers.budget.high", value: "high" },
     ],
   },
   {
     id: "space",
-    title: "What is the maximum habitat size you can accommodate?",
+    titleKey: "quiz.questions.space",
     options: [
-      { label: "Small table / Desktop (Small)", value: "small" },
-      { label: "Dedicated corner / Stand (Medium)", value: "medium" },
-      { label: "Large room / Outdoor pond (Large)", value: "large" },
+      { labelKey: "quiz.options.space.small", value: "small" },
+      { labelKey: "quiz.options.space.medium", value: "medium" },
+      { labelKey: "quiz.options.space.large", value: "large" },
     ],
   },
   {
     id: "lifespan",
-    title: "What is your desired pet lifespan commitment?",
+    titleKey: "quiz.questions.lifespan",
     options: [
-      { label: "1 - 5 years", value: "short" },
-      { label: "5 - 15 years", value: "medium" },
-      { label: "15+ years (Long term)", value: "long" },
+      { labelKey: "profile.answers.lifespan.short", value: "short" },
+      { labelKey: "profile.answers.lifespan.medium", value: "medium" },
+      { labelKey: "quiz.options.lifespan.long", value: "long" },
     ],
   },
   {
     id: "experience",
-    title: "What is your care experience level with aquatic pets?",
+    titleKey: "quiz.questions.experience",
     options: [
-      { label: "First-time owner (Beginner)", value: "beginner" },
-      { label: "Have kept some before (Intermediate)", value: "intermediate" },
-      { label: "Experienced hobbyist (Advanced)", value: "advanced" },
+      { labelKey: "profile.answers.experience.beginner", value: "beginner" },
+      {
+        labelKey: "quiz.options.experience.intermediate",
+        value: "intermediate",
+      },
+      { labelKey: "profile.answers.experience.advanced", value: "advanced" },
     ],
   },
 ];
@@ -78,6 +92,8 @@ type QuizLocationState = {
 
 // ===================== Main Quiz Component =====================
 export function Quiz() {
+  // Access translation function for current language
+  const { t } = useLanguage();
   // Navigation hook for redirecting between pages
   const navigate = useNavigate();
   // Access router location state (used for retake detection)
@@ -95,12 +111,17 @@ export function Quiz() {
   // Store user-selected answers locally before submission
   const [formData, setFormData] = useState<Partial<LifestyleAnswers>>({});
 
+  // Calculate progress percentage for progress bar
+  const progress = ((currentStep + 1) / questions.length) * 100;
+
+  const currentQuestion = questions[currentStep];
+
   // ===================== Loading State Handling =====================
   // Show loading screen while user data is being fetched
   if (loading) {
     return (
       <div className="bg-stone-50 min-h-screen flex items-center justify-center text-stone-600">
-        Loading quiz...
+        {t("quiz.loading")}
       </div>
     );
   }
@@ -116,7 +137,7 @@ export function Quiz() {
   const handleSelect = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [questions[currentStep].id]: value,
+      [currentQuestion.id]: value,
     }));
   };
 
@@ -141,11 +162,7 @@ export function Quiz() {
 
   // ===================== Validation + Progress Calculation =====================
   // Check if current question has been answered
-  const isCurrentAnswered =
-    !!formData[questions[currentStep].id as keyof LifestyleAnswers];
-
-  // Calculate progress percentage for progress bar
-  const progress = ((currentStep + 1) / questions.length) * 100;
+  const isCurrentAnswered = !!formData[currentQuestion.id];
 
   // ===================== UI Rendering =====================
   return (
@@ -157,11 +174,11 @@ export function Quiz() {
             <div>
               {/* Quiz Title */}
               <h1 className="text-3xl font-extrabold text-stone-900">
-                Lifestyle Compatibility Screening
+                {t("quiz.title")}
               </h1>
               {/* Subtitle description */}
               <p className="text-stone-600 mt-2 text-lg">
-                Let's find the right aquatic pet for you.
+                {t("quiz.description")}
               </p>
             </div>
 
@@ -195,17 +212,16 @@ export function Quiz() {
             >
               {/* Current question title */}
               <h2 className="text-3xl md:text-4xl font-bold mb-8 text-stone-900 leading-tight">
-                {questions[currentStep].title}
+                {t(currentQuestion.titleKey)}
               </h2>
 
               {/* Options list */}
               <div className="space-y-4">
-                {questions[currentStep].options.map((option) => {
+                {currentQuestion.options.map((option) => {
                   // Check if option is currently selected
                   const isSelected =
-                    formData[
-                      questions[currentStep].id as keyof LifestyleAnswers
-                    ] === option.value;
+                    formData[currentQuestion.id as keyof LifestyleAnswers] ===
+                    option.value;
 
                   return (
                     <button
@@ -217,7 +233,7 @@ export function Quiz() {
                           : "border-stone-200 bg-white hover:border-emerald-300 hover:bg-stone-50 text-stone-700"
                       }`}
                     >
-                      {option.label}
+                      {t(option.labelKey)}
                     </button>
                   );
                 })}
@@ -238,7 +254,7 @@ export function Quiz() {
                 : "text-stone-600 hover:bg-stone-200"
             }`}
           >
-            <ArrowLeft className="w-5 h-5" /> Back
+            <ArrowLeft className="w-5 h-5" /> {t("quiz.back")}
           </button>
 
           {/* Next / Submit button */}
@@ -251,7 +267,9 @@ export function Quiz() {
                 : "bg-stone-200 text-stone-400 cursor-not-allowed"
             }`}
           >
-            {currentStep === questions.length - 1 ? "See Results" : "Continue"}{" "}
+            {currentStep === questions.length - 1
+              ? t("quiz.seeResults")
+              : t("quiz.continue")}{" "}
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -263,7 +281,7 @@ export function Quiz() {
             className="inline-flex items-center gap-2 text-stone-500 hover:text-emerald-600 font-medium transition-colors"
           >
             <HelpCircle className="w-5 h-5" />
-            Don't know your pet's name? Click to identify it first.
+            {t("quiz.identifyHelp")}
           </Link>
         </div>
       </div>

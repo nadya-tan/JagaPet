@@ -11,44 +11,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
-
-/**
- * Mapping for quiz answer display labels
- * Converts stored backend values into human-readable text
- */
-const answerLabels: Record<string, Record<string, string>> = {
-  age: {
-    under_18: "Under 18",
-    "18_35": "18 - 35",
-    "36_55": "36 - 55",
-    "56_plus": "56+",
-  },
-  time: {
-    low: "A few minutes (Low)",
-    medium: "A few hours (Medium)",
-    high: "Daily dedication (High)",
-  },
-  budget: {
-    low: "Under RM 100 (Low)",
-    medium: "RM 100 - RM 500 (Medium)",
-    high: "RM 500+ (High)",
-  },
-  space: {
-    small: "Small table / Desktop",
-    medium: "Dedicated corner / Stand",
-    large: "Large room / Outdoor pond",
-  },
-  lifespan: {
-    short: "1 - 5 years",
-    medium: "5 - 15 years",
-    long: "15+ years",
-  },
-  experience: {
-    beginner: "First-time owner (Beginner)",
-    intermediate: "Intermediate",
-    advanced: "Experienced hobbyist (Advanced)",
-  },
-};
+import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * Species option structure
@@ -102,40 +66,43 @@ const TASK_ICONS: Record<string, React.ReactNode> = {
 };
 
 /**
- * Human-readable names for task types
- */
-const TASK_NAMES: Record<string, string> = {
-  "water-change": "25% Water Change",
-  feeding: "Feeding",
-  "filter-clean": "Clean Filter",
-  "health-check": "Health Check",
-  "temperature-check": "Temperature Check",
-};
-
-/**
  * Format care task frequency into readable string
  */
-function formatFrequency(task: CareTask) {
+function formatFrequency(task: CareTask, t: (key: string) => string) {
   const unit = task.intervalUnit;
   const pluralUnit = task.interval === 1 ? unit : `${unit}s`;
 
-  if (task.count === 1 && task.interval === 1 && unit === "day") return "daily";
-  if (task.count === 1 && task.interval === 1 && unit === "week")
-    return "weekly";
-  if (task.count === 1 && task.interval === 1 && unit === "month")
-    return "monthly";
-  if (task.count === 1 && task.interval === 1 && unit === "year")
-    return "yearly";
+  if (task.count === 1 && task.interval === 1 && unit === "day") {
+    return t("profile.frequency.daily");
+  }
+
+  if (task.count === 1 && task.interval === 1 && unit === "week") {
+    return t("profile.frequency.weekly");
+  }
+
+  if (task.count === 1 && task.interval === 1 && unit === "month") {
+    return t("profile.frequency.monthly");
+  }
+
+  if (task.count === 1 && task.interval === 1 && unit === "year") {
+    return t("profile.frequency.yearly");
+  }
 
   if (task.count > 1 && task.interval === 1) {
-    return `${task.count} times per ${unit}`;
+    return `${task.count} ${t("profile.frequency.timesPer")} ${t(
+      `profile.frequency.units.${unit}`,
+    )}`;
   }
 
   if (task.count > 1) {
-    return `${task.count} times every ${task.interval} ${pluralUnit}`;
+    return `${task.count} ${t("profile.frequency.timesEvery")} ${
+      task.interval
+    } ${t(`profile.frequency.units.${pluralUnit}`)}`;
   }
 
-  return `every ${task.interval} ${pluralUnit}`;
+  return `${t("profile.frequency.every")} ${task.interval} ${t(
+    `profile.frequency.units.${pluralUnit}`,
+  )}`;
 }
 
 /**
@@ -145,6 +112,9 @@ function formatFrequency(task: CareTask) {
  * - Tracks care tasks
  */
 export function Profile() {
+  // Language context for localization
+  const { t, language } = useLanguage();
+
   // Global user context
   const {
     user,
@@ -204,7 +174,7 @@ export function Profile() {
   /**
    * Guard: loading state
    */
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <div className="p-8">{t("profile.loading")}</div>;
 
   /**
    * Guard: unauthenticated redirect
@@ -215,12 +185,12 @@ export function Profile() {
    * Quiz answer rows for rendering profile tab
    */
   const rows = [
-    ["Age group", answers?.age, "age"],
-    ["Free time", answers?.time, "time"],
-    ["Budget", answers?.budget, "budget"],
-    ["Habitat space", answers?.space, "space"],
-    ["Lifespan", answers?.lifespan, "lifespan"],
-    ["Experience", answers?.experience, "experience"],
+    [t("profile.rows.age"), answers?.age, "age"],
+    [t("profile.rows.time"), answers?.time, "time"],
+    [t("profile.rows.budget"), answers?.budget, "budget"],
+    [t("profile.rows.space"), answers?.space, "space"],
+    [t("profile.rows.lifespan"), answers?.lifespan, "lifespan"],
+    [t("profile.rows.experience"), answers?.experience, "experience"],
   ];
 
   /**
@@ -247,7 +217,7 @@ export function Profile() {
       setShowAddPet(false);
     } catch (error) {
       setFormError(
-        error instanceof Error ? error.message : "Could not add pet.",
+        error instanceof Error ? error.message : t("profile.couldNotAddPet"),
       );
     } finally {
       setSavingPet(false);
@@ -264,7 +234,7 @@ export function Profile() {
       await removeUserPet(petListId);
     } catch (error) {
       setFormError(
-        error instanceof Error ? error.message : "Could not remove pet.",
+        error instanceof Error ? error.message : t("profile.couldNotRemovePet"),
       );
     }
   };
@@ -279,7 +249,9 @@ export function Profile() {
       await completeCareTask(taskId);
     } catch (error) {
       setFormError(
-        error instanceof Error ? error.message : "Could not update task.",
+        error instanceof Error
+          ? error.message
+          : t("profile.couldNotUpdateTask"),
       );
     }
   };
@@ -315,8 +287,10 @@ export function Profile() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       {/* Profile header */}
-      <h1 className="text-3xl font-bold mb-2">My Profile</h1>
-      <p className="text-stone-600 mb-8">Signed in as @{user.username}</p>
+      <h1 className="text-3xl font-bold mb-2">{t("profile.title")}</h1>
+      <p className="text-stone-600 mb-8">
+        {t("profile.signedInAs")} @{user.username}
+      </p>
 
       {/* Tab switcher */}
       <div className="flex gap-2 mb-6 rounded-2xl bg-stone-100 p-1">
@@ -328,7 +302,7 @@ export function Profile() {
               : "text-stone-600"
           }`}
         >
-          Quiz Profile
+          {t("profile.quizProfile")}
         </button>
 
         <button
@@ -339,7 +313,7 @@ export function Profile() {
               : "text-stone-600"
           }`}
         >
-          My Pets
+          {t("profile.myPets")}
         </button>
       </div>
 
@@ -352,19 +326,19 @@ export function Profile() {
       {activeTab === "profile" && (
         <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
           <h2 className="text-xl font-semibold mb-4">
-            Saved compatibility quiz answers
+            {t("profile.savedQuizAnswers")}
           </h2>
 
           {!answers ? (
             <div>
               <p className="text-stone-600 mb-4">
-                You have not saved any quiz answers yet.
+                {t("profile.noQuizAnswers")}
               </p>
               <Link
                 to="/quiz"
                 className="inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white"
               >
-                Take quiz
+                {t("profile.takeQuiz")}
               </Link>
             </div>
           ) : (
@@ -377,9 +351,8 @@ export function Profile() {
                   <span className="font-medium text-stone-700">{label}</span>
                   <span className="text-stone-600 text-right">
                     {value
-                      ? (answerLabels[String(key)]?.[String(value)] ??
-                        String(value))
-                      : "Not answered"}
+                      ? t(`profile.answers.${String(key)}.${String(value)}`)
+                      : t("profile.notAnswered")}
                   </span>
                 </div>
               ))}
@@ -389,13 +362,13 @@ export function Profile() {
                   to="/quiz"
                   className="rounded-xl px-4 py-2 bg-emerald-600 text-white"
                 >
-                  Retake quiz
+                  {t("profile.takeQuiz")}
                 </Link>
                 <button
                   onClick={logout}
                   className="rounded-xl px-4 py-2 border border-stone-300 text-stone-700"
                 >
-                  Log out
+                  {t("profile.logOut")}
                 </button>
               </div>
             </div>
@@ -409,7 +382,7 @@ export function Profile() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
               <User className="w-6 h-6 text-emerald-600" />
-              My Pets
+              {t("profile.myPets")}
             </h2>
 
             <button
@@ -417,25 +390,27 @@ export function Profile() {
               className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-md"
             >
               <PlusCircle className="w-5 h-5" />
-              Add Pet
+              {t("profile.addPet")}
             </button>
           </div>
 
           {showAddPet && (
             <div className="bg-emerald-50 p-6 rounded-2xl mb-6 border border-emerald-200">
-              <h3 className="font-bold text-emerald-900 mb-4">Add a New Pet</h3>
+              <h3 className="font-bold text-emerald-900 mb-4">
+                {t("profile.addNewPet")}
+              </h3>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-bold text-stone-700 mb-2">
-                    Species
+                    {t("profile.species")}
                   </label>
                   <select
                     value={selectedSpeciesId}
                     onChange={(e) => setSelectedSpeciesId(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border-2 border-stone-200 focus:border-emerald-500 outline-none bg-white"
                   >
-                    <option value="">Select a species...</option>
+                    <option value="">{t("profile.selectSpecies")}</option>
                     {speciesOptions.map((species) => (
                       <option key={species.petId} value={species.petId}>
                         {species.name}
@@ -449,20 +424,20 @@ export function Profile() {
 
                 <div>
                   <label className="block text-sm font-bold text-stone-700 mb-2">
-                    Nickname
+                    {t("profile.nickname")}
                   </label>
                   <input
                     type="text"
                     value={petNickname}
                     onChange={(e) => setPetNickname(e.target.value)}
-                    placeholder="e.g., Bubbles, Goldie, Pleccy"
+                    placeholder={t("profile.nicknamePlaceholder")}
                     className="w-full px-4 py-3 rounded-xl border-2 border-stone-200 focus:border-emerald-500 outline-none bg-white"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-stone-700 mb-2">
-                    Age in years, optional
+                    {t("profile.ageOptional")}
                   </label>
                   <input
                     type="number"
@@ -470,7 +445,7 @@ export function Profile() {
                     step="0.1"
                     value={petAge}
                     onChange={(e) => setPetAge(e.target.value)}
-                    placeholder="e.g., 1.5"
+                    placeholder={t("profile.agePlaceholder")}
                     className="w-full px-4 py-3 rounded-xl border-2 border-stone-200 focus:border-emerald-500 outline-none bg-white"
                   />
                 </div>
@@ -483,14 +458,14 @@ export function Profile() {
                     }
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 disabled:bg-stone-300 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md"
                   >
-                    {savingPet ? "Adding..." : "Add Pet"}
+                    {savingPet ? t("profile.adding") : t("profile.addPet")}
                   </button>
 
                   <button
                     onClick={() => setShowAddPet(false)}
                     className="px-6 py-3 rounded-xl font-bold border-2 border-stone-300 hover:bg-stone-100 transition-all"
                   >
-                    Cancel
+                    {t("profile.cancel")}
                   </button>
                 </div>
               </div>
@@ -499,25 +474,28 @@ export function Profile() {
 
           {petsLoading ? (
             <div className="text-center py-12 bg-stone-50 rounded-2xl border border-stone-200">
-              <p className="text-stone-600">Loading your pets...</p>
+              <p className="text-stone-600">{t("profile.loadingPets")}</p>
             </div>
           ) : userPets.length === 0 ? (
             <div className="text-center py-12 bg-stone-50 rounded-2xl border border-stone-200">
-              <p className="text-stone-600 mb-4">
-                You have not added any pets yet.
-              </p>
+              <p className="text-stone-600 mb-4">{t("profile.noPet")}</p>
               <button
                 onClick={() => setShowAddPet(true)}
                 className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md"
               >
                 <PlusCircle className="w-5 h-5" />
-                Add your first pet
+                {t("profile.addFirstPet")}
               </button>
             </div>
           ) : (
             <div className="space-y-6">
               {userPets.map((pet) => {
                 const petTasks = tasksByPetListId[pet.petListId] || [];
+                const dateLocaleByLanguage = {
+                  en: "en-GB",
+                  ms: "ms-MY",
+                  zh: "zh-CN",
+                } as const;
 
                 return (
                   <div
@@ -540,7 +518,12 @@ export function Profile() {
                           <h3 className="text-2xl font-bold text-stone-900">
                             {pet.nickname}
                           </h3>
-                          <p className="text-stone-600">{pet.speciesName}</p>
+                          <p className="text-stone-600">
+                            <TranslatedText
+                              text={pet.speciesName}
+                              language={language}
+                            />
+                          </p>
                           {pet.scientificName && (
                             <p className="text-sm italic text-stone-500">
                               {pet.scientificName}
@@ -548,14 +531,14 @@ export function Profile() {
                           )}
                           {pet.age !== null && (
                             <p className="text-sm text-stone-500 mt-1">
-                              Age: {pet.age} years
+                              {t("profile.age")}: {pet.age} {t("profile.years")}
                             </p>
                           )}
                           {pet.addedDate && (
                             <p className="text-sm text-stone-500 mt-1">
-                              Added{" "}
+                              {t("profile.added")}{" "}
                               {new Date(pet.addedDate).toLocaleDateString(
-                                "en-GB",
+                                dateLocaleByLanguage[language],
                               )}
                             </p>
                           )}
@@ -573,12 +556,12 @@ export function Profile() {
                     <div className="mt-6">
                       <h4 className="font-bold text-stone-800 mb-4 flex items-center gap-2 text-lg">
                         <Clock className="w-5 h-5 text-emerald-600" />
-                        Care Schedule
+                        {t("profile.careSchedule")}
                       </h4>
 
                       {petTasks.length === 0 ? (
                         <div className="bg-white border border-stone-200 rounded-2xl p-5 text-stone-600">
-                          No care tasks were generated for this pet yet.
+                          {t("profile.noCareTasks")}
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -615,10 +598,10 @@ export function Profile() {
 
                                     <div>
                                       <h5 className="font-bold text-stone-900">
-                                        {TASK_NAMES[task.type] || task.type}
+                                        {t(`profile.tasks.${task.type}`)}
                                       </h5>
                                       <p className="text-sm text-stone-600">
-                                        {formatFrequency(task)}
+                                        {formatFrequency(task, t)}
                                       </p>
                                     </div>
                                   </div>
@@ -627,16 +610,16 @@ export function Profile() {
                                 {task.lastCompleted ? (
                                   <p className="text-sm text-emerald-700 font-semibold mb-3">
                                     {completedToday
-                                      ? "Completed today"
-                                      : `Last done: ${
+                                      ? t("profile.completedToday")
+                                      : `${t("profile.lastDone")} ${
                                           daysSince === null
-                                            ? "Recently"
-                                            : `${daysSince} days ago`
+                                            ? t("profile.recently")
+                                            : `${daysSince} ${t("profile.daysAgo")}`
                                         }`}
                                   </p>
                                 ) : (
                                   <p className="text-sm text-amber-700 font-semibold mb-3">
-                                    Not completed yet
+                                    {t("profile.notCompletedYet")}
                                   </p>
                                 )}
 
@@ -650,8 +633,8 @@ export function Profile() {
                                   }`}
                                 >
                                   {completedToday
-                                    ? "Done for Today"
-                                    : "Mark as Done Today"}
+                                    ? t("profile.doneForToday")
+                                    : t("profile.markAsDoneToday")}
                                 </button>
                               </div>
                             );
@@ -665,7 +648,7 @@ export function Profile() {
                         to={`/care-guide/${pet.petId}`}
                         className="bg-white rounded-2xl border border-stone-200 p-4 text-center font-bold text-emerald-700 hover:bg-emerald-50 transition-all"
                       >
-                        Full Guide
+                        {t("profile.fullGuide")}
                       </Link>
                     </div>
                   </div>

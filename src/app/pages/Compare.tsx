@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router";
 import {
   Scale,
@@ -20,13 +19,22 @@ import {
   normalizeDangerBadge,
   getSpeciesCareBadgeClasses,
   getSpeciesDangerBadgeClasses,
+  formatCurrencyMYR,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+  dangerLabels,
+  nativeStatusLabels,
 } from "../utils/petDisplay";
+import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Main Compare Component ===================== */
 
 export function Compare() {
   // Get compare list data and actions from context
   const { comparePets, removeCompare, clearCompare } = useCompare();
+  const { t, language } = useLanguage();
 
   /* ===================== Empty Compare List ===================== */
 
@@ -41,13 +49,12 @@ export function Compare() {
 
         {/* Empty state title */}
         <h2 className="mb-4 text-3xl font-bold text-stone-900">
-          You haven&apos;t added any pets yet
+          {t("comparePage.emptyTitle")}
         </h2>
 
         {/* Empty state description */}
         <p className="mb-8 max-w-md text-lg text-stone-600">
-          Add pets to your compare list to view their care level, biodiversity
-          risk, danger level, and setup requirements side-by-side.
+          {t("comparePage.emptyDescription")}
         </p>
 
         {/* Back to browse page */}
@@ -55,7 +62,7 @@ export function Compare() {
           to="/"
           className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-8 py-4 font-bold text-white shadow-lg transition hover:bg-emerald-700"
         >
-          Browse Species <ArrowRight className="h-5 w-5" />
+          {t("comparePage.browseSpecies")} <ArrowRight className="h-5 w-5" />
         </Link>
       </div>
     );
@@ -71,11 +78,11 @@ export function Compare() {
           <div>
             <h1 className="mb-4 flex items-center gap-4 text-4xl font-extrabold text-stone-900 md:text-5xl">
               <Scale className="h-10 w-10 text-emerald-600" />
-              Compare Pets
+              {t("comparePage.title")}
             </h1>
 
             <p className="max-w-2xl text-xl text-stone-600">
-              Compare real pet data side-by-side before making a decision.
+              {t("comparePage.description")}
             </p>
           </div>
 
@@ -85,7 +92,7 @@ export function Compare() {
             className="flex items-center gap-2 px-4 py-2 font-semibold text-stone-500 transition-colors hover:text-rose-600"
           >
             <Trash2 className="h-4 w-4" />
-            Clear List
+            {t("comparePage.clearList")}
           </button>
         </div>
 
@@ -118,7 +125,7 @@ export function Compare() {
                     <button
                       onClick={() => removeCompare(pet.pet_id)}
                       className="absolute right-4 top-4 z-20 rounded-full bg-stone-900/50 p-2 text-white backdrop-blur-md transition-colors hover:bg-rose-500"
-                      aria-label="Remove from compare"
+                      aria-label={t("comparePage.removeFromCompare")}
                     >
                       <Trash2 className="h-5 w-5" />
                     </button>
@@ -137,7 +144,10 @@ export function Compare() {
                       {/* Pet name text */}
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-2xl font-bold leading-tight text-white drop-shadow-md">
-                          {primaryCommonName}
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
                         </h3>
 
                         <p className="mt-1 text-sm italic text-stone-200">
@@ -157,7 +167,11 @@ export function Compare() {
                           )}
                         >
                           <Thermometer className="h-4 w-4" />
-                          {pet.pet_care_level || "Unknown"} Care
+                          {getLocalizedPetLabel(
+                            careLevelLabels,
+                            pet.pet_care_level,
+                            language,
+                          )}
                         </span>
 
                         {/* Invasive risk badge */}
@@ -167,7 +181,11 @@ export function Compare() {
                           )}
                         >
                           <ShieldAlert className="h-4 w-4" />
-                          {pet.pet_invasive_risk || "Unknown"} Risk
+                          {getLocalizedPetLabel(
+                            invasiveRiskLabels,
+                            pet.pet_invasive_risk,
+                            language,
+                          )}
                         </span>
 
                         {/* Danger badge */}
@@ -177,14 +195,18 @@ export function Compare() {
                           )}
                         >
                           <Skull className="h-4 w-4" />
-                          {dangerLevel || "Unknown"} Danger
+                          {getLocalizedPetLabel(
+                            dangerLabels,
+                            dangerLevel,
+                            language,
+                          )}
                         </span>
 
                         {/* Banned badge */}
                         {pet.pet_banned && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
                             <Ban className="h-4 w-4" />
-                            Banned
+                            {t("comparePage.banned")}
                           </span>
                         )}
                       </div>
@@ -195,13 +217,13 @@ export function Compare() {
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-2 text-sm font-bold uppercase text-stone-500">
                             <Ruler className="h-4 w-4" />
-                            Max Length
+                            {t("comparePage.maxLength")}
                           </span>
 
                           <span className="font-bold text-stone-900">
                             {pet.pet_max_length != null
-                              ? `${pet.pet_max_length} cm`
-                              : "Unknown"}
+                              ? `${pet.pet_max_length} ${t("comparePage.cm")}`
+                              : t("comparePage.unknown")}
                           </span>
                         </div>
 
@@ -209,13 +231,13 @@ export function Compare() {
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-2 text-sm font-bold uppercase text-stone-500">
                             <Clock className="h-4 w-4" />
-                            Longevity
+                            {t("comparePage.longevity")}
                           </span>
 
                           <span className="font-bold text-stone-900">
                             {pet.pet_longevity != null
-                              ? `${pet.pet_longevity} years`
-                              : "Unknown"}
+                              ? `${pet.pet_longevity} ${t("comparePage.years")}`
+                              : t("comparePage.unknown")}
                           </span>
                         </div>
 
@@ -223,35 +245,42 @@ export function Compare() {
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-2 text-sm font-bold uppercase text-stone-500">
                             <Wallet className="h-4 w-4" />
-                            Cost
+                            {t("comparePage.cost")}
                           </span>
 
                           <span className="font-bold text-stone-900">
                             {pet.pet_cost != null
-                              ? `RM ${pet.pet_cost}`
-                              : "Unknown"}
+                              ? formatCurrencyMYR(pet.pet_cost)
+                              : t("comparePage.unknown")}
                           </span>
                         </div>
 
                         {/* Tank size */}
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-bold uppercase text-stone-500">
-                            Tank Size
+                            {t("comparePage.tankSize")}
                           </span>
 
                           <span className="font-bold text-right text-stone-900">
-                            {displayText(pet.pet_tank_size)}
+                            {displayText(
+                              pet.pet_tank_size,
+                              t("comparePage.unknown"),
+                            )}
                           </span>
                         </div>
 
                         {/* Native status */}
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-bold uppercase text-stone-500">
-                            Native Status
+                            {t("comparePage.nativeStatus")}
                           </span>
 
                           <span className="font-bold text-right text-stone-900">
-                            {displayText(pet.pet_is_native)}
+                            {getLocalizedPetLabel(
+                              nativeStatusLabels,
+                              pet.pet_is_native,
+                              language,
+                            )}
                           </span>
                         </div>
                       </div>
@@ -262,7 +291,8 @@ export function Compare() {
                           to={`/species/${pet.pet_id}`}
                           className="inline-flex items-center gap-1 font-bold text-emerald-600 transition-colors hover:text-emerald-700"
                         >
-                          View Full Profile <ArrowRight className="h-4 w-4" />
+                          {t("comparePage.viewFullProfile")}{" "}
+                          <ArrowRight className="h-4 w-4" />
                         </Link>
                       </div>
                     </div>
@@ -281,7 +311,9 @@ export function Compare() {
                   <Scale className="h-8 w-8" />
                 </div>
 
-                <span className="text-lg font-bold">Add another species</span>
+                <span className="text-lg font-bold">
+                  {t("comparePage.addAnotherSpecies")}
+                </span>
               </Link>
             )}
           </div>
