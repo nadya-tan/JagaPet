@@ -164,9 +164,12 @@ export function AiChatbot() {
                           <div className="flex gap-3 items-center">
                             {card.imageUrl && (
                               <img
-                                src={card.imageUrl}
+                                src={card.imageUrl || "/pet_image/pet_placeholder.png"}
                                 alt=""
                                 className="h-12 w-12 rounded-lg object-cover bg-white"
+                                onError={(event) => {
+                                  event.currentTarget.src = "/pet_image/pet_placeholder.png";
+                                }}
                               />
                             )}
 

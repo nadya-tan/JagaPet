@@ -2,6 +2,8 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Groq from "groq-sdk";
 import { sql } from "./_lib/auth.js";
 
+const PET_IMAGE_PLACEHOLDER = "/pet_image/pet_placeholder.png";
+
 const groqApiKey = process.env.GROQ_AI_GROQ_API_KEY;
 
 const groq = new Groq({
@@ -224,6 +226,20 @@ function getLocalizedToolCards(
   return [];
 }
 
+function getPetImageUrl(value: unknown): string {
+  if (typeof value !== "string") {
+    return PET_IMAGE_PLACEHOLDER;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return PET_IMAGE_PLACEHOLDER;
+  }
+
+  return encodeURI(`/pet_image/${trimmed}`);
+}
+
 async function analyseMessage(message: string): Promise<MessageAnalysis> {
   const completion = await groq.chat.completions.create({
     model: "llama-3.1-8b-instant",
@@ -248,7 +264,7 @@ Rules:
 - If the user appears to be describing an aquatic pet for identification, intent must be "identify".
 - For identify intent, suggest exactly 5 likely scientific names where possible.
 - Scientific names must be binomial names where possible, such as "Carassius auratus".
-- If the message is not about species identification, likelyScientificNames should be [].
+- If the message is not about species identification, likelyScientificNames should be []. Do not suggest possible pets or attempt to identify the pet if the message is not about species identification.
 - Do not include markdown.
 - Do not include explanations.
         `.trim(),
@@ -377,7 +393,7 @@ async function getSpeciesCardsByScientificNames(
     title: chooseDisplayName(row, language),
     description: row.pet_scientific_name || "Aquatic pet profile",
     to: `/species/${row.pet_id}`,
-    imageUrl: row.pet_image_ref,
+    imageUrl: getPetImageUrl(row.pet_image_ref),
     badge:
       row.pet_common_aquarium === true
         ? language === "ms"
@@ -473,28 +489,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         {
           role: "user",
           content: `
-User message:
-${message}
+            User message:
+            ${message}
 
-Detected language:
-${analysis.language}
+            Detected language:
+            ${analysis.language}
 
-English processing summary:
-${analysis.englishDescription}
+            English processing summary:
+            ${analysis.englishDescription}
 
-Intent:
-${analysis.intent}
+            Intent:
+            ${analysis.intent}
 
-Application species matches, if any:
-${speciesContext}
+            Application species matches, if any:
+            ${speciesContext}
 
-Instructions:
-- Reply in the same language as the user.
-- Do not include raw URLs.
-- Do not say "click the link below".
-- If species matches are provided, explain that they are likely matches based on the description, not a confirmed identification.
-- If species matches are provided, mention that visual identification is recommended.
-- The application will render clickable cards separately, so do not write markdown links.
+            Instructions:
+            - Reply in the same language as the user.
+            - Do not include raw URLs.
+            - Do not say "click the link below".
+            - If species matches are provided, explain that they are likely matches based on the description, not a confirmed identification.
+            - If species matches are provided, mention that visual identification is recommended.
+            - The application will render clickable cards separately, so do not write markdown links.
           `.trim(),
         },
       ],
