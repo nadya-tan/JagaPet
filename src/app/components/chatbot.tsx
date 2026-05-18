@@ -2,10 +2,21 @@ import React, { useState } from "react";
 import { MessageCircleQuestion, X, Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Link } from "react-router";
+
+type ChatActionCard = {
+  type: "species" | "tool" | "page";
+  title: string;
+  description?: string;
+  to: string;
+  imageUrl?: string | null;
+  badge?: string | null;
+};
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
+  cards?: ChatActionCard[];
 };
 
 export function AiChatbot() {
@@ -53,6 +64,7 @@ export function AiChatbot() {
       const assistantMessage: ChatMessage = {
         role: "assistant",
         content: data.answer || "Sorry, I could not generate a response.",
+        cards: Array.isArray(data.cards) ? data.cards : [],
       };
 
       setMessages((current) => [...current, assistantMessage]);
@@ -119,29 +131,71 @@ export function AiChatbot() {
               }`}
             >
               {chatMessage.role === "assistant" ? (
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components ={{
-                    p: ({ children }) => (
+                <>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p: ({ children }) => (
                         <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
-                    ),
-                    strong: ({ children }) => (
+                      ),
+                      strong: ({ children }) => (
                         <strong className="font-semibold text-stone-900">{children}</strong>
-                    ),
-                    ul: ({ children }) => (
+                      ),
+                      ul: ({ children }) => (
                         <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>
-                    ),
-                    ol: ({ children }) => (
+                      ),
+                      ol: ({ children }) => (
                         <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>
-                    ),
-                    li: ({ children }) => <li>{children}</li>,
-                  }}
-                >
+                      ),
+                      li: ({ children }) => <li>{children}</li>,
+                    }}
+                  >
                     {chatMessage.content}
-                </ReactMarkdown>
-            ) : (
+                  </ReactMarkdown>
+
+                  {chatMessage.cards && chatMessage.cards.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {chatMessage.cards.map((card, cardIndex) => (
+                        <Link
+                          key={`${card.to}-${cardIndex}`}
+                          to={card.to}
+                          className="block rounded-xl border border-emerald-100 bg-emerald-50 hover:bg-emerald-100 transition-colors p-3 no-underline"
+                        >
+                          <div className="flex gap-3 items-center">
+                            {card.imageUrl && (
+                              <img
+                                src={card.imageUrl}
+                                alt=""
+                                className="h-12 w-12 rounded-lg object-cover bg-white"
+                              />
+                            )}
+
+                            <div className="min-w-0">
+                              <div className="font-semibold text-emerald-900 text-sm">
+                                {card.title}
+                              </div>
+
+                              {card.description && (
+                                <div className="text-xs text-emerald-800 mt-0.5">
+                                  {card.description}
+                                </div>
+                              )}
+
+                              {card.badge && (
+                                <div className="inline-block mt-1 text-[11px] px-2 py-0.5 rounded-full bg-white text-emerald-700 border border-emerald-200">
+                                  {card.badge}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
                 chatMessage.content
-            )}
+              )}
             </div>
           </div>
         ))}
