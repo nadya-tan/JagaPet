@@ -13,7 +13,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    if (!process.env.GROQ_API_KEY) {
+    if (!process.env.GROQ_AI_GROQ_API_KEY) {
       return res.status(500).json({
         error: 'Groq API key is not configured.',
       });
