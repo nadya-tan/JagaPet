@@ -259,12 +259,24 @@ Return ONLY valid JSON in this exact shape:
   "likelyScientificNames": ["name 1", "name 2", "name 3"]
 }
 
-Rules:
-- If the user writes in Malay or Chinese, translate the useful pet description into English in englishDescription.
-- If the user appears to be describing an aquatic pet for identification, intent must be "identify".
-- For identify intent, suggest exactly 5 likely scientific names where possible.
-- Scientific names must be binomial names where possible, such as "Carassius auratus".
-- If the message is not about species identification, likelyScientificNames should be []. Do not suggest possible pets or attempt to identify the pet if the message is not about species identification.
+Intent rules:
+- Use "identify" ONLY when the user is asking what species/pet they have OR clearly describing an aquatic pet for identification.
+- Do NOT use "identify" just because the message mentions fish, turtle, pet, species, or aquarium.
+- If the user asks about illness, symptoms, disease, abnormal behaviour, white spots, not eating, floating, gasping, injuries, or health, intent must be "sickness".
+- If the user asks about giving away, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
+- If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
+- If the user compares species, intent must be "compare".
+- Otherwise use "general".
+
+Identification description rules:
+- Intent should be "identify" only if the user gives visible traits such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
+- If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet.
+- For identify intent with enough description, suggest exactly 3 likely scientific names where possible.
+- For all non-identify intents, likelyScientificNames must be [].
+- For identify intent without enough description, likelyScientificNames must be [].
+
+Language rules:
+- If the user writes in Malay or Chinese, translate the useful content into English in englishDescription.
 - Do not include markdown.
 - Do not include explanations.
         `.trim(),
