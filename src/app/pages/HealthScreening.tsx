@@ -625,7 +625,7 @@ export function HealthScreening() {
                                 </h2>
 
                                 <p className="text-sm text-stone-500">
-                                  {t("healthScreening.confidence")}:{" "}
+                                  {t("Confidence")}:{" "}
                                   {(item.confidence * 100).toFixed(1)}%
                                 </p>
                               </div>
