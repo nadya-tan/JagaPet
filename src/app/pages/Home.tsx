@@ -14,21 +14,28 @@ import {
   ScanHeart,
   X,
   Maximize2,
+  Minus,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SearchAutocomplete } from "../components/SearchAutocomplete";
-import { usePetRecommendationPool } from "../hooks/usePetRecommendations";
-import { useHighRiskSpecies } from "../hooks/useHighRiskSpecies";
+import { useHomeSpecies } from "../hooks/useHomeSpecies";
 import {
   getPetCommonNames,
   getDangerBadgeClasses,
   getCareBadgeClasses,
   getCostBadgeClasses,
   getNativeBadgeClasses,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+  budgetLabels,
+  nativeStatusLabels,
 } from "../utils/petDisplay";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
+import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * Utility function:
@@ -50,15 +57,11 @@ function shuffleArray<T>(items: T[]) {
  * - Provides navigation and interactive features
  */
 export function Home() {
-  const { recommendations, loading, error } = usePetRecommendationPool(); // Fetch recommended pets from API/hook
+  const { t, language } = useLanguage(); // Translation function from LanguageContext
+  const { recommendations, highRiskSpecies, loading, error } = useHomeSpecies();
+  const highRiskLoading = loading;
+  const highRiskError = error; // Fetch recommended pets from API/hook
   const navigate = useNavigate(); // Navigation hook for routing
-
-  // Fetch high risk species list
-  const {
-    highRiskSpecies,
-    loading: highRiskLoading,
-    error: highRiskError,
-  } = useHighRiskSpecies();
 
   // Reference to hidden file input (used for image upload identification)
   const identifyFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -80,6 +83,68 @@ export function Home() {
 
   // Controls visibility of mini video player
   const [showMiniPlayer, setShowMiniPlayer] = useState(true);
+
+  // Mini player draggable container reference
+  const miniPlayerRef = useRef<HTMLDivElement | null>(null);
+
+  // Stores drag offset while user is dragging
+  const dragOffsetRef = useRef({
+    x: 0,
+    y: 0,
+  });
+
+  // Mini player position on screen
+  const [miniPlayerPosition, setMiniPlayerPosition] = useState({
+    x: 24,
+    y: 24,
+  });
+
+  // Put mini player at bottom-left when it first appears
+  useEffect(() => {
+    if (!showMiniPlayer) return;
+
+    const playerWidth = 340;
+    const estimatedPlayerHeight = 230;
+
+    setMiniPlayerPosition({
+      x: 24,
+      y: window.innerHeight - estimatedPlayerHeight - 24,
+    });
+  }, [showMiniPlayer]);
+
+  const handleMiniPlayerDragStart = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    if (!miniPlayerRef.current) return;
+
+    const rect = miniPlayerRef.current.getBoundingClientRect();
+
+    dragOffsetRef.current = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMiniPlayerDragMove = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    if (!miniPlayerRef.current || event.buttons !== 1) return;
+
+    const rect = miniPlayerRef.current.getBoundingClientRect();
+
+    const nextX = event.clientX - dragOffsetRef.current.x;
+    const nextY = event.clientY - dragOffsetRef.current.y;
+
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+
+    setMiniPlayerPosition({
+      x: Math.min(Math.max(nextX, 8), maxX - 8),
+      y: Math.min(Math.max(nextY, 8), maxY - 8),
+    });
+  };
 
   /**
    * Open mini player in fullscreen mode
@@ -272,7 +337,7 @@ export function Home() {
   return (
     <div className="flex flex-col gap-12 pb-24 font-sans bg-stone-50 text-stone-900 overflow-hidden">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[600px] pb-32 flex items-center justify-center">
+      <section className="relative w-full min-h-[680px] pt-16 md:pt-20 pb-32 flex items-start justify-center">
         <div className="absolute inset-0 bg-emerald-900/60 z-10 overflow-hidden"></div>
         <img
           src="https://images.unsplash.com/photo-1764175760954-e99714c7dd98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWF1dGlmdWwlMjBwbGFudGVkJTIwYXF1YXJpdW0lMjB0YW5rfGVufDF8fHx8MTc3NDcxODU3Mnww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -280,7 +345,7 @@ export function Home() {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        <div className="relative z-20 max-w-4xl mx-auto px-4 text-center">
+        <div className="relative z-20 max-w-5xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -288,16 +353,16 @@ export function Home() {
             className="bg-rose-600 text-white px-4 py-2 rounded-full inline-flex items-center gap-2 text-sm font-semibold mb-6 shadow-lg uppercase tracking-wider"
           >
             <AlertTriangle className="w-4 h-4" />
-            Never Release Pets Into the Wild
+            {t("home.alert")}
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-md leading-tight"
+            className="text-balance text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-md leading-tight"
           >
-            Responsible Pet Ownership Starts Here
+            {t("home.heroTitle")}
           </motion.h1>
 
           <motion.p
@@ -306,9 +371,7 @@ export function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-emerald-50 mb-10 max-w-2xl mx-auto font-medium"
           >
-            Explore species profiles, check lifestyle compatibility, and learn
-            how to safely manage your ornamental fish and pet turtles in
-            Malaysia.
+            {t("home.heroDescription")}
           </motion.p>
 
           <motion.div
@@ -355,12 +418,9 @@ export function Home() {
             <div className="relative z-10">
               <ShieldCheck className="w-12 h-12 text-emerald-600 mb-4 bg-emerald-50 p-2 rounded-xl" />
               <h3 className="text-xl font-bold text-stone-800 mb-2">
-                Pre-Purchase Quiz
+                {t("home.quizTitle")}
               </h3>
-              <p className="text-stone-600">
-                Find out if you have the budget, space, and time for that
-                specific pet.
-              </p>
+              <p className="text-stone-600">{t("home.quizDescription")}</p>
             </div>
           </Link>
 
@@ -372,12 +432,9 @@ export function Home() {
             <div className="relative z-10">
               <Camera className="w-12 h-12 text-sky-600 mb-4 bg-sky-50 p-2 rounded-xl" />
               <h3 className="text-xl font-bold text-stone-800 mb-2">
-                Identify a Pet
+                {t("home.identifyTitle")}
               </h3>
-              <p className="text-stone-600">
-                Snap a photo to identify a species and view its biodiversity
-                risk.
-              </p>
+              <p className="text-stone-600">{t("home.identifyDescription")}</p>
             </div>
           </Link>
 
@@ -391,13 +448,10 @@ export function Home() {
               <ScanHeart className="w-12 h-12 text-amber-600 mb-4 bg-amber-50 p-2 rounded-xl" />
 
               <h3 className="text-xl font-bold text-stone-800 mb-2">
-                Health Screening
+                {t("home.healthTitle")}
               </h3>
 
-              <p className="text-stone-600">
-                Upload a fish photo to screen for possible visible disease
-                signs.
-              </p>
+              <p className="text-stone-600">{t("home.healthDescription")}</p>
             </div>
           </Link>
 
@@ -409,12 +463,9 @@ export function Home() {
             <div className="relative z-10">
               <HeartHandshake className="w-12 h-12 text-rose-500 mb-4 bg-rose-50 p-2 rounded-xl" />
               <h3 className="text-xl font-bold text-stone-800 mb-2">
-                Need to Rehome?
+                {t("home.rehomeTitle")}
               </h3>
-              <p className="text-stone-600">
-                Can't keep your pet anymore? Learn how to exit safely without
-                releasing.
-              </p>
+              <p className="text-stone-600">{t("home.rehomeDescription")}</p>
             </div>
           </Link>
         </div>
@@ -426,11 +477,10 @@ export function Home() {
           <div>
             <h2 className="text-3xl font-extrabold text-stone-900 flex items-center gap-3">
               <Sparkles className="text-emerald-600" />
-              Recommended for Beginners
+              {t("home.recommendedTitle")}
             </h2>
             <p className="text-stone-600 mt-2 text-lg">
-              Great starter species that are easier to care for and pose lower
-              ecological risks.
+              {t("home.recommendedDescription")}
             </p>
           </div>
           {!loading && !error && recommendations.length > 4 && (
@@ -440,7 +490,7 @@ export function Home() {
               className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-semibold text-stone-700 shadow-sm hover:bg-stone-50"
             >
               <RefreshCw className="h-4 w-4" />
-              Not my type
+              {t("home.notMyType")}
             </button>
           )}
         </div>
@@ -453,7 +503,7 @@ export function Home() {
           ) : error ? (
             <p className="text-rose-600">{error}</p>
           ) : visibleRecommendations.length === 0 ? (
-            <p className="text-stone-600">No recommendations found.</p>
+            <p className="text-stone-600">{t("home.noRecommendations")}</p>
           ) : (
             visibleRecommendations.map((pet, index) => {
               const { primaryCommonName } = getPetCommonNames(pet);
@@ -487,20 +537,27 @@ export function Home() {
                             )}
                           >
                             <ShieldAlert className="w-3 h-3" />
-                            {pet.pet_invasive_risk} Risk
+                            {getLocalizedPetLabel(
+                              invasiveRiskLabels,
+                              pet.pet_invasive_risk,
+                              language,
+                            )}
                           </span>
                         )}
 
                         <span className="inline-flex items-center gap-1 bg-emerald-500/90 text-white px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-sm">
                           <Sparkles className="w-3 h-3" />
-                          Recommended
+                          {t("home.recommended")}
                         </span>
                       </div>
                     </div>
 
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-stone-900 mb-1">
-                        {primaryCommonName}
+                        <TranslatedText
+                          text={primaryCommonName}
+                          language={language}
+                        />
                       </h3>
 
                       <p className="text-sm text-stone-500 italic mb-4 font-serif">
@@ -514,7 +571,11 @@ export function Home() {
                             className={getNativeBadgeClasses(pet.pet_is_native)}
                           >
                             <Fish className="w-3 h-3" />
-                            {pet.pet_is_native}
+                            {getLocalizedPetLabel(
+                              nativeStatusLabels,
+                              pet.pet_is_native,
+                              language,
+                            )}
                           </span>
                         )}
                         {pet.pet_care_level && (
@@ -522,7 +583,11 @@ export function Home() {
                             className={getCareBadgeClasses(pet.pet_care_level)}
                           >
                             <HandHeart className="w-3 h-3" />
-                            {pet.pet_care_level} Care
+                            {getLocalizedPetLabel(
+                              careLevelLabels,
+                              pet.pet_care_level,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -533,19 +598,26 @@ export function Home() {
                             )}
                           >
                             <Banknote className="w-3 h-3" />
-                            {pet.pet_lifetime_budget_category} Budget
+                            {getLocalizedPetLabel(
+                              budgetLabels,
+                              pet.pet_lifetime_budget_category,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
 
                       {pet.pet_comments && (
                         <p className="text-stone-600 text-sm line-clamp-3 mb-6 flex-1">
-                          {pet.pet_comments}
+                          <TranslatedText
+                            text={pet.pet_comments}
+                            language={language}
+                          />
                         </p>
                       )}
 
                       <div className="text-emerald-700 font-semibold text-sm">
-                        View Profile & Care Guide →
+                        {t("home.viewProfile")}
                       </div>
                     </div>
                   </Link>
@@ -562,11 +634,10 @@ export function Home() {
           <div>
             <h2 className="text-3xl font-extrabold text-stone-900 flex items-center gap-3">
               <Leaf className="text-emerald-600" />
-              High Biodiversity Risk Alert
+              {t("home.highRiskTitle")}
             </h2>
             <p className="text-stone-600 mt-2 text-lg">
-              Commonly bought pets that pose threats to local ecosystems if
-              released.
+              {t("home.highRiskDescription")}
             </p>
           </div>
 
@@ -577,7 +648,7 @@ export function Home() {
               className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-semibold text-stone-700 shadow-sm hover:bg-stone-50"
             >
               <RefreshCw className="h-4 w-4" />
-              Show more
+              {t("home.showMore")}
             </button>
           )}
         </div>
@@ -590,7 +661,7 @@ export function Home() {
           ) : highRiskError ? (
             <p className="text-rose-600">{highRiskError}</p>
           ) : visibleHighRiskSpecies.length === 0 ? (
-            <p className="text-stone-600">No high risk species found.</p>
+            <p className="text-stone-600">{t("home.noHighRisk")}</p>
           ) : (
             visibleHighRiskSpecies.map((pet, index) => {
               const { primaryCommonName } = getPetCommonNames(pet);
@@ -625,7 +696,11 @@ export function Home() {
                             )}
                           >
                             <ShieldAlert className="w-3 h-3" />
-                            {pet.pet_invasive_risk} Risk
+                            {getLocalizedPetLabel(
+                              invasiveRiskLabels,
+                              pet.pet_invasive_risk,
+                              language,
+                            )}
                           </span>
                         )}
 
@@ -634,7 +709,11 @@ export function Home() {
                             className={getCareBadgeClasses(pet.pet_care_level)}
                           >
                             <HandHeart className="w-3 h-3" />
-                            {pet.pet_care_level} Care
+                            {getLocalizedPetLabel(
+                              careLevelLabels,
+                              pet.pet_care_level,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
@@ -642,7 +721,10 @@ export function Home() {
 
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-stone-900 mb-1">
-                        {primaryCommonName}
+                        <TranslatedText
+                          text={primaryCommonName}
+                          language={language}
+                        />
                       </h3>
 
                       <p className="text-sm text-stone-500 italic mb-4 font-serif">
@@ -656,19 +738,26 @@ export function Home() {
                             className={getNativeBadgeClasses(pet.pet_is_native)}
                           >
                             <Fish className="w-3 h-3" />
-                            {pet.pet_is_native}
+                            {getLocalizedPetLabel(
+                              nativeStatusLabels,
+                              pet.pet_is_native,
+                              language,
+                            )}
                           </span>
                         )}
                       </div>
 
                       {pet.pet_comments && (
                         <p className="text-stone-600 text-sm line-clamp-3 mb-6 flex-1">
-                          {pet.pet_comments}
+                          <TranslatedText
+                            text={pet.pet_comments}
+                            language={language}
+                          />
                         </p>
                       )}
 
                       <div className="text-emerald-700 font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                        View Profile & Care Guide →
+                        {t("home.viewProfile")}
                       </div>
                     </div>
                   </Link>
@@ -687,21 +776,17 @@ export function Home() {
           </div>
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-3xl font-bold text-white mb-4">
-              Why shouldn't I set my pet free?
+              {t("home.educationTitle")}
             </h2>
             <p className="text-stone-300 text-lg mb-8 leading-relaxed">
-              Pets like the Red-Eared Slider or Suckermouth Catfish (Pleco)
-              aren't native to Malaysia. When released into our rivers and
-              lakes, they aggressively outcompete local wildlife for food,
-              destroy habitats, and spread foreign diseases. Our local species
-              suffer immensely.
+              {t("home.educationDescription")}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/safe-exit"
                 className="bg-white text-stone-900 hover:bg-emerald-50 px-6 py-3 rounded-full font-bold transition shadow-md"
               >
-                Find Alternative Rehoming
+                {t("home.findRehoming")}
               </Link>
             </div>
           </div>
@@ -710,7 +795,22 @@ export function Home() {
 
       {/* Mini Player */}
       {showMiniPlayer && (
-        <div className="fixed bottom-6 left-6 z-50 w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700">
+        <div
+          ref={miniPlayerRef}
+          className="fixed z-50 w-[260px] sm:w-[300px] md:w-[340px] overflow-hidden rounded-2xl bg-black shadow-2xl border border-stone-700"
+          style={{
+            left: miniPlayerPosition.x,
+            top: miniPlayerPosition.y,
+          }}
+        >
+          <div
+            onPointerDown={handleMiniPlayerDragStart}
+            onPointerMove={handleMiniPlayerDragMove}
+            className="flex touch-none cursor-grab select-none items-center justify-center bg-stone-900 px-3 text-xs text-white active:cursor-grabbing"
+          >
+            <Minus className="h-4 w-4" />
+          </div>
+
           <div className="relative aspect-video w-full bg-black">
             <button
               type="button"

@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router";
 import { useUser } from "../context/UserContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Auth() {
+  // Language context for localization
+  const { t } = useLanguage();
+
   // Get current user state and authentication functions from context
   const { user, login, register } = useUser();
 
@@ -39,21 +43,21 @@ export function Auth() {
       }
     } catch (err: any) {
       // Display error message if authentication fails
-      setError(err.message || "Something went wrong.");
+      setError(err.message || t("auth.errors.generic"));
     }
   };
+
+  const isLoginMode = mode === "login";
 
   return (
     <div className="max-w-md mx-auto px-6 py-10">
       {/* Page title changes based on current mode */}
       <h1 className="text-3xl font-bold mb-2">
-        {mode === "login" ? "Log in" : "Create profile"}
+        {isLoginMode ? t("auth.loginTitle") : t("auth.registerTitle")}
       </h1>
 
       {/* Short description text */}
-      <p className="text-stone-600 mb-6">
-        Save your compatibility quiz answers to your profile.
-      </p>
+      <p className="text-stone-600 mb-6">{t("auth.description")}</p>
 
       {/* Authentication form */}
       <form
@@ -62,22 +66,30 @@ export function Auth() {
       >
         {/* Username input field */}
         <div>
-          <label className="block mb-1 font-medium">Username</label>
+          <label className="block mb-1 font-medium" htmlFor="username">
+            {t("auth.username")}
+          </label>
           <input
+            id="username"
             className="w-full rounded-xl border border-stone-300 px-4 py-3"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder={t("auth.usernamePlaceholder")}
           />
         </div>
 
         {/* Password input field */}
         <div>
-          <label className="block mb-1 font-medium">Password</label>
+          <label className="block mb-1 font-medium" htmlFor="password">
+            {t("auth.password")}
+          </label>
           <input
+            id="password"
             type="password"
             className="w-full rounded-xl border border-stone-300 px-4 py-3"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder={t("auth.passwordPlaceholder")}
           />
         </div>
 
@@ -86,18 +98,16 @@ export function Auth() {
 
         {/* Submit button for login/register */}
         <button className="w-full rounded-xl bg-emerald-600 text-white px-4 py-3">
-          {mode === "login" ? "Log in" : "Create profile"}
+          {isLoginMode ? t("auth.loginButton") : t("auth.registerButton")}
         </button>
 
         {/* Button to switch between login and register mode */}
         <button
           type="button"
           className="w-full text-stone-600"
-          onClick={() => setMode(mode === "login" ? "register" : "login")}
+          onClick={() => setMode(isLoginMode ? "register" : "login")}
         >
-          {mode === "login"
-            ? "Need an account? Create profile"
-            : "Already have an account? Log in"}
+          {isLoginMode ? t("auth.switchToRegister") : t("auth.switchToLogin")}
         </button>
       </form>
     </div>

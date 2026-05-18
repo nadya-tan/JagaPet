@@ -2,7 +2,7 @@
 // Import React hooks for lifecycle, memoization, and state management
 import React, { useEffect, useMemo, useState } from "react";
 // Import routing utilities for navigation and conditional redirects
-import { useLocation, Link, Navigate } from "react-router";
+import { Link, Navigate } from "react-router";
 // Import wishlist context for user-selected species tracking
 import { useWishlist } from "../context/WishlistContext";
 // Import user context containing quiz answers and authentication state
@@ -26,9 +26,17 @@ import { useQuizRecommendations } from "../hooks/useQuizRecommendations";
 // Import typed model for recommendation results
 import type { QuizRecommendationPet } from "../types/pet.types";
 // Import utility to display common names for pets
-import { getPetCommonNames } from "../utils/petDisplay";
+import {
+  getPetCommonNames,
+  getLocalizedPetLabel,
+  careLevelLabels,
+  invasiveRiskLabels,
+} from "../utils/petDisplay";
 // Import loading spinner component from Material UI
 import CircularProgress from "@mui/material/CircularProgress";
+// Import translation hook for internationalization
+import { useLanguage } from "../context/LanguageContext";
+import { TranslatedText } from "../components/TranslatedText";
 
 // ===================== Scoring Conversion Tables =====================
 // Convert user answers into numerical scales for comparison logic
@@ -151,93 +159,76 @@ function getUserLifespanLevel(value: string | undefined): 1 | 2 | 3 | null {
 // ===================== Core Evaluation Engine =====================
 // Evaluate how well a pet matches a user's lifestyle answers
 const evaluatePet = (pet: QuizRecommendationPet, answers: LifestyleAnswers) => {
-  const reasons: string[] = []; // mismatch explanations
-  const fits: string[] = []; // positive matching attributes
+  const reasons: string[] = [];
+  const fits: string[] = [];
 
-  // Convert pet attributes into comparable numeric levels
   const petBudget = getBudgetLevel(pet.pet_lifetime_budget_category);
   const petSpace = getSpaceLevel(pet.pet_tank_size, pet.pet_max_length);
   const petTime = getTimeLevel(pet.pet_care_level);
   const petExperience = getExperienceLevel(pet.pet_care_level);
   const petLifespan = getLifespanLevel(pet.pet_longevity);
 
-  let score = 0; // overall compatibility score
-  let blockers = 0; // hard mismatches that disqualify suitability
+  let score = 0;
+  let blockers = 0;
 
-  // ===================== Budget Compatibility Check =====================
   if (petBudget !== null) {
     if (levels.budget[answers.budget] < petBudget) {
-      reasons.push(
-        `Budget: This pet likely needs a ${pet.pet_lifetime_budget_category?.toLowerCase()} lifetime budget, which is above your selected budget.`,
-      );
+      const budgetKey =
+        pet.pet_lifetime_budget_category?.toLowerCase() ?? "unknown";
+
+      reasons.push(`quizResults.reasons.budget.${budgetKey}`);
       blockers += 1;
     } else {
-      fits.push("Suitable budget");
+      fits.push("quizResults.fits.suitableBudget");
       score += 1;
     }
   }
 
-  // ===================== Space Requirement Check =====================
   if (petSpace !== null) {
     if (levels.space[answers.space] < petSpace) {
-      reasons.push(
-        "Space: This pet may need a larger habitat setup than the space you selected.",
-      );
+      reasons.push("quizResults.reasons.space");
       blockers += 1;
     } else {
-      fits.push("Appropriate space requirement");
+      fits.push("quizResults.fits.appropriateSpace");
       score += 1;
     }
   }
 
-  // ===================== Time Commitment Check =====================
   if (petTime !== null) {
     if (levels.time[answers.time] < petTime) {
-      reasons.push(
-        "Time: This pet may require more care time than your current availability.",
-      );
+      reasons.push("quizResults.reasons.time");
       blockers += 1;
     } else {
-      fits.push("Manageable maintenance time");
+      fits.push("quizResults.fits.manageableTime");
       score += 1;
     }
   }
 
-  // ===================== Experience Level Check =====================
   if (petExperience !== null) {
     if (levels.experience[answers.experience] < petExperience) {
-      reasons.push(
-        "Experience: This pet may be too challenging for your current experience level.",
-      );
+      reasons.push("quizResults.reasons.experience");
       blockers += 1;
     } else {
-      fits.push("Manageable care level");
+      fits.push("quizResults.fits.manageableCare");
       score += 1;
     }
   }
 
-  // ===================== Lifespan Preference Check (Soft Constraint) =====================
   const userLifespanLevel = getUserLifespanLevel(answers.lifespan);
 
   if (petLifespan !== null && userLifespanLevel !== null) {
     if (petLifespan === userLifespanLevel) {
-      fits.push("Matches your lifespan preference");
+      fits.push("quizResults.fits.lifespanMatch");
       score += 1;
     } else if (petLifespan > userLifespanLevel) {
-      reasons.push(
-        "Commitment: This pet may live longer than the commitment you prefer.",
-      );
+      reasons.push("quizResults.reasons.commitment");
     }
   }
 
-  // ===================== Ecological Risk Warning =====================
   if (pet.pet_invasive_risk === "High") {
-    reasons.push(
-      "High ecological risk: This species needs especially responsible containment and must never be released.",
-    );
+    reasons.push("quizResults.reasons.highEcologicalRisk");
   }
 
-  // Final suitability decision based on blockers
   const suitable = blockers === 0;
 
   return {
@@ -364,6 +355,7 @@ export function QuizResults() {
   // Access user wishlist and quiz answers from context
   const { wishlist } = useWishlist();
   const { user, answers } = useUser();
+  const { t, language } = useLanguage();
 
   // Fetch pet dataset and loading state from API hook
   const { pets, loading, error } = useQuizRecommendations();
@@ -433,7 +425,7 @@ export function QuizResults() {
       <div className="bg-stone-50 min-h-screen py-16 px-4">
         <div className="max-w-5xl mx-auto text-center text-stone-600">
           <CircularProgress size="3rem" />
-          <p className="mt-4">Loading your quiz matches...</p>
+          <p className="mt-4">{t("quizResults.loading")}</p>
         </div>
       </div>
     );
@@ -470,7 +462,7 @@ export function QuizResults() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-extrabold mb-4"
           >
-            Your Lifestyle Compatibility Results
+            {t("quizResults.title")}
           </motion.h1>
 
           <motion.p
@@ -480,8 +472,8 @@ export function QuizResults() {
             className="text-xl text-stone-600 max-w-2xl mx-auto leading-relaxed mb-8"
           >
             {wishlist.length > 0
-              ? "We've evaluated the species on your list against your answers."
-              : "We've evaluated our database to find the best matches for your lifestyle."}
+              ? t("quizResults.wishlistDescription")
+              : t("quizResults.databaseDescription")}
           </motion.p>
 
           {/* Action buttons */}
@@ -491,14 +483,14 @@ export function QuizResults() {
               state={{ retake: true }}
               className="bg-white border-2 border-stone-200 text-stone-700 px-6 py-2 rounded-full font-bold hover:bg-stone-100 transition"
             >
-              Retake Quiz
+              {t("quizResults.retakeQuiz")}
             </Link>
 
             <Link
               to="/identify"
               className="bg-stone-100 text-stone-700 px-6 py-2 rounded-full font-bold hover:bg-stone-200 transition inline-flex items-center gap-2"
             >
-              <HelpCircle className="w-5 h-5" /> Not sure what pet you have?
+              <HelpCircle className="w-5 h-5" /> {t("quizResults.identifyHelp")}
             </Link>
           </div>
         </div>
@@ -508,33 +500,29 @@ export function QuizResults() {
           {!user ? (
             <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
               <h3 className="text-lg font-semibold text-emerald-900 mb-2">
-                Save these results to your profile
+                {t("quizResults.saveResultsTitle")}
               </h3>
               <p className="text-emerald-800 mb-4">
-                Create a profile or log in to keep your quiz answers and update
-                them whenever you retake the quiz.
+                {t("quizResults.saveResultsDescription")}
               </p>
               <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
                 <Link
                   to="/login"
                   className="rounded-xl px-4 py-2 bg-emerald-600 text-white"
                 >
-                  Create profile / Log in
-                </Link>
-                <Link
-                  to="/quiz"
-                  className="rounded-xl px-4 py-2 border border-emerald-300 text-emerald-900"
-                >
-                  Retake quiz
+                  {t("quizResults.createProfileLogin")}
                 </Link>
               </div>
             </div>
           ) : (
             <div className="mb-6 rounded-2xl border border-stone-200 bg-white p-5">
-              <h3 className="text-lg font-semibold mb-2">Profile updated</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {t("quizResults.profileUpdatedTitle")}
+              </h3>
               <p className="text-stone-600">
-                Your latest quiz answers are saved to @{user.username}'s
-                profile. Retaking the quiz will update them automatically.
+                {t("quizResults.profileUpdatedDescriptionStart")} @
+                {user.username}'s{" "}
+                {t("quizResults.profileUpdatedDescriptionEnd")}
               </p>
             </div>
           )}
@@ -552,7 +540,7 @@ export function QuizResults() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-3xl font-bold flex items-center gap-3 text-emerald-900 border-b-2 border-emerald-100 pb-4">
                 <Heart className="w-8 h-8 text-emerald-500 fill-current" />
-                Suitable For You
+                {t("quizResults.suitableForYou")}
               </h2>
 
               {/* Refresh pagination button */}
@@ -563,7 +551,7 @@ export function QuizResults() {
                   className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm hover:bg-emerald-50"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Show other matches
+                  {t("quizResults.showOtherMatches")}
                 </button>
               )}
             </div>
@@ -591,30 +579,47 @@ export function QuizResults() {
                         className="absolute inset-0 w-full h-full object-fit"
                       />
                       <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
-                        Great Fit
+                        {t("quizResults.greatFit")}
                       </div>
                     </div>
 
                     {/* Content section */}
                     <div className="p-6 flex flex-col flex-1">
                       <h3 className="text-2xl font-bold mb-1">
-                        {primaryCommonName ?? pet.pet_scientific_name}
+                        {primaryCommonName ? (
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
+                        ) : (
+                          pet.pet_scientific_name
+                        )}
                       </h3>
 
                       <p className="text-stone-500 text-sm mb-4">
-                        Care: {pet.pet_care_level} • Risk:{" "}
-                        {pet.pet_invasive_risk}
+                        {t("quizResults.care")}:{" "}
+                        {getLocalizedPetLabel(
+                          careLevelLabels,
+                          pet.pet_care_level,
+                          language,
+                        )}{" "}
+                        • {t("quizResults.risk")}:{" "}
+                        {getLocalizedPetLabel(
+                          invasiveRiskLabels,
+                          pet.pet_invasive_risk,
+                          language,
+                        )}
                       </p>
 
                       {/* Fit reasons */}
                       <div className="bg-emerald-50 rounded-2xl p-4 mb-6">
                         <h4 className="text-emerald-900 font-bold mb-2 flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-emerald-600" />{" "}
-                          Why it fits you:
+                          {t("quizResults.whyItFitsYou")}
                         </h4>
                         <ul className="space-y-2 text-sm text-emerald-800">
                           {fits.map((fit, i) => (
-                            <li key={i}>• {fit}</li>
+                            <li key={i}>• {t(fit)}</li>
                           ))}
                         </ul>
                       </div>
@@ -625,7 +630,7 @@ export function QuizResults() {
                           to={`/species/${pet.pet_id}`}
                           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-bold text-center transition-colors inline-flex items-center justify-center gap-2"
                         >
-                          View Full Care Guide{" "}
+                          {t("quizResults.viewFullCareGuide")}{" "}
                           <ArrowRight className="w-5 h-5" />
                         </Link>
                       </div>
@@ -649,7 +654,7 @@ export function QuizResults() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-3xl font-bold flex items-center gap-3 text-rose-900 border-b-2 border-rose-100 pb-4">
                 <ShieldAlert className="w-8 h-8 text-rose-500" />
-                Not Recommended
+                {t("quizResults.notRecommended")}
               </h2>
 
               {/* Refresh button */}
@@ -660,7 +665,7 @@ export function QuizResults() {
                   className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 shadow-sm hover:bg-rose-50"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Show other concerns
+                  {t("quizResults.showOtherConcerns")}
                 </button>
               )}
             </div>
@@ -690,7 +695,14 @@ export function QuizResults() {
                         className="w-full h-40 object-fit rounded-2xl shadow-sm"
                       />
                       <h4 className="font-bold text-xl text-stone-900 mt-3">
-                        {primaryCommonName ?? pet.pet_scientific_name}
+                        {primaryCommonName ? (
+                          <TranslatedText
+                            text={primaryCommonName}
+                            language={language}
+                          />
+                        ) : (
+                          pet.pet_scientific_name
+                        )}
                       </h4>
                     </div>
 
@@ -698,7 +710,7 @@ export function QuizResults() {
                     <div className="md:w-2/3 bg-rose-50/50 rounded-2xl p-5 border border-rose-100">
                       <h5 className="font-bold text-rose-800 mb-3 flex items-center gap-2 text-lg">
                         <XOctagon className="w-5 h-5 text-rose-600" />
-                        Why this may not fit you:
+                        {t("quizResults.whyThisMayNotFitYou")}
                       </h5>
 
                       <ul className="space-y-3">
@@ -708,14 +720,13 @@ export function QuizResults() {
                             className="flex gap-3 items-start text-rose-900 font-medium bg-white p-3 rounded-xl shadow-sm border border-rose-100"
                           >
                             <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                            <span>{reason}</span>
+                            <span>{t(reason)}</span>
                           </li>
                         ))}
                       </ul>
 
                       <div className="mt-4 text-sm text-stone-600 italic">
-                        Suggestion: Consider adjusting your budget or freeing up
-                        more space, otherwise explore the alternatives below.
+                        {t("quizResults.suggestion")}
                       </div>
                     </div>
                   </div>
@@ -734,13 +745,13 @@ export function QuizResults() {
             className="bg-sky-50 rounded-3xl p-8 md:p-12 border border-sky-100 shadow-sm"
           >
             <h3 className="text-2xl font-bold text-sky-900 mb-4">
-              Recommended Alternatives
+              {t("quizResults.recommendedAlternatives")}
             </h3>
 
             <p className="text-sky-800 mb-8 text-lg">
               {matches.length === 0
-                ? "Since none of the pets on your list fit your lifestyle, we highly recommend these safer, better-matching alternatives (ranked by lowest ecological risk):"
-                : "You might also want to consider these highly suitable pets:"}
+                ? t("quizResults.alternativesWhenNoMatches")
+                : t("quizResults.alternativesWhenHasMatches")}
             </p>
 
             {/* Alternative cards */}
@@ -767,30 +778,43 @@ export function QuizResults() {
                       </h4>
 
                       <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-md uppercase">
-                        Top Match
+                        {t("quizResults.topMatch")}
                       </span>
                     </div>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-md">
-                        {pet.pet_care_level} Care
+                        {getLocalizedPetLabel(
+                          careLevelLabels,
+                          pet.pet_care_level,
+                          language,
+                        )}
                       </span>
                       <span className="text-xs bg-sky-100 text-sky-800 px-2 py-1 rounded-md">
-                        {pet.pet_invasive_risk} Risk
+                        {getLocalizedPetLabel(
+                          invasiveRiskLabels,
+                          pet.pet_invasive_risk,
+                          language,
+                        )}
                       </span>
                     </div>
 
                     {/* Highlight fit reason */}
                     <div className="text-sm text-stone-600 bg-stone-50 p-3 rounded-xl mb-4 italic flex-1">
-                      "{fits[0] || "Perfect fit for your space and budget"}"
+                      “
+                      {fits[0]
+                        ? t(fits[0])
+                        : t("quizResults.perfectFitFallback")}
+                      ”
                     </div>
 
                     <Link
                       to={`/species/${pet.pet_id}`}
                       className="mt-auto text-sky-700 font-bold hover:text-sky-800 inline-flex items-center gap-1"
                     >
-                      View Profile <ArrowRight className="w-4 h-4" />
+                      {t("quizResults.viewProfile")}{" "}
+                      <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </div>
@@ -804,11 +828,10 @@ export function QuizResults() {
           <div className="bg-stone-100 rounded-3xl p-12 text-center border border-stone-200">
             <Search className="w-16 h-16 text-stone-400 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-stone-900 mb-2">
-              No suitable recommendation found
+              {t("quizResults.noRecommendationTitle")}
             </h3>
             <p className="text-stone-600 mb-6 text-lg">
-              Your current lifestyle constraints might make it difficult to
-              properly care for the aquatic pets in our database.
+              {t("quizResults.noRecommendationDescription")}
             </p>
 
             <Link
@@ -816,7 +839,7 @@ export function QuizResults() {
               state={{ retake: true }}
               className="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold hover:bg-emerald-700 transition inline-block"
             >
-              Adjust Your Answers
+              {t("quizResults.adjustAnswers")}
             </Link>
           </div>
         )}

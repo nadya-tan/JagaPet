@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
+import { useLanguage } from "../context/LanguageContext";
+import { getLocalizedPetLabel, invasiveRiskLabels } from "../utils/petDisplay";
+import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * AI model identification result structure
@@ -65,16 +68,15 @@ const parseModelResult = (resultText: string): IdentificationResult => {
   const parsed = JSON.parse(withoutCodeFence) as Partial<IdentificationResult>;
 
   return {
-    scientific_name: parsed.scientific_name?.trim() || "Unknown",
-    common_name: parsed.common_name?.trim() || "Unknown",
-    confidence: parsed.confidence?.trim() || "Unknown",
-    notes: parsed.notes?.trim() || "No notes provided.",
+    scientific_name: parsed.scientific_name?.trim() || "",
+    common_name: parsed.common_name?.trim() || "",
+    confidence: parsed.confidence?.trim() || "",
+    notes: parsed.notes?.trim() || "",
   };
 };
 
 /**
  * Match AI result to local species database
- * - Uses fuzzy matching between scientific and common names
  */
 const findLocalSpecies = (
   analysis: IdentificationResult,
@@ -88,14 +90,7 @@ const findLocalSpecies = (
       const localScientific = normalizeName(species.scientificName);
       const localCommon = normalizeName(species.name);
 
-      return (
-        scientificName === localScientific ||
-        commonName === localCommon ||
-        Boolean(commonName && localCommon.includes(commonName)) ||
-        Boolean(commonName && commonName.includes(localCommon)) ||
-        Boolean(scientificName && localScientific.includes(scientificName)) ||
-        Boolean(scientificName && scientificName.includes(localScientific))
-      );
+      return scientificName === localScientific || commonName === localCommon;
     }) ?? null
   );
 };
@@ -108,6 +103,9 @@ const findLocalSpecies = (
  * - Match with local biodiversity database
  */
 export function IdentifyPet() {
+  // Language context for localization
+  const { t, language } = useLanguage();
+
   // UI state: drag & drop interaction
   const [dragActive, setDragActive] = useState(false);
 
@@ -161,12 +159,12 @@ export function IdentifyPet() {
           throw new Error(
             "error" in data && data.error
               ? data.error
-              : "Failed to load species database.",
+              : t("identify.errors.loadSpeciesFailed"),
           );
         }
 
         if (!Array.isArray(data)) {
-          throw new Error("Species database returned an invalid format.");
+          throw new Error(t("identify.errors.invalidSpeciesFormat"));
         }
 
         setSpeciesList(data);
@@ -175,7 +173,7 @@ export function IdentifyPet() {
         setSpeciesError(
           speciesLoadError instanceof Error
             ? speciesLoadError.message
-            : "Failed to load species database.",
+            : t("identify.errors.loadSpeciesFailed"),
         );
       }
     };
@@ -249,11 +247,11 @@ export function IdentifyPet() {
       };
 
       if (!response.ok) {
-        throw new Error(data.error || "The identification request failed.");
+        throw new Error(data.error || t("identify.errors.requestFailed"));
       }
 
       if (!data.result) {
-        throw new Error("The server returned an empty identification result.");
+        throw new Error(t("identify.errors.emptyResult"));
       }
 
       setResult(parseModelResult(data.result));
@@ -261,7 +259,7 @@ export function IdentifyPet() {
       setError(
         uploadError instanceof Error
           ? uploadError.message
-          : "We couldn't identify this image right now. Please try again.",
+          : t("identify.errors.identifyFailed"),
       );
     } finally {
       setIsScanning(false);
@@ -276,7 +274,7 @@ export function IdentifyPet() {
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file such as JPG, PNG, or HEIC.");
+      setError(t("identify.errors.invalidFileType"));
       return;
     }
 
@@ -338,12 +336,10 @@ export function IdentifyPet() {
         {/* Header section */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
-            Identify a Species
+            {t("identify.title")}
           </h1>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
-            Upload a real fish or turtle photo. We&apos;ll send it to the local
-            identification service, surface the AI guess, and connect it to
-            Shell &amp; Fin MY guidance when we have a local match.
+            {t("identify.description")}
           </p>
         </div>
 
@@ -382,24 +378,24 @@ export function IdentifyPet() {
                   <UploadCloud className="w-12 h-12 text-emerald-600" />
                 </div>
                 <h3 className="text-2xl font-bold text-stone-800 mb-2">
-                  Drag &amp; Drop your photo here
+                  {t("identify.dropTitle")}
                 </h3>
                 <p className="text-stone-500 mb-8">
-                  or click the button below to browse
+                  {t("identify.dropDescription")}
                 </p>
 
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1 inline-flex items-center gap-2"
                 >
-                  <Camera className="w-5 h-5" /> Select Photo
+                  <Camera className="w-5 h-5" /> {t("identify.selectPhoto")}
                 </button>
                 <p className="text-xs text-stone-400 mt-4 uppercase tracking-widest font-semibold">
-                  Supported: JPG, PNG, HEIC
+                  {t("identify.supportedFormats")}
                 </p>
                 {error && (
                   <p className="mt-4 text-sm text-rose-600 font-medium">
-                    {error}
+                    <TranslatedText text={error} language={language} />
                   </p>
                 )}
               </motion.div>
@@ -418,17 +414,17 @@ export function IdentifyPet() {
                 <div className="relative w-64 h-64 mb-8 rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src={selectedImage}
-                    alt="Scanning"
+                    alt={t("identify.scanningAlt")}
                     className="w-full h-full object-fit"
                   />
                   <div className="absolute inset-0 bg-emerald-500/20 scan-line"></div>
                 </div>
                 <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mb-4" />
                 <h3 className="text-2xl font-bold text-stone-800">
-                  Analyzing Photo...
+                  {t("identify.analyzing")}
                 </h3>
                 <p className="text-stone-500">
-                  Sending your image to the local Gemini-powered backend.
+                  {t("identify.analyzingDescription")}
                 </p>
               </motion.div>
             )}
@@ -445,7 +441,7 @@ export function IdentifyPet() {
                   <div className="w-full md:w-1/3">
                     <img
                       src={selectedImage}
-                      alt={selectedFileName || "Uploaded"}
+                      alt={selectedFileName || t("identify.uploadedAlt")}
                       className="w-full aspect-square object-fit rounded-2xl shadow-md border-4 border-white mb-4"
                     />
                     {selectedFileName && (
@@ -457,7 +453,8 @@ export function IdentifyPet() {
                       onClick={resetForm}
                       className="w-full py-3 text-stone-500 hover:text-stone-800 font-medium flex items-center justify-center gap-2 transition-colors border border-stone-200 rounded-xl hover:bg-stone-50"
                     >
-                      <ImageIcon className="w-4 h-4" /> Try another photo
+                      <ImageIcon className="w-4 h-4" />{" "}
+                      {t("identify.tryAnother")}
                     </button>
                   </div>
 
@@ -468,9 +465,14 @@ export function IdentifyPet() {
                           <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
                           <div>
                             <h4 className="font-bold mb-1">
-                              Identification unavailable
+                              {t("identify.identificationUnavailable")}
                             </h4>
-                            <p className="text-sm opacity-90">{error}</p>
+                            <p className="text-sm opacity-90">
+                              <TranslatedText
+                                text={error}
+                                language={language}
+                              />
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -483,23 +485,37 @@ export function IdentifyPet() {
                           <div className="flex items-center gap-3 mb-2">
                             <CheckCircle className="text-emerald-500 w-6 h-6" />
                             <span className="text-emerald-700 font-bold uppercase tracking-wider text-sm">
-                              AI Identification Result
+                              {t("identify.aiResult")}
                             </span>
                           </div>
                           <h2 className="text-3xl font-extrabold text-stone-900">
-                            {result.common_name || "Unknown"}
+                            {result.common_name ? (
+                              <TranslatedText
+                                text={result.common_name}
+                                language={language}
+                              />
+                            ) : (
+                              t("identify.unknown")
+                            )}
                           </h2>
                           <p className="text-stone-500 italic font-serif">
-                            {result.scientific_name || "Unknown"}
+                            {result.scientific_name || t("identify.unknown")}
                           </p>
                         </div>
 
                         <div className="rounded-2xl border border-stone-200 bg-stone-50 p-5">
                           <h3 className="text-lg font-bold text-stone-900 mb-2">
-                            Notes
+                            {t("identify.notes")}
                           </h3>
                           <p className="text-stone-700 text-sm leading-relaxed">
-                            {result.notes || "No notes provided."}
+                            {result.notes ? (
+                              <TranslatedText
+                                text={result.notes}
+                                language={language}
+                              />
+                            ) : (
+                              t("identify.noNotes")
+                            )}
                           </p>
                         </div>
 
@@ -518,14 +534,14 @@ export function IdentifyPet() {
                                 <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
                                 <div>
                                   <h4 className="font-bold mb-1">
-                                    {matchedSpecies.biodiversityRisk ||
-                                      "Unknown"}{" "}
-                                    Biodiversity Risk
+                                    {getLocalizedPetLabel(
+                                      invasiveRiskLabels,
+                                      matchedSpecies.biodiversityRisk,
+                                      language,
+                                    )}
                                   </h4>
                                   <p className="text-sm opacity-90">
-                                    This risk level is based on the invasive
-                                    risk information in Shell & Fin pet
-                                    database.
+                                    {t("identify.riskDescription")}
                                   </p>
                                 </div>
                               </div>
@@ -535,19 +551,16 @@ export function IdentifyPet() {
                               to={`/species/${matchedSpecies.petId}`}
                               className="block text-center w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-bold transition shadow-lg"
                             >
-                              View Species Profile
+                              {t("identify.viewSpeciesProfile")}
                             </Link>
                           </>
                         ) : (
                           <div className="p-4 rounded-xl border border-dashed border-amber-300 bg-amber-50 text-amber-900">
                             <h4 className="font-bold mb-1">
-                              Needs human review
+                              {t("identify.needsHumanReview")}
                             </h4>
                             <p className="text-sm opacity-90">
-                              We couldn&apos;t confidently map this AI result to
-                              a local Shell &amp; Fin MY species profile yet, so
-                              the care and biodiversity cards are intentionally
-                              hidden for manual review.
+                              {t("identify.humanReviewDescription")}
                             </p>
                           </div>
                         )}
