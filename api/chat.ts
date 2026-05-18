@@ -280,7 +280,7 @@ Identification description rules:
 
 Output rules:
 - For sickness, rehome, recommendation, compare, and general intents, likelyScientificNames must be [].
-- Do not attempt or bring up species identification in any context other than the identify intent.
+- Do NOT attempt or bring up species identification in any intent other than the identify intent. You should not mention or suggest identification unless the user specifically asks for pet identification.
 - For sickness, rehome, recommendation, compare, and general intents, hasIdentificationDescription must be false even if the user describes visible symptoms.
 
 Language rules:
