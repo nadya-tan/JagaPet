@@ -348,7 +348,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
    * Mark care task as completed
    */
   const completeCareTask = async (taskId: string) => {
-    const updatedTask = await fetchJson<CareTask>("/api/user-pet-tasks", {
+    const updatedTask = await fetchJson<CareTask>("/api/user-pets", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
