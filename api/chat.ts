@@ -262,21 +262,25 @@ Return ONLY valid JSON in this exact shape:
 }
 
 Intent rules:
-- In no case except for "identify" should you try to identify the species.
-- Use "identify" ONLY when the user is asking what species/pet they have OR clearly describing an aquatic pet for identification.
-- Do NOT use "identify" just because the message mentions fish, turtle, pet, species, or aquarium.
-- If the user asks about illness, symptoms, disease, abnormal behaviour, white spots, not eating, floating, gasping, injuries, or health, intent must be "sickness".
+- If the user's main concern is illness, symptoms, disease, infection, abnormal behaviour, abnormal growth, injury, wounds, white spots, white patches, white stuff, cotton-like growth, fungus-like growth, not eating, floating, gasping, lethargy, bloating, swelling, fin damage, cloudy eyes, or health, intent must be "sickness".
 - If the user asks about giving away, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
 - If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
 - If the user compares species, intent must be "compare".
-- Otherwise use "general".
+- Use "identify" only when the user's main goal is to identify what species or pet they have.
+- Do NOT use "identify" just because the message mentions fish, turtle, pet, species, colour, spots, fins, shell, or visible appearance.
+- If a visible description is about a health problem, such as "white stuff growing", "white spots", "red patches", "bloated", or "cloudy eye", classify it as "sickness", not "identify".
+
 
 Identification description rules:
-- Intent should be "identify" only if the user gives visible traits such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
+- Intent should be "identify" only if the user gives visible traits that are not pertinent to illness such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
 - If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet.
 - For identify intent with enough description, suggest exactly 3 likely scientific names where possible.
 - For all non-identify intents, likelyScientificNames must be [].
 - For identify intent without enough description, likelyScientificNames must be [].
+
+Output rules:
+- For sickness, rehome, recommendation, compare, and general intents, likelyScientificNames must be [].
+- For sickness, hasIdentificationDescription must be false even if the user describes visible symptoms.
 
 Language rules:
 - If the user writes in Malay or Chinese, translate the useful content into English in englishDescription.
