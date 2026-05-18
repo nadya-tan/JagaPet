@@ -33,6 +33,7 @@ type MessageAnalysis = {
   language: UserLanguage;
   intent: ChatIntent;
   englishDescription: string;
+  hasIdentificationDescription: boolean;
   likelyScientificNames: string[];
 };
 
@@ -240,6 +241,7 @@ function getPetImageUrl(value: unknown): string {
   return encodeURI(`/pet_image/${trimmed}`);
 }
 
+
 async function analyseMessage(message: string): Promise<MessageAnalysis> {
   const completion = await groq.chat.completions.create({
     model: "llama-3.1-8b-instant",
@@ -260,6 +262,7 @@ Return ONLY valid JSON in this exact shape:
 }
 
 Intent rules:
+- In no case except for "identify" should you try to identify the species.
 - Use "identify" ONLY when the user is asking what species/pet they have OR clearly describing an aquatic pet for identification.
 - Do NOT use "identify" just because the message mentions fish, turtle, pet, species, or aquarium.
 - If the user asks about illness, symptoms, disease, abnormal behaviour, white spots, not eating, floating, gasping, injuries, or health, intent must be "sickness".
@@ -296,6 +299,7 @@ Language rules:
       language: "en",
       intent: "general",
       englishDescription: message,
+      hasIdentificationDescription: false,
       likelyScientificNames: [],
     };
   }
@@ -328,6 +332,9 @@ Language rules:
       parsed.englishDescription.trim()
         ? parsed.englishDescription.trim()
         : message,
+    hasIdentificationDescription: intent === "identify" && Array.isArray(parsed.likelyScientificNames)
+      ? parsed.likelyScientificNames.length > 0
+      : false,
     likelyScientificNames: normalizeScientificNames(parsed.likelyScientificNames),
   };
 }
@@ -471,10 +478,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let cards: ChatActionCard[] = [];
 
     if (analysis.intent === "identify") {
-      const speciesCards = await getSpeciesCardsByScientificNames(
-        analysis.likelyScientificNames,
-        analysis.language,
-      );
+      const speciesCards =
+        analysis.hasIdentificationDescription &&
+        analysis.likelyScientificNames.length > 0
+          ? await getSpeciesCardsByScientificNames(
+              analysis.likelyScientificNames,
+              analysis.language,
+            )
+          : [];
 
       cards = [
         ...speciesCards,
@@ -482,6 +493,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ];
     } else {
       cards = getLocalizedToolCards(analysis.intent, analysis.language);
+    }
+
+    if (
+      analysis.intent === "identify" &&
+      (!analysis.hasIdentificationDescription ||
+        analysis.likelyScientificNames.length === 0)
+    ) {
+      const fallbackAnswers: Record<UserLanguage, string> = {
+        en:
+          "I can help with identification. You can describe visible traits such as colour, size, body shape, fins, tail shape, stripes, spots, or shell markings. For a more reliable result, you can also upload a photo using the identification tool.",
+        ms:
+          "Saya boleh bantu dengan pengecaman. Anda boleh terangkan ciri yang boleh dilihat seperti warna, saiz, bentuk badan, bentuk sirip atau ekor, jalur, bintik, atau corak cangkerang. Untuk hasil yang lebih jelas, anda juga boleh memuat naik gambar menggunakan alat pengecaman.",
+        zh:
+          "我可以帮助识别。你可以描述可见特征，例如颜色、大小、身体形状、鱼鳍或尾巴形状、条纹、斑点，或龟壳花纹。为了获得更可靠的结果，也可以使用识别工具上传照片。",
+        other:
+          "I can help with identification. You can describe visible traits such as colour, size, body shape, fins, tail shape, stripes, spots, or shell markings. For a more reliable result, you can also upload a photo using the identification tool.",
+      };
+
+      return res.status(200).json({
+        answer: fallbackAnswers[analysis.language],
+        cards,
+      });
     }
 
     const speciesContext =
