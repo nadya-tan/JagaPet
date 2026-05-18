@@ -16,10 +16,16 @@ import { useLanguage } from "../context/LanguageContext";
 import { TranslatedText } from "../components/TranslatedText";
 
 /* ===================== Type Definitions ===================== */
-
 // Response format from health screening API
+type HealthPrediction = {
+  disease: string;
+  confidence: number;
+};
+
+// Response format for frontend from health screening API
 type HealthScreenResponse = {
-  result?: string;
+  status?: "healthy" | "single_disease" | "possible_multiple";
+  result?: HealthPrediction[];
   error?: string;
 };
 
@@ -241,8 +247,8 @@ export function HealthScreening() {
       );
     }
 
-    if (!data.result) {
-      throw new Error(t("healthScreening.errors.emptyScreeningResult"));
+    if (!data.result || data.result.length === 0) {
+      throw new Error("The server returned an empty screening result.");
     }
 
     return data.result;
@@ -530,7 +536,7 @@ export function HealthScreening() {
             )}
 
             {/* ===================== Result State ===================== */}
-            {selectedImage && !isScreening && (result || error) && (
+            {selectedImage && !isScreening && ((result && result.length > 0) || error) && (
               <motion.div
                 key="result"
                 initial={{ opacity: 0, y: 20 }}
