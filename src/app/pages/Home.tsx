@@ -21,6 +21,7 @@ import { SearchAutocomplete } from "../components/SearchAutocomplete";
 import { useHomeSpecies } from "../hooks/useHomeSpecies";
 import {
   getPetCommonNames,
+  getLocalizedPetComments,
   getDangerBadgeClasses,
   getCareBadgeClasses,
   getCostBadgeClasses,
@@ -35,7 +36,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { RecommendedPet } from "../types/pet.types";
 import { useLanguage } from "../context/LanguageContext";
-import { TranslatedText } from "../components/TranslatedText";
 
 /**
  * Utility function:
@@ -506,7 +506,8 @@ export function Home() {
             <p className="text-stone-600">{t("home.noRecommendations")}</p>
           ) : (
             visibleRecommendations.map((pet, index) => {
-              const { primaryCommonName } = getPetCommonNames(pet);
+              const { primaryCommonName } = getPetCommonNames(pet, language);
+              const localizedComments = getLocalizedPetComments(pet, language);
               return (
                 <motion.div
                   key={pet.pet_id}
@@ -554,10 +555,7 @@ export function Home() {
 
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-stone-900 mb-1">
-                        <TranslatedText
-                          text={primaryCommonName}
-                          language={language}
-                        />
+                        {primaryCommonName}
                       </h3>
 
                       <p className="text-sm text-stone-500 italic mb-4 font-serif">
@@ -609,10 +607,7 @@ export function Home() {
 
                       {pet.pet_comments && (
                         <p className="text-stone-600 text-sm line-clamp-3 mb-6 flex-1">
-                          <TranslatedText
-                            text={pet.pet_comments}
-                            language={language}
-                          />
+                          {localizedComments}
                         </p>
                       )}
 
@@ -664,7 +659,8 @@ export function Home() {
             <p className="text-stone-600">{t("home.noHighRisk")}</p>
           ) : (
             visibleHighRiskSpecies.map((pet, index) => {
-              const { primaryCommonName } = getPetCommonNames(pet);
+              const { primaryCommonName } = getPetCommonNames(pet, language);
+              const localizedComments = getLocalizedPetComments(pet, language);
 
               return (
                 <motion.div
@@ -721,10 +717,7 @@ export function Home() {
 
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-stone-900 mb-1">
-                        <TranslatedText
-                          text={primaryCommonName}
-                          language={language}
-                        />
+                        {primaryCommonName}
                       </h3>
 
                       <p className="text-sm text-stone-500 italic mb-4 font-serif">
@@ -749,10 +742,7 @@ export function Home() {
 
                       {pet.pet_comments && (
                         <p className="text-stone-600 text-sm line-clamp-3 mb-6 flex-1">
-                          <TranslatedText
-                            text={pet.pet_comments}
-                            language={language}
-                          />
+                          {localizedComments}
                         </p>
                       )}
 

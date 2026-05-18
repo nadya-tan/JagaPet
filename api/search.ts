@@ -34,6 +34,8 @@ export default async function handler(req: any, res: any) {
         pet_id,
         pet_scientific_name,
         pet_vernacular_name,
+        pet_vernacular_name_cn,
+        pet_vernacular_name_ms,
         pet_genus,
         pet_family,
         pet_body_shape,
@@ -50,6 +52,8 @@ export default async function handler(req: any, res: any) {
         pet_danger,
         pet_is_native,
         pet_comments,
+        pet_comments_cn,
+        pet_comments_ms,
         pet_aquarium,
         pet_cost,
         pet_image_ref,
@@ -63,6 +67,8 @@ export default async function handler(req: any, res: any) {
         or pet_scientific_name ilike ${pattern}
         or pet_genus ilike ${pattern}
         or pet_family ilike ${pattern}
+        or pet_vernacular_name_cn ilike ${pattern}
+        or pet_vernacular_name_ms ilike ${pattern}
       limit 50
     `;
 

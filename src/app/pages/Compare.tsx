@@ -103,7 +103,7 @@ export function Compare() {
               {/* Loop through all selected pets */}
               {comparePets.map((pet) => {
                 // Get common display name
-                const { primaryCommonName } = getPetCommonNames(pet);
+                const { primaryCommonName } = getPetCommonNames(pet, language);
 
                 // Normalize danger badge text
                 const dangerLevel = normalizeDangerBadge(pet.pet_danger);
@@ -144,10 +144,7 @@ export function Compare() {
                       {/* Pet name text */}
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-2xl font-bold leading-tight text-white drop-shadow-md">
-                          <TranslatedText
-                            text={primaryCommonName}
-                            language={language}
-                          />
+                          {primaryCommonName}
                         </h3>
 
                         <p className="mt-1 text-sm italic text-stone-200">

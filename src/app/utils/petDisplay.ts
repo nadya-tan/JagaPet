@@ -145,8 +145,19 @@ export function getLocalizedPetLabel(
  * Priority: vernacular name → scientific name → empty string
  * Output is converted to lowercase for consistency
  */
-export function getPetDisplayName(pet: Pet | RecommendedPet) {
+export function getPetDisplayName(
+  pet: Pet | RecommendedPet,
+  language: Language = "en",
+) {
+  const localizedName =
+    language === "zh"
+      ? pet.pet_vernacular_name_cn
+      : language === "ms"
+        ? pet.pet_vernacular_name_ms
+        : pet.pet_vernacular_name;
+
   return (
+    localizedName ??
     pet.pet_vernacular_name ??
     pet.pet_scientific_name ??
     ""
@@ -158,17 +169,43 @@ export function getPetDisplayName(pet: Pet | RecommendedPet) {
  * Supports multiple names separated by ";" or ","
  * Returns primary + additional aliases
  */
-export function getPetCommonNames(pet: Pet | RecommendedPet) {
-  const vernacularNames = (pet.pet_vernacular_name ?? "")
+export function getPetCommonNames(
+  pet: Pet | RecommendedPet,
+  language: Language = "en",
+) {
+  const localizedVernacularName =
+    language === "zh"
+      ? pet.pet_vernacular_name_cn
+      : language === "ms"
+        ? pet.pet_vernacular_name_ms
+        : pet.pet_vernacular_name;
+
+  const fallbackName =
+    pet.pet_vernacular_name ?? pet.pet_scientific_name ?? "Unknown Pet";
+
+  const vernacularNames = (localizedVernacularName ?? fallbackName)
     .split(/[;,]/)
     .map((name) => name.trim())
     .filter(Boolean);
 
   return {
-    primaryCommonName:
-      vernacularNames[0] ?? pet.pet_scientific_name ?? "Unknown Pet",
+    primaryCommonName: vernacularNames[0] ?? fallbackName,
     otherCommonNames: vernacularNames.slice(1),
   };
+}
+
+export function getLocalizedPetComments(
+  pet: Pet | RecommendedPet,
+  language: Language,
+) {
+  const localizedComments =
+    language === "zh"
+      ? pet.pet_comments_cn
+      : language === "ms"
+        ? pet.pet_comments_ms
+        : pet.pet_comments;
+
+  return localizedComments?.trim() || pet.pet_comments?.trim() || "";
 }
 
 // ===================== Body Shape Formatting =====================

@@ -1,4 +1,4 @@
-// 
+//
 import { neon } from "@neondatabase/serverless";
 import {
   buildLifetimeBudgetThresholds,
@@ -14,7 +14,10 @@ function normalizePetRow(row: any) {
     pet_id: String(row.pet_id),
 
     pet_vernacular_name: row.pet_vernacular_name ?? null,
+    pet_vernacular_name_cn: row.pet_vernacular_name_cn ?? null,
+    pet_vernacular_name_ms: row.pet_vernacular_name_ms ?? null,
     pet_scientific_name: row.pet_scientific_name ?? null,
+
     pet_care_level: row.pet_care_level ?? null,
     pet_is_native: row.pet_is_native ?? null,
     pet_danger: row.pet_danger ?? null,
@@ -24,10 +27,11 @@ function normalizePetRow(row: any) {
       typeof row.pet_image_ref === "string" ? row.pet_image_ref : null,
 
     pet_comments: row.pet_comments ?? null,
+    pet_comments_cn: row.pet_comments_cn ?? null,
+    pet_comments_ms: row.pet_comments_ms ?? null,
 
     pet_cost: row.pet_cost == null ? null : Number(row.pet_cost),
-    pet_longevity:
-      row.pet_longevity == null ? null : Number(row.pet_longevity),
+    pet_longevity: row.pet_longevity == null ? null : Number(row.pet_longevity),
     pet_max_length:
       row.pet_max_length == null ? null : Number(row.pet_max_length),
   };
@@ -72,6 +76,8 @@ export default async function handler(req: any, res: any) {
       select
         pet_id,
         pet_vernacular_name,
+        pet_vernacular_name_cn,
+        pet_vernacular_name_ms,
         pet_scientific_name,
         pet_care_level,
         pet_is_native,
@@ -79,6 +85,8 @@ export default async function handler(req: any, res: any) {
         pet_invasive_risk,
         pet_image_ref,
         pet_comments,
+        pet_comments_cn,
+        pet_comments_ms,
         pet_cost::float8 as pet_cost,
         pet_longevity::float8 as pet_longevity,
         pet_max_length::float8 as pet_max_length
@@ -90,7 +98,8 @@ export default async function handler(req: any, res: any) {
       order by pet_id
     `;
 
-    const normalizedRecommendationRows = recommendationRows.map(normalizePetRow);
+    const normalizedRecommendationRows =
+      recommendationRows.map(normalizePetRow);
 
     const recommendations = enrichPetsWithLifetimeBudget(
       normalizedRecommendationRows,
@@ -102,6 +111,8 @@ export default async function handler(req: any, res: any) {
       select
         pet_id,
         pet_vernacular_name,
+        pet_vernacular_name_cn,
+        pet_vernacular_name_ms,
         pet_scientific_name,
         pet_care_level,
         pet_is_native,
@@ -109,6 +120,8 @@ export default async function handler(req: any, res: any) {
         pet_invasive_risk,
         pet_image_ref,
         pet_comments,
+        pet_comments_cn,
+        pet_comments_ms,
         pet_cost::float8 as pet_cost,
         pet_longevity::float8 as pet_longevity,
         pet_max_length::float8 as pet_max_length

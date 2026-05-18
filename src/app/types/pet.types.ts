@@ -94,6 +94,8 @@ export type Pet = {
   // Taxonomy information
   pet_scientific_name: string | null;
   pet_vernacular_name: string | null;
+  pet_vernacular_name_cn: string | null;
+  pet_vernacular_name_ms: string | null;
   pet_genus: string | null;
   pet_family: string | null;
 
@@ -125,6 +127,8 @@ export type Pet = {
   // Care information
   pet_care_level: string | null;
   pet_comments: string | null;
+  pet_comments_cn: string | null;
+  pet_comments_ms: string | null;
 
   // Aquarium usage flag
   pet_aquarium: boolean | null;
@@ -150,6 +154,8 @@ export type Pet = {
 export type RecommendedPet = {
   pet_id: string;
   pet_vernacular_name: string | null;
+  pet_vernacular_name_cn: string | null;
+  pet_vernacular_name_ms: string | null;
   pet_scientific_name: string | null;
   pet_care_level: string | null;
   pet_is_native: string | null;
@@ -157,6 +163,8 @@ export type RecommendedPet = {
   pet_invasive_risk: string | null;
   pet_image_ref: string | null;
   pet_comments: string | null;
+  pet_comments_cn: string | null;
+  pet_comments_ms: string | null;
   pet_cost: number | null;
   pet_purchase_cost_category?: PurchaseCostCategory;
   pet_lifetime_budget_category?: LifetimeBudgetCategory;
@@ -169,6 +177,8 @@ export type RecommendedPet = {
 export type QuizRecommendationPet = {
   pet_id: string;
   pet_vernacular_name: string | null;
+  pet_vernacular_name_cn: string | null;
+  pet_vernacular_name_ms: string | null;
   pet_scientific_name: string | null;
   pet_care_level: string | null;
   pet_is_native: string | null;
@@ -176,6 +186,8 @@ export type QuizRecommendationPet = {
   pet_invasive_risk: string | null;
   pet_image_ref: string | null;
   pet_comments: string | null;
+  pet_comments_cn: string | null;
+  pet_comments_ms: string | null;
   pet_cost: number | null;
 
   // Additional ecological/physical attributes for filtering

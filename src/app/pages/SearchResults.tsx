@@ -16,6 +16,7 @@ import { motion } from "motion/react";
 import type { SortOption } from "../types/pet.types";
 import {
   getPetCommonNames,
+  getLocalizedPetComments,
   displayText,
   normalizeDangerBadge,
   getDangerBadgeClasses,
@@ -242,8 +243,13 @@ export function SearchResults() {
                 const danger = normalizeDangerBadge(pet.pet_danger);
 
                 // Extract display names (primary + alternative names)
-                const { primaryCommonName, otherCommonNames } =
-                  getPetCommonNames(pet);
+                const { primaryCommonName, otherCommonNames } = pet
+                  ? getPetCommonNames(pet, language)
+                  : { primaryCommonName: "Unknown Pet", otherCommonNames: [] };
+
+                const localizedComments = pet
+                  ? getLocalizedPetComments(pet, language)
+                  : "";
 
                 return (
                   <motion.div
@@ -267,10 +273,7 @@ export function SearchResults() {
                               ? `/pet_image/${pet.pet_image_ref}`
                               : "/pet_image/pet_placeholder.png"
                           }
-                          alt={
-                            pet.pet_vernacular_name ??
-                            t("searchResults.petImagePlaceholder")
-                          }
+                          alt={primaryCommonName}
                           className="w-full h-full object-fit group-hover:scale-105 transition duration-500"
                         />
 
@@ -324,10 +327,7 @@ export function SearchResults() {
                       <div className="p-6 flex-1 flex flex-col">
                         {/* Primary name */}
                         <h3 className="text-xl font-bold text-stone-900 mb-1 group-hover:text-emerald-700 transition">
-                          <TranslatedText
-                            text={primaryCommonName}
-                            language={language}
-                          />
+                          {primaryCommonName}
                         </h3>
 
                         {/* Scientific name */}
@@ -341,10 +341,7 @@ export function SearchResults() {
                             <span className="font-semibold">
                               {t("searchResults.aka")}
                             </span>{" "}
-                            <TranslatedText
-                              text={otherCommonNames.join(", ")}
-                              language={language}
-                            />
+                            {otherCommonNames.join(", ")}
                           </p>
                         )}
 
@@ -387,13 +384,10 @@ export function SearchResults() {
 
                         {/* Description text */}
                         <p className="text-stone-600 text-sm mb-6 line-clamp-3">
-                          <TranslatedText
-                            text={displayText(
-                              pet.pet_comments,
-                              t("searchResults.noDescription"),
-                            )}
-                            language={language}
-                          />
+                          {displayText(
+                            localizedComments,
+                            t("searchResults.noDescription"),
+                          )}
                         </p>
 
                         {/* CTA */}

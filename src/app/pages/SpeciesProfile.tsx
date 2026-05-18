@@ -29,6 +29,7 @@ import {
   displayText,
   normalizeDangerBadge,
   getPetCommonNames,
+  getLocalizedPetComments,
   isInvasiveSpecies,
   getSpeciesCareBadgeClasses,
   getSpeciesDangerBadgeClasses,
@@ -40,7 +41,6 @@ import {
   getLocalizedPetLabel,
   careLevelLabels,
   invasiveRiskLabels,
-  budgetLabels,
   nativeStatusLabels,
   dangerLabels,
 } from "../utils/petDisplay";
@@ -279,8 +279,10 @@ export function SpeciesProfile() {
    * Extract readable names for UI display
    */
   const { primaryCommonName, otherCommonNames } = pet
-    ? getPetCommonNames(pet)
+    ? getPetCommonNames(pet, language)
     : { primaryCommonName: "Unknown Pet", otherCommonNames: [] };
+
+  const localizedComments = pet ? getLocalizedPetComments(pet, language) : "";
 
   /**
    * =========================
@@ -445,7 +447,7 @@ export function SpeciesProfile() {
               ? `/pet_image/${pet.pet_image_ref}`
               : "/pet_image/pet_placeholder.png"
           }
-          alt={pet.pet_vernacular_name ?? "Pet Image Placeholder"}
+          alt={primaryCommonName}
           className="absolute inset-0 w-full h-full object-fit"
         />
 
@@ -514,10 +516,7 @@ export function SpeciesProfile() {
                   transition={{ duration: 0.5, delay: 0.3 }}
                   className="text-4xl md:text-6xl font-extrabold text-white mb-2 drop-shadow-xl"
                 >
-                  <TranslatedText
-                    text={primaryCommonName}
-                    language={language}
-                  />
+                  {primaryCommonName}
                 </motion.h1>
 
                 {/* Scientific name */}
@@ -545,10 +544,7 @@ export function SpeciesProfile() {
                     <span className="font-semibold">
                       {t("speciesProfile.aka")}
                     </span>{" "}
-                    <TranslatedText
-                      text={otherCommonNames.join(", ")}
-                      language={language}
-                    />
+                    {otherCommonNames.join(", ")}
                   </motion.p>
                 )}
               </div>
@@ -653,77 +649,78 @@ export function SpeciesProfile() {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {recommendedAlternatives.map((item) => (
-                    <Link
-                      key={item.pet_id}
-                      to={`/species/${item.pet_id}`}
-                      className="rounded-2xl border border-stone-200 p-4 transition hover:border-emerald-400 hover:bg-emerald-50"
-                    >
-                      {/* Badges */}
-                      <div className="mb-3 flex flex-wrap gap-2">
-                        {item.hasLowerRisk && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-                            <ShieldAlert className="h-3.5 w-3.5" />
-                            {t("speciesProfile.lowerRisk")}
-                          </span>
-                        )}
+                  {recommendedAlternatives.map((item) => {
+                    const { primaryCommonName: alternativeName } =
+                      getPetCommonNames(item, language);
 
-                        {item.hasLowerCare && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800">
-                            <HandHeart className="h-3.5 w-3.5" />
-                            {t("speciesProfile.easierCare")}
-                          </span>
-                        )}
-                      </div>
-
-                      <h3 className="font-bold text-stone-900">
-                        <TranslatedText
-                          text={displayText(
-                            item.pet_vernacular_name,
-                            item.pet_scientific_name
-                              ? item.pet_scientific_name
-                              : t("speciesProfile.unknownSpecies"),
+                    return (
+                      <Link
+                        key={item.pet_id}
+                        to={`/species/${item.pet_id}`}
+                        className="rounded-2xl border border-stone-200 p-4 transition hover:border-emerald-400 hover:bg-emerald-50"
+                      >
+                        {/* Badges */}
+                        <div className="mb-3 flex flex-wrap gap-2">
+                          {item.hasLowerRisk && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                              <ShieldAlert className="h-3.5 w-3.5" />
+                              {t("speciesProfile.lowerRisk")}
+                            </span>
                           )}
-                          language={language}
-                        />
-                      </h3>
 
-                      <p className="mt-1 text-sm italic text-stone-600">
-                        {displayText(item.pet_scientific_name)}
-                      </p>
+                          {item.hasLowerCare && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800">
+                              <HandHeart className="h-3.5 w-3.5" />
+                              {t("speciesProfile.easierCare")}
+                            </span>
+                          )}
+                        </div>
 
-                      {/* Risk + care badges */}
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {item.pet_invasive_risk && (
-                          <span
-                            className={getDangerBadgeClasses(
-                              item.pet_invasive_risk,
-                            )}
-                          >
-                            <ShieldAlert className="w-3 h-3" />
-                            {getLocalizedPetLabel(
-                              invasiveRiskLabels,
-                              item.pet_invasive_risk,
-                              language,
-                            )}
-                          </span>
-                        )}
+                        <h3 className="font-bold text-stone-900">
+                          {alternativeName === "Unknown Pet"
+                            ? t("speciesProfile.unknownSpecies")
+                            : alternativeName}
+                        </h3>
 
-                        {item.pet_care_level && (
-                          <span
-                            className={getCareBadgeClasses(item.pet_care_level)}
-                          >
-                            <HandHeart className="w-3 h-3" />
-                            {getLocalizedPetLabel(
-                              careLevelLabels,
-                              item.pet_care_level,
-                              language,
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                        <p className="mt-1 text-sm italic text-stone-600">
+                          {displayText(item.pet_scientific_name)}
+                        </p>
+
+                        {/* Risk + care badges */}
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {item.pet_invasive_risk && (
+                            <span
+                              className={getDangerBadgeClasses(
+                                item.pet_invasive_risk,
+                              )}
+                            >
+                              <ShieldAlert className="w-3 h-3" />
+                              {getLocalizedPetLabel(
+                                invasiveRiskLabels,
+                                item.pet_invasive_risk,
+                                language,
+                              )}
+                            </span>
+                          )}
+
+                          {item.pet_care_level && (
+                            <span
+                              className={getCareBadgeClasses(
+                                item.pet_care_level,
+                              )}
+                            >
+                              <HandHeart className="w-3 h-3" />
+                              {getLocalizedPetLabel(
+                                careLevelLabels,
+                                item.pet_care_level,
+                                language,
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -745,12 +742,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
                     {t("speciesProfile.vernacularName")}
                   </p>
-                  <p className="mt-1 text-stone-800">
-                    <TranslatedText
-                      text={pet.pet_vernacular_name}
-                      language={language}
-                    />
-                  </p>
+                  <p className="mt-1 text-stone-800">{primaryCommonName}</p>
                 </div>
 
                 <div>
@@ -894,13 +886,10 @@ export function SpeciesProfile() {
               </div>
 
               <p className="leading-7 text-stone-700">
-                <TranslatedText
-                  text={displayText(
-                    pet.pet_comments,
-                    t("speciesProfile.noAdditionalComments"),
-                  )}
-                  language={language}
-                />
+                {displayText(
+                  localizedComments,
+                  t("speciesProfile.noAdditionalComments"),
+                )}
               </p>
             </div>
           </div>

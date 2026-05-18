@@ -233,6 +233,8 @@ function mapCareGuide(row: any) {
     name: row.pet_vernacular_name || row.pet_scientific_name || "Unknown Pet",
     scientificName: row.pet_scientific_name,
     vernacularName: row.pet_vernacular_name,
+    vernacularNameCn: row.pet_vernacular_name_cn,
+    vernacularNameMs: row.pet_vernacular_name_ms,
 
     maxLength: formatNumber(row.pet_max_length, "cm"),
     maxWeight: formatNumber(row.pet_max_weight, "kg"),
@@ -292,6 +294,8 @@ export default async function handler(req: any, res: any) {
         p.pet_id,
         p.pet_scientific_name,
         p.pet_vernacular_name,
+        p.pet_vernacular_name_cn,
+        p.pet_vernacular_name_ms,
         p.pet_genus,
         p.pet_max_length,
         p.pet_max_weight,

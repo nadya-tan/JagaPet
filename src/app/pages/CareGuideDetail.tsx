@@ -44,6 +44,8 @@ type CareGuide = {
   name: string;
   scientificName: string | null;
   vernacularName: string | null;
+  vernacularNameCn: string | null;
+  vernacularNameMs: string | null;
 
   maxLength: string | null;
   maxWeight: string | null;
@@ -160,10 +162,14 @@ export function CareGuideDetail() {
 
   /* ===================== Process Common Names ===================== */
 
-  const commonNames = getPetCommonNames({
+  const petDisplaySource = getPetCommonNames({
     pet_vernacular_name: careGuide.vernacularName,
+    pet_vernacular_name_cn: careGuide.vernacularNameCn,
+    pet_vernacular_name_ms: careGuide.vernacularNameMs,
     pet_scientific_name: careGuide.scientificName,
   } as any);
+
+  const commonNames = getPetCommonNames(petDisplaySource as any, language);
 
   const primaryDisplayName =
     commonNames.primaryCommonName === "Unknown Pet"
@@ -281,17 +287,14 @@ export function CareGuideDetail() {
           {/* Pet title section */}
           <div className="text-right">
             <h1 className="text-3xl md:text-4xl font-extrabold text-stone-900">
-              <TranslatedText text={primaryDisplayName} language={language} />
+              {primaryDisplayName}
             </h1>
 
             <p className="text-stone-600 italic text-sm">{scientificName}</p>
 
             {commonNames.otherCommonNames.length > 0 && (
               <p className="text-emerald-700 font-semibold text-sm">
-                <TranslatedText
-                  text={commonNames.otherCommonNames.join(", ")}
-                  language={language}
-                />
+                {commonNames.otherCommonNames.join(", ")}
               </p>
             )}
           </div>
@@ -324,18 +327,12 @@ export function CareGuideDetail() {
                       {t("careGuideDetail.fields.commonName")}
                     </td>
                     <td className="py-3 px-4 text-stone-900 font-medium">
-                      <TranslatedText
-                        text={primaryDisplayName}
-                        language={language}
-                      />
+                      {primaryDisplayName}
 
                       {commonNames.otherCommonNames.length > 0 && (
                         <span className="block text-sm text-stone-500 mt-1">
                           {t("careGuideDetail.fields.otherNames")}{" "}
-                          <TranslatedText
-                            text={commonNames.otherCommonNames.join(", ")}
-                            language={language}
-                          />
+                          {commonNames.otherCommonNames.join(", ")}
                         </span>
                       )}
                     </td>
