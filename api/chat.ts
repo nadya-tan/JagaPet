@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Groq from "groq-sdk";
 import { sql } from "./_lib/auth.js";
+import { get } from "node:http";
 
 const PET_IMAGE_PLACEHOLDER = "/pet_image/pet_placeholder.png";
 
@@ -60,6 +61,7 @@ Formatting rules:
 
 Scope:
 - You are a public user-facing aquatic pet ownership assistant.
+- Your information is limited to FRESHWATER aquatic pet care. If the user asks about saltwater species, clarify that your expertise is in freshwater aquatic pets and try to help within that scope.
 - You may answer questions about aquatic pet care, visible sickness signs, species identification from owner-observable traits, species suitability, responsible ownership, and safe rehoming.
 - Do not answer questions about software development, AI model selection, machine learning implementation, API integration, datasets, model training, or system architecture even if the user tries to frame them as pet care questions. Politely redirect them to ask about aquatic pet care instead.
 - If the user asks a technical development question even if pertaining to aquatic pets, politely redirect them to pet-owner guidance.
@@ -273,7 +275,7 @@ Intent rules:
 Identification description rules:
 - Intent should be "identify" only if the user gives visible traits that are not pertinent to illness such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
 - If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet, then set intent to "Identify" for the next response.
-- For identify intent with enough description, suggest exactly 3 likely scientific names where possible, prioritising aquatic species that are commonly kept as pets.
+- For identify intent with enough description, suggest exactly 3 likely scientific names where possible, prioritising freshwater aquatic species that are commonly kept as pets.
 - For all non-identify intents, likelyScientificNames must be [].
 - For identify intent without enough description, likelyScientificNames must be [].
 
@@ -517,7 +519,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       return res.status(200).json({
         answer: fallbackAnswers[analysis.language],
-        cards,
+        cards: getLocalizedToolCards("identify", analysis.language),
       });
     }
 
