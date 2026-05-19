@@ -266,15 +266,14 @@ Intent rules:
 - If the user asks about giving away, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
 - If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
 - If the user compares species, intent must be "compare".
-- Use "identify" only when the user's main goal is to identify what species or pet they have; otherwise do not use "identify" even if they mention species or visible traits.
-- Do NOT use "identify" just because the message mentions fish, turtle, pet, species, colour, spots, fins, shell, or visible appearance.
+- Use "identify" only when the user's main goal is to identify what species or pet they have.
 - If a visible description is about a health problem, such as "white stuff growing", "white spots", "red patches", "bloated", or "cloudy eye", classify it as "sickness", not "identify".
 
 
 Identification description rules:
 - Intent should be "identify" only if the user gives visible traits that are not pertinent to illness such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
-- If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet.
-- For identify intent with enough description, suggest exactly 3 likely scientific names where possible.
+- If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet, then set intent to "Identify" for the next response.
+- For identify intent with enough description, suggest exactly 3 likely scientific names where possible, prioritising aquatic species that are commonly kept as pets.
 - For all non-identify intents, likelyScientificNames must be [].
 - For identify intent without enough description, likelyScientificNames must be [].
 
