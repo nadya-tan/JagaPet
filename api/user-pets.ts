@@ -395,6 +395,46 @@ export default async function handler(req: any, res: any) {
 
       return res.status(200).json({ ok: true });
     }
+    
+    /* ===================== PATCH: Update task status ===================== */
+    if (req.method === "PATCH") {
+
+      const { taskId } = req.body || {};
+
+      if (!taskId) {
+        return res.status(400).json({ error: "Missing taskId" });
+      }
+
+      /* ===================== Update task in database ===================== */
+      const rows = await sql`
+        update public.pet_task t
+        set
+          pet_task_done = true,
+          pet_task_last_done = now()
+        from public.pet_list pl
+        where t.pet_list_id = pl.pet_list_id
+          and pl.user_id = ${sessionUser.user_id}
+          and t.pet_task_id = ${String(taskId)}
+        returning
+          t.pet_task_id,
+          t.pet_list_id,
+          t.pet_task_type,
+          t.pet_task_done,
+          t.pet_task_created_at,
+          t.pet_task_last_done,
+          t.pet_task_count,
+          t.pet_task_interval,
+          t.pet_task_interval_unit
+      `;
+      
+      /* ===================== Handle not found ===================== */
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+
+      /* ===================== Return updated task ===================== */
+      return res.status(200).json(mapTask(rows[0]));
+    }
 
     /* ===================== Invalid method fallback ===================== */
     return res.status(405).json({ error: "Method not allowed" });

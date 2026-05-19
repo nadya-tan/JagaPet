@@ -4,21 +4,17 @@ import {
   Fish,
   Menu,
   X,
-  MessageCircleQuestion,
-  HelpCircle,
   Scale,
 } from "lucide-react";
 import { useCompare } from "../context/CompareContext";
 import logoImage from "../../imports/image-0.jpg";
+import { AiChatbot } from "../components/chatbot";
 import { Languages } from "lucide-react";
 import { useLanguage, type Language } from "../context/LanguageContext";
 
 export function MainLayout() {
   // Control mobile navigation menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Control floating chatbot window visibility
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Get current route path for active navigation styling
   const location = useLocation();
@@ -274,75 +270,7 @@ export function MainLayout() {
         </div>
       </footer>
 
-      {/* ===================== Floating AI ChatBot ===================== */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {isChatOpen ? (
-          /* Open Chat Window */
-          <div className="bg-white w-80 sm:w-96 rounded-2xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col h-[500px] transition-all transform origin-bottom-right">
-            {/* Chat Header */}
-            <div className="bg-emerald-700 p-4 text-white flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <HelpCircle className="h-5 w-5" />
-                <h3 className="font-semibold">Shell & Fin MY Assistant</h3>
-              </div>
-
-              {/* Close Chat Button */}
-              <button
-                onClick={() => setIsChatOpen(false)}
-                className="text-emerald-200 hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Chat Messages Area */}
-            <div className="flex-1 p-4 overflow-y-auto bg-stone-50 space-y-4 text-sm">
-              {/* Assistant Welcome Message */}
-              <div className="bg-emerald-100 text-emerald-900 p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%]">
-                Hi! I'm your Shell & Fin MY Assistant. Do you have questions
-                about caring for a specific species, or need advice on rehoming
-                a pet you can no longer keep?
-              </div>
-
-              {/* Prototype Example Conversation */}
-              <div className="bg-white border border-stone-200 text-stone-800 p-3 rounded-2xl rounded-tr-sm self-end max-w-[85%] ml-auto shadow-sm">
-                What size tank does a red-eared slider need?
-              </div>
-
-              <div className="bg-emerald-100 text-emerald-900 p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%]">
-                A baby slider can start in a 20-gallon tank, but they grow fast!
-                An adult needs a minimum of 100 gallons (about 380 liters) or a
-                large outdoor pond, plus a dry basking area with UV light. Are
-                you thinking of getting one?
-              </div>
-            </div>
-
-            {/* Chat Input Area */}
-            <div className="p-3 bg-white border-t border-stone-200">
-              <div className="flex items-center gap-2 bg-stone-100 rounded-full px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  className="bg-transparent border-none focus:outline-none flex-1 text-sm text-stone-700 placeholder-stone-400"
-                />
-
-                <button className="text-emerald-600 hover:text-emerald-700">
-                  <MessageCircleQuestion className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Floating Open Chat Button */
-          <button
-            onClick={() => setIsChatOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center transform hover:scale-105"
-            aria-label="Open AI Assistant"
-          >
-            <MessageCircleQuestion className="h-6 w-6" />
-          </button>
-        )}
-      </div>
+      <AiChatbot />
     </div>
   );
 }
