@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
-
+type HealthPrediction = {
+  disease: string;
+  confidence: number;
+};
 /**
  * State structure for health screening feature
  *
@@ -8,7 +11,7 @@ import React, { createContext, useContext, useState } from "react";
 type HealthScreeningState = {
   selectedImage: string | null;
   selectedFileName: string | null;
-  result: string | null;
+  result: HealthPrediction[] | null;
   matchedCareGuidePetId: string | null;
   careGuideLookupDone: boolean;
   error: string | null;

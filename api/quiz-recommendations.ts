@@ -57,6 +57,8 @@ export default async function handler(req: any, res: any) {
       select
         pet_id,
         pet_vernacular_name,
+        pet_vernacular_name_cn,
+        pet_vernacular_name_ms,
         pet_scientific_name,
         pet_care_level,
         pet_is_native,
@@ -64,6 +66,8 @@ export default async function handler(req: any, res: any) {
         pet_invasive_risk,
         pet_image_ref,
         pet_comments,
+        pet_comments_cn,
+        pet_comments_ms,
         pet_cost::float8 as pet_cost,
         pet_longevity::float8 as pet_longevity,
         pet_max_length::float8 as pet_max_length,
@@ -82,6 +86,8 @@ export default async function handler(req: any, res: any) {
 
       // Text fields with null fallback
       pet_vernacular_name: row.pet_vernacular_name ?? null,
+      pet_vernacular_name_cn: row.pet_vernacular_name_cn ?? null,
+      pet_vernacular_name_ms: row.pet_vernacular_name_ms ?? null,
       pet_scientific_name: row.pet_scientific_name ?? null,
       pet_care_level: row.pet_care_level ?? null,
       pet_is_native: row.pet_is_native ?? null,
@@ -94,6 +100,8 @@ export default async function handler(req: any, res: any) {
 
       // Optional text comments
       pet_comments: row.pet_comments ?? null,
+      pet_comments_cn: row.pet_comments_cn ?? null,
+      pet_comments_ms: row.pet_comments_ms ?? null,
 
       // Numeric normalization
       pet_cost: row.pet_cost == null ? null : Number(row.pet_cost),
