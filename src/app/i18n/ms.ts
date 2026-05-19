@@ -642,7 +642,7 @@ export const ms = {
     title: "Pembantu Penyerahan Haiwan Peliharaan Yang Selamat",
     description:
       "Beritahu kami mengapa anda mungkin tidak dapat terus menjaga haiwan peliharaan anda. Kami akan cadangkan sama ada anda patut cuba mendapatkan sokongan dahulu atau mula mencari pemilik baharu dengan selamat.",
-    warningTitle: "Jangan Lepaskan Haiwan Peliharaan Anda",
+    warningTitle: "Jangan lepaskan haiwan peliharaan anda ke dalam sungai atau air tawar",
     warningDescription:
       "Melepaskan ikan atau kura-kura peliharaan ke dalam longkang, kolam, tasik, atau sungai boleh membahayakan haiwan tersebut dan biodiversiti tempatan. Sentiasa ada pilihan yang lebih selamat daripada melepaskannya.",
 

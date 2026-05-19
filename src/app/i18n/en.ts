@@ -631,7 +631,7 @@ export const en = {
     title: "Safe Rehoming Helper",
     description:
       "Tell us why you may not be able to keep your pet. We will suggest whether you should try support first or start safe rehoming.",
-    warningTitle: "Do Not Release Your Pet",
+    warningTitle: "Do not release your pet into local waterways",
     warningDescription:
       "Releasing pet fish or turtles into drains, ponds, lakes, or rivers can harm the animal and local biodiversity. There is always a safer option than release.",
 
