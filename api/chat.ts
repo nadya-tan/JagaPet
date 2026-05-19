@@ -322,7 +322,7 @@ Return ONLY valid JSON in this exact shape:
 Intent rules:
 - If the user asks to identify, recognise, ID, name, or find out what species/pet/fish they have, intent must be "identify".
 - If the user says "I want to identify my fish", "identify my fish", "what fish is this", "can you identify my pet", or similar, intent must be "identify" even if they give no description.
-- If the user gives visible non-health traits such as colour, size, body shape, fins, tail shape, shell, stripes, spots, markings, schooling behaviour, or body form for the purpose of knowing what species it is, intent must be "identify".
+- If the user gives visible non-health traits such as colour, size, body shape, fins, tail shape, shell, stripes, spots, markings, behaviour, or body form for the purpose of knowing what species it is, intent must be "identify".
 - If the user's main concern is illness, symptoms, disease, infection, abnormal growth, injury, wounds, white stuff, cotton-like growth, fungus-like growth, not eating, floating, gasping, lethargy, bloating, swelling, fin damage, cloudy eyes, or health, intent must be "sickness".
 - If the user asks about giving away, rehoming, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
 - If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
@@ -333,7 +333,7 @@ Identification description rules:
 - hasIdentificationDescription must be true only when the user provides useful identification traits such as colour, size, shape, pattern, fins, tail, shell, stripes, spots, markings, schooling behaviour, or body form.
 - hasIdentificationDescription must be false when the user only asks to identify a pet but gives no visible description.
 - For identify intent with hasIdentificationDescription true, suggest exactly 5 likely scientific names where possible.
-- Prioritise freshwater aquatic species that are commonly kept as pets.
+- Prioritise freshwater aquatic species that are commonly kept as aquarium pets; only suggest less common species if there are no remaining common aquarium species that match the description.
 - For identify intent with hasIdentificationDescription false, likelyScientificNames must be [].
 - For all non-identify intents, likelyScientificNames must be [].
 - Do not classify sickness descriptions as identify just because they mention visible traits.
