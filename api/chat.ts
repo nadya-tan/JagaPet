@@ -1,7 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Groq from "groq-sdk";
 import { sql } from "./_lib/auth.js";
-import { get } from "node:http";
 
 const PET_IMAGE_PLACEHOLDER = "/pet_image/pet_placeholder.png";
 
@@ -244,45 +243,100 @@ function getPetImageUrl(value: unknown): string {
 }
 
 
+function getIntentResponseInstruction(intent: ChatIntent) {
+  if (intent === "identify") {
+    return `
+The user is asking to identify their aquatic pet.
+- If application species matches are provided, describe them as possible matches, not confirmed identification.
+- Recommend using the identification tool for a more reliable visual check.
+- Do not discuss sickness unless the user mentions symptoms.
+    `.trim();
+  }
+
+  if (intent === "sickness") {
+    return `
+The user is asking about pet health or sickness.
+- Focus only on possible health-related causes and safe next steps.
+- Do not identify the pet species.
+- Do not list possible species matches.
+- Do not mention visual species identification.
+- Mention that the app can help screen visible health signs if useful.
+- Avoid giving a guaranteed diagnosis.
+- Recommend a veterinarian or aquatic specialist for serious, worsening, or unclear symptoms.
+    `.trim();
+  }
+
+  if (intent === "rehome") {
+    return `
+The user wants to rehome or give up an aquatic pet.
+- Focus only on safe and responsible rehoming.
+- Do not suggest identifying the pet unless the user specifically asks.
+- Do not suggest releasing the pet into rivers, ponds, drains, lakes, or the wild.
+- Mention that the app provides safe-exit guidance if useful.
+    `.trim();
+  }
+
+  if (intent === "recommendation") {
+    return `
+The user is asking for pet suitability or recommendations.
+- Focus on beginner-friendly ownership factors such as tank size, care needs, cost, lifespan, and suitability.
+- Mention the recommendation quiz if useful.
+    `.trim();
+  }
+
+  if (intent === "compare") {
+    return `
+The user is comparing aquatic pets.
+- Compare care needs, suitability, risk, size, and beginner-friendliness.
+- Mention the comparison feature if useful.
+    `.trim();
+  }
+
+  return `
+Answer the user's freshwater aquatic pet ownership question directly.
+- Do not mention species identification unless the user asked to identify a pet.
+- Do not write raw URLs.
+  `.trim();
+}
+
 async function analyseMessage(message: string): Promise<MessageAnalysis> {
   const completion = await groq.chat.completions.create({
     model: "llama-3.1-8b-instant",
     temperature: 0,
-    max_tokens: 350,
+    max_tokens: 500,
     messages: [
       {
         role: "system",
         content: `
-You analyse user messages for an aquatic pet care app.
+You analyse user messages for a freshwater aquatic pet care app.
 
 Return ONLY valid JSON in this exact shape:
 {
   "language": "en" | "ms" | "zh" | "other",
   "intent": "identify" | "sickness" | "rehome" | "recommendation" | "compare" | "general",
-  "englishDescription": "English translation or summary of the user's pet description/question",
-  "likelyScientificNames": ["name 1", "name 2", "name 3"]
+  "englishDescription": "English translation or summary of the user's message",
+  "hasIdentificationDescription": true | false,
+  "likelyScientificNames": ["name 1", "name 2", "name 3", "name 4", "name 5"]
 }
 
 Intent rules:
-- If the user's main concern is illness, symptoms, disease, infection, abnormal behaviour, abnormal growth, injury, wounds, white spots, white patches, white stuff, cotton-like growth, fungus-like growth, not eating, floating, gasping, lethargy, bloating, swelling, fin damage, cloudy eyes, or health, intent must be "sickness".
-- If the user asks about giving away, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
+- If the user asks to identify, recognise, ID, name, or find out what species/pet/fish they have, intent must be "identify".
+- If the user says "I want to identify my fish", "identify my fish", "what fish is this", "can you identify my pet", or similar, intent must be "identify" even if they give no description.
+- If the user gives visible non-health traits such as colour, size, body shape, fins, tail shape, shell, stripes, spots, markings, schooling behaviour, or body form for the purpose of knowing what species it is, intent must be "identify".
+- If the user's main concern is illness, symptoms, disease, infection, abnormal growth, injury, wounds, white stuff, cotton-like growth, fungus-like growth, not eating, floating, gasping, lethargy, bloating, swelling, fin damage, cloudy eyes, or health, intent must be "sickness".
+- If the user asks about giving away, rehoming, releasing, not wanting, or being unable to keep the pet, intent must be "rehome".
 - If the user asks what pet to get or what pet is suitable, intent must be "recommendation".
 - If the user compares species, intent must be "compare".
-- Use "identify" only when the user's main goal is to identify what species or pet they have.
-- If a visible description is about a health problem, such as "white stuff growing", "white spots", "red patches", "bloated", or "cloudy eye", classify it as "sickness", not "identify".
-
+- Otherwise use "general".
 
 Identification description rules:
-- Intent should be "identify" only if the user gives visible traits that are not pertinent to illness such as colour, size, shape, pattern, fins, shell, stripes, spots, body form, tail shape, or behaviour useful for identification.
-- If the user only says "identify my fish", "what fish is this", "can you identify my pet", or similar without descriptive details, intent must be "general". Ask the user for more description of the pet, then set intent to "Identify" for the next response.
-- For identify intent with enough description, suggest exactly 3 likely scientific names where possible, prioritising freshwater aquatic species that are commonly kept as pets.
+- hasIdentificationDescription must be true only when the user provides useful identification traits such as colour, size, shape, pattern, fins, tail, shell, stripes, spots, markings, schooling behaviour, or body form.
+- hasIdentificationDescription must be false when the user only asks to identify a pet but gives no visible description.
+- For identify intent with hasIdentificationDescription true, suggest exactly 5 likely scientific names where possible.
+- Prioritise freshwater aquatic species that are commonly kept as pets.
+- For identify intent with hasIdentificationDescription false, likelyScientificNames must be [].
 - For all non-identify intents, likelyScientificNames must be [].
-- For identify intent without enough description, likelyScientificNames must be [].
-
-Output rules:
-- For sickness, rehome, recommendation, compare, and general intents, likelyScientificNames must be [].
-- Do NOT attempt or bring up species identification in any intent other than the identify intent. You should not mention or suggest identification unless the user specifically asks for pet identification.
-- For sickness, rehome, recommendation, compare, and general intents, hasIdentificationDescription must be false even if the user describes visible symptoms.
+- Do not classify sickness descriptions as identify just because they mention visible traits.
 
 Language rules:
 - If the user writes in Malay or Chinese, translate the useful content into English in englishDescription.
@@ -330,6 +384,9 @@ Language rules:
     ? (parsed.intent as ChatIntent)
     : "general";
 
+  const hasIdentificationDescription =
+    intent === "identify" && parsed.hasIdentificationDescription === true;
+
   return {
     language,
     intent,
@@ -338,10 +395,11 @@ Language rules:
       parsed.englishDescription.trim()
         ? parsed.englishDescription.trim()
         : message,
-    hasIdentificationDescription: intent === "identify" && Array.isArray(parsed.likelyScientificNames)
-      ? parsed.likelyScientificNames.length > 0
-      : false,
-    likelyScientificNames: normalizeScientificNames(parsed.likelyScientificNames),
+    hasIdentificationDescription,
+    likelyScientificNames:
+      intent === "identify" && hasIdentificationDescription
+        ? normalizeScientificNames(parsed.likelyScientificNames)
+        : [],
   };
 }
 
@@ -409,8 +467,8 @@ async function getSpeciesCardsByScientificNames(
   const topFive = rows.slice(0, 5);
 
   const pickedRows = [
-    ...topFive.filter((row: any) => row.pet_common_aquarium === true),
-    ...topFive.filter((row: any) => row.pet_common_aquarium !== true),
+    ...topFive.filter((row: any) => row.pet_aquarium === true),
+    ...topFive.filter((row: any) => row.pet_aquarium !== true),
   ].slice(0, 3);
 
   return pickedRows.map((row: any) => ({
@@ -420,7 +478,7 @@ async function getSpeciesCardsByScientificNames(
     to: `/species/${row.pet_id}`,
     imageUrl: getPetImageUrl(row.pet_image_ref),
     badge:
-      row.pet_common_aquarium === true
+      row.pet_aquarium === true
         ? language === "ms"
           ? "Haiwan akuatik biasa dipelihara"
           : language === "zh"
@@ -523,10 +581,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
+    const speciesCards = cards.filter((card) => card.type === "species");
+
     const speciesContext =
-      analysis.intent === "identify"
-        ? buildSpeciesContext(cards.filter((card) => card.type === "species"))
-        : "";
+      analysis.intent === "identify" && speciesCards.length > 0
+        ? buildSpeciesContext(speciesCards)
+        : "Not applicable.";
+
+    const intentResponseInstruction = getIntentResponseInstruction(analysis.intent);
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
@@ -552,16 +614,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             Intent:
             ${analysis.intent}
 
-            Application species matches, if any:
+            Application species matches:
             ${speciesContext}
+
+            Intent-specific response instructions:
+            ${intentResponseInstruction}
 
             Instructions:
             - Reply in the same language as the user.
             - Do not include raw URLs.
             - Do not say "click the link below".
             - If species matches are provided, explain that they are likely matches based on the description, not a confirmed identification.
-            - If species matches are provided, mention that visual identification is recommended.
             - The application will render clickable cards separately, so do not write markdown links.
+            - Only mention species matches if the detected intent is "identify" and application species matches are provided.
           `.trim(),
         },
       ],
