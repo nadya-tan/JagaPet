@@ -638,6 +638,208 @@ export const ms = {
     },
   },
 
+  safeExit: {
+    title: "Pembantu Penyerahan Haiwan Peliharaan Yang Selamat",
+    description:
+      "Beritahu kami mengapa anda mungkin tidak dapat terus menjaga haiwan peliharaan anda. Kami akan cadangkan sama ada anda patut cuba mendapatkan sokongan dahulu atau mula mencari pemilik baharu dengan selamat.",
+    warningTitle: "Jangan Lepaskan Haiwan Peliharaan Anda",
+    warningDescription:
+      "Melepaskan ikan atau kura-kura peliharaan ke dalam longkang, kolam, tasik, atau sungai boleh membahayakan haiwan tersebut dan biodiversiti tempatan. Sentiasa ada pilihan yang lebih selamat daripada melepaskannya.",
+
+    step1: "Langkah 1 daripada 2",
+    step2: "Langkah 2 daripada 2",
+    mainSituationTitle: "Apakah situasi utama anda?",
+    mainSituationDescription:
+      "Pilih kategori dahulu, kemudian pilih satu atau lebih sebab yang sepadan dengan situasi anda.",
+    selectAll: "Pilih semua yang berkaitan.",
+    selectedReasons: "Sebab dipilih",
+    selectedReasonsHint:
+      "Anda boleh memilih lebih daripada satu sebab sebelum mengesahkan.",
+    confirmButton: "Sahkan dan tunjukkan panduan",
+
+    yourGuidance: "Panduan anda",
+    recommendedNextStep: "Langkah seterusnya yang disyorkan",
+    recommendedDescription:
+      "Berdasarkan sebab yang anda pilih, inilah laluan paling selamat.",
+    changeReason: "Tukar sebab",
+    helpfulTips: "Tip berguna",
+    nextSafeSteps: "Langkah selamat seterusnya",
+
+    authorityCardTitle:
+      "Hubungi PERHILITAN atau Jabatan Perikanan untuk panduan",
+    authorityCardDescription:
+      "Jika haiwan tersebut ialah hidupan liar, spesies terkawal, berbahaya, atau anda tidak pasti apa yang perlu dilakukan, hubungi PERHILITAN untuk panduan yang betul.",
+    visitPerhilitan: "Lawati laman web PERHILITAN",
+    visitDof: "Lawati laman web Jabatan Perikanan",
+
+    adoptionCardTitle: "Senaraikan haiwan anda untuk diambil sebagai angkat",
+    adoptionCardDescription:
+      "Gunakan platform pengambilan haiwan peliharaan untuk mencari penjaga yang bertanggungjawab. Sertakan gambar yang jelas, maklumat spesies, saiz, dan keperluan penjagaan.",
+    visitPetFinder: "Lawati senarai pengambilan PetFinder",
+    startOver: "Mula semula",
+
+    badges: {
+      support: "Cuba sokongan dahulu",
+      rehome: "Mungkin perlu cari pemilik baharu",
+      urgent: "Urus dengan berhati-hati",
+    },
+
+    categories: {
+      care: {
+        title: "Penjagaan semakin sukar",
+        description:
+          "Masa, kos, pembersihan, atau saiz haiwan semakin sukar diurus.",
+      },
+      life: {
+        title: "Keadaan tempat tinggal saya berubah",
+        description:
+          "Berpindah rumah, berpindah jauh, peraturan tuan rumah, atau keputusan keluarga.",
+      },
+      space: {
+        title: "Saya tidak dapat menyediakan ruang yang sesuai",
+        description:
+          "Haiwan memerlukan lebih banyak ruang, peralatan lebih baik, atau tempat tinggal yang lebih selamat.",
+      },
+      safety: {
+        title: "Isu keselamatan, undang-undang, atau kecemasan",
+        description:
+          "Haiwan mungkin berbahaya, terkawal, sakit, atau perlu diurus segera.",
+      },
+    },
+
+    reasons: {
+      notEnoughTime: {
+        label: "Saya tidak mempunyai masa yang mencukupi",
+        description: "Rutin penjagaan haiwan semakin sukar untuk diikuti.",
+      },
+      tooExpensive: {
+        label: "Kos semakin terlalu tinggi",
+        description:
+          "Makanan, peralatan, elektrik, atau rawatan semakin mahal.",
+      },
+      maintenanceHard: {
+        label: "Pembersihan atau penyelenggaraan air terlalu sukar",
+        description:
+          "Akuarium cepat kotor atau kerja penyelenggaraan terasa membebankan.",
+      },
+      lostInterest: {
+        label: "Saya hilang minat atau terlalu sibuk",
+        description:
+          "Saya risau tidak dapat menjaga haiwan ini secara konsisten lagi.",
+      },
+      movingNoPets: {
+        label: "Saya berpindah ke tempat yang tidak membenarkan haiwan",
+        description:
+          "Tempat baharu tidak membenarkan haiwan peliharaan atau akuarium.",
+      },
+      relocation: {
+        label: "Saya akan berpindah untuk jangka masa panjang",
+        description:
+          "Saya tidak dapat membawa haiwan tersebut bersama untuk tempoh yang lama.",
+      },
+      familyIssue: {
+        label: "Keluarga atau rakan serumah saya tidak mahu haiwan ini",
+        description:
+          "Terdapat aduan tentang ruang, bau, bunyi, kos, atau keselamatan.",
+      },
+      petTooBig: {
+        label: "Haiwan saya membesar lebih daripada jangkaan",
+        description: "Akuarium atau kandang semasa tidak lagi sesuai.",
+      },
+      cannotProvideCare: {
+        label:
+          "Saya tidak dapat menyediakan ruang atau penjagaan yang sesuai lagi",
+        description:
+          "Keperluan asas kebajikan haiwan tidak dapat dipenuhi untuk jangka panjang.",
+      },
+      tooManyPets: {
+        label:
+          "Saya mempunyai terlalu banyak haiwan atau pembiakan tidak dirancang",
+        description:
+          "Terdapat terlalu banyak haiwan untuk dijaga dengan betul.",
+      },
+      dangerousOrRestricted: {
+        label: "Haiwan ini berbahaya, terkawal, atau tidak sah",
+        description:
+          "Haiwan tersebut mungkin memerlukan pengendalian pakar atau pihak berkuasa.",
+      },
+      sickUrgent: {
+        label:
+          "Haiwan ini memerlukan rawatan segera dan saya tidak dapat menyediakannya",
+        description:
+          "Haiwan tersebut mungkin sakit, cedera, atau keadaannya semakin merosot dengan cepat.",
+      },
+    },
+
+    guidance: {
+      urgent: {
+        title: "Ini memerlukan panduan segera atau pakar",
+        description:
+          "Kerana ini melibatkan keselamatan, status undang-undang, atau kebajikan haiwan yang mendesak, jangan lepaskan, jual, atau serahkan haiwan kepada orang yang tidak bersedia.",
+        tips: {
+          keepContained: "Pastikan haiwan dikurung dengan selamat.",
+          avoidHandling: "Elakkan pengendalian yang tidak perlu.",
+          doNotRelease:
+            "Jangan lepaskan haiwan ke dalam longkang, kolam, tasik, atau sungai.",
+          prepareDetails:
+            "Sediakan nama spesies, saiz, gambar, dan keadaan semasa haiwan.",
+        },
+        nextSteps: {
+          contactExpert:
+            "Hubungi penjaga berpengalaman, pihak penyelamat, kedai haiwan, atau pihak berkuasa berkaitan untuk panduan.",
+          askBeforeTransporting:
+            "Tanya dahulu sebelum memindahkan haiwan, terutamanya jika ia mungkin berbahaya atau terkawal.",
+          continueBasicCare:
+            "Teruskan penjagaan asas sementara menunggu bantuan.",
+        },
+      },
+      rehome: {
+        title:
+          "Mencari pemilik baharu dengan selamat mungkin pilihan bertanggungjawab",
+        description:
+          "Berdasarkan sebab anda, mencari pemilik baharu mungkin lebih baik daripada membiarkan haiwan dalam keadaan yang tidak sesuai. Perkara paling penting ialah menyerahkannya dengan selamat, bukan melepaskannya.",
+        tips: {
+          doNotWait: "Jangan tunggu sehingga saat akhir.",
+          takePhotos:
+            "Ambil gambar jelas haiwan dan keadaan tempat tinggalnya sekarang.",
+          beHonest:
+            "Berterus terang tentang saiz, tingkah laku, diet, dan keperluan penjagaan haiwan.",
+          doNotGiveUnprepared:
+            "Jangan berikan haiwan kepada seseorang yang tidak mampu menyediakan ruang atau penjagaan yang sesuai.",
+        },
+        nextSteps: {
+          askGroups:
+            "Tanya kumpulan hobi akuarium atau reptilia yang dipercayai dahulu.",
+          contactStores:
+            "Hubungi kedai haiwan tempatan dan tanya sama ada mereka menerima kes penyerahan haiwan.",
+          prepareCareNote:
+            "Sediakan nota penjagaan ringkas untuk penjaga baharu.",
+        },
+      },
+      support: {
+        title: "Cuba dapatkan sokongan dahulu sebelum mencari pemilik baharu",
+        description:
+          "Sebab anda mungkin boleh diselesaikan dengan rutin yang lebih mudah, kos yang lebih rendah, atau bantuan orang lain. Mencari pemilik baharu masih boleh dipertimbangkan jika penjagaan asas haiwan tidak dapat dikekalkan.",
+        tips: {
+          weeklyRoutine: "Buat rutin penjagaan mingguan yang mudah.",
+          prioritiseEssentials:
+            "Utamakan keperluan asas: makanan, air bersih, penapis, dan tempat tinggal yang selamat.",
+          askForHelp:
+            "Minta bantuan ahli keluarga atau peminat hobi yang berpengalaman.",
+          simplifySetup:
+            "Kurangkan hiasan yang tidak perlu atau tugasan setup yang terlalu rumit.",
+        },
+        nextSteps: {
+          tryRoutine: "Cuba rutin yang diperbaiki selama 1 hingga 2 minggu.",
+          startRehomingEarly:
+            "Jika haiwan masih terabai, mula cari pemilik baharu dengan selamat lebih awal.",
+          doNotRelease:
+            "Jangan lepaskan haiwan walaupun penjagaan terasa membebankan.",
+        },
+      },
+    },
+  },
+
   footer: {
     description:
       "Membantu rakyat Malaysia membuat pilihan yang selamat dan bertanggungjawab untuk haiwan peliharaan ikan dan kura-kura. Lindungi biodiversiti kita, satu haiwan pada satu masa.",

@@ -627,6 +627,193 @@ export const en = {
     },
   },
 
+  safeExit: {
+    title: "Safe Rehoming Helper",
+    description:
+      "Tell us why you may not be able to keep your pet. We will suggest whether you should try support first or start safe rehoming.",
+    warningTitle: "Do Not Release Your Pet",
+    warningDescription:
+      "Releasing pet fish or turtles into drains, ponds, lakes, or rivers can harm the animal and local biodiversity. There is always a safer option than release.",
+
+    step1: "Step 1 of 2",
+    step2: "Step 2 of 2",
+    mainSituationTitle: "What is the main situation?",
+    mainSituationDescription:
+      "Choose a category first, then select one or more reasons that match your situation.",
+    selectAll: "Select all that apply.",
+    selectedReasons: "Selected reasons",
+    selectedReasonsHint:
+      "You can select more than one reason before confirming.",
+    confirmButton: "Confirm and show guidance",
+
+    yourGuidance: "Your guidance",
+    recommendedNextStep: "Recommended next step",
+    recommendedDescription:
+      "Based on the reason you selected, here is the safest path.",
+    changeReason: "Change reason",
+    helpfulTips: "Helpful tips",
+    nextSafeSteps: "Next safe steps",
+
+    authorityCardTitle:
+      "Contact PERHILITAN or Department of Fisheries for guidance",
+    authorityCardDescription:
+      "If the pet is wildlife, restricted, dangerous, or you are unsure what to do, contact PERHILITAN for proper guidance.",
+    visitPerhilitan: "Visit PERHILITAN website",
+    visitDof: "Visit Department of Fisheries website",
+
+    adoptionCardTitle: "List your pet for adoption",
+    adoptionCardDescription:
+      "Use a pet adoption platform to look for responsible adopters. Include clear photos, species details, size, and care requirements.",
+    visitPetFinder: "Visit PetFinder adoption listings",
+    startOver: "Start over",
+
+    badges: {
+      support: "Try support first",
+      rehome: "Rehoming may be needed",
+      urgent: "Handle carefully",
+    },
+
+    categories: {
+      care: {
+        title: "Care is becoming difficult",
+        description:
+          "Time, cost, cleaning, or pet size is becoming hard to manage.",
+      },
+      life: {
+        title: "My living situation changed",
+        description: "Moving, relocation, landlord rules, or family decisions.",
+      },
+      space: {
+        title: "I cannot provide proper space",
+        description:
+          "The pet needs more space, better equipment, or safer housing.",
+      },
+      safety: {
+        title: "Safety, legal, or urgent issue",
+        description:
+          "The pet may be dangerous, restricted, sick, or urgent to handle.",
+      },
+    },
+
+    reasons: {
+      notEnoughTime: {
+        label: "I do not have enough time",
+        description: "The pet care routine is becoming difficult to follow.",
+      },
+      tooExpensive: {
+        label: "The cost is becoming too high",
+        description:
+          "Food, equipment, electricity, or treatment is becoming expensive.",
+      },
+      maintenanceHard: {
+        label: "Cleaning or water maintenance is too hard",
+        description:
+          "The tank gets dirty quickly or maintenance feels overwhelming.",
+      },
+      lostInterest: {
+        label: "I lost interest or became too busy",
+        description:
+          "I am worried I cannot care for the pet consistently anymore.",
+      },
+      movingNoPets: {
+        label: "I am moving somewhere pets are not allowed",
+        description: "The new place does not allow pets or aquariums.",
+      },
+      relocation: {
+        label: "I am relocating long-term",
+        description:
+          "I cannot bring the pet with me for a long period of time.",
+      },
+      familyIssue: {
+        label: "My family or housemates do not want the pet",
+        description:
+          "There are complaints about space, smell, noise, cost, or safety.",
+      },
+      petTooBig: {
+        label: "My pet grew bigger than expected",
+        description: "The current tank or enclosure is no longer suitable.",
+      },
+      cannotProvideCare: {
+        label: "I cannot provide proper space or care anymore",
+        description: "The pet’s basic welfare needs cannot be met long-term.",
+      },
+      tooManyPets: {
+        label: "I have too many pets or accidental breeding",
+        description: "There are too many animals to care for properly.",
+      },
+      dangerousOrRestricted: {
+        label: "The pet is dangerous, restricted, or illegal",
+        description: "The animal may need specialist or official handling.",
+      },
+      sickUrgent: {
+        label: "The pet needs urgent care and I cannot provide it",
+        description: "The pet may be sick, injured, or declining quickly.",
+      },
+    },
+
+    guidance: {
+      urgent: {
+        title: "This needs urgent or specialist guidance",
+        description:
+          "Because this involves safety, legal status, or urgent animal welfare, do not release, sell, or pass the pet to an unprepared person.",
+        tips: {
+          keepContained: "Keep the pet safely contained.",
+          avoidHandling: "Avoid unnecessary handling.",
+          doNotRelease:
+            "Do not release the pet into drains, ponds, lakes, or rivers.",
+          prepareDetails:
+            "Prepare the pet’s species name, size, photos, and current condition.",
+        },
+        nextSteps: {
+          contactExpert:
+            "Contact an experienced keeper, rescue contact, pet store, or relevant authority for guidance.",
+          askBeforeTransporting:
+            "Ask before transporting the animal, especially if it may be dangerous or restricted.",
+          continueBasicCare: "Continue basic care while waiting for help.",
+        },
+      },
+      rehome: {
+        title: "Safe rehoming may be the responsible choice",
+        description:
+          "Based on your reason, rehoming may be better than keeping the pet in unsuitable conditions. The important part is to rehome safely, not release.",
+        tips: {
+          doNotWait: "Do not wait until the last minute.",
+          takePhotos: "Take clear photos of the pet and its current setup.",
+          beHonest:
+            "Be honest about the pet’s size, behaviour, diet, and care needs.",
+          doNotGiveUnprepared:
+            "Do not give the pet to someone who cannot provide proper space or care.",
+        },
+        nextSteps: {
+          askGroups: "Ask trusted aquarium or reptile hobbyist groups first.",
+          contactStores:
+            "Contact local pet stores and ask whether they accept surrender cases.",
+          prepareCareNote: "Prepare a simple care note for the new keeper.",
+        },
+      },
+      support: {
+        title: "Try support first before rehoming",
+        description:
+          "Your reason may be fixable with a simpler routine, lower-cost setup, or help from others. Rehoming is still an option if the pet’s basic care cannot be maintained.",
+        tips: {
+          weeklyRoutine: "Create a simple weekly care routine.",
+          prioritiseEssentials:
+            "Prioritise essentials: food, clean water, filter, and safe housing.",
+          askForHelp: "Ask a family member or experienced hobbyist for help.",
+          simplifySetup:
+            "Reduce unnecessary decorations or complicated setup tasks.",
+        },
+        nextSteps: {
+          tryRoutine: "Try the improved routine for 1 to 2 weeks.",
+          startRehomingEarly:
+            "If the pet is still being neglected, start safe rehoming early.",
+          doNotRelease:
+            "Do not release the pet even if care feels overwhelming.",
+        },
+      },
+    },
+  },
+
   footer: {
     description:
       "Empowering Malaysians to make safe, responsible choices for pet fish and turtles. Protect our biodiversity, one pet at a time.",

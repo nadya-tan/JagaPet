@@ -607,6 +607,175 @@ export const zh = {
     },
   },
 
+  safeExit: {
+    title: "安全转让宠物助手",
+    description:
+      "告诉我们你为什么可能无法继续饲养宠物。我们会建议你应该先尝试寻求支持，还是开始安全地为宠物寻找新主人。",
+    warningTitle: "不要放生你的宠物",
+    warningDescription:
+      "把宠物鱼或乌龟放生到沟渠、池塘、湖泊或河流中，可能会伤害动物本身和当地生物多样性。一定有比放生更安全的选择。",
+
+    step1: "第 1 步，共 2 步",
+    step2: "第 2 步，共 2 步",
+    mainSituationTitle: "主要情况是什么？",
+    mainSituationDescription:
+      "请先选择一个类别，然后选择一个或多个符合你情况的原因。",
+    selectAll: "请选择所有适用的选项。",
+    selectedReasons: "已选择的原因",
+    selectedReasonsHint: "你可以在确认前选择多个原因。",
+    confirmButton: "确认并显示建议",
+
+    yourGuidance: "你的建议",
+    recommendedNextStep: "建议的下一步",
+    recommendedDescription: "根据你选择的原因，以下是最安全的处理方式。",
+    changeReason: "更改原因",
+    helpfulTips: "实用建议",
+    nextSafeSteps: "下一步安全做法",
+
+    authorityCardTitle: "联系 PERHILITAN 或渔业局寻求指导",
+    authorityCardDescription:
+      "如果该宠物属于野生动物、受管制物种、危险动物，或你不确定该怎么处理，请联系 PERHILITAN 获取正确指导。",
+    visitPerhilitan: "访问 PERHILITAN 网站",
+    visitDof: "访问渔业局网站",
+
+    adoptionCardTitle: "将你的宠物发布为领养",
+    adoptionCardDescription:
+      "使用宠物领养平台寻找负责任的领养者。请提供清晰照片、物种资料、体型大小和照顾需求。",
+    visitPetFinder: "访问 PetFinder 领养列表",
+    startOver: "重新开始",
+
+    badges: {
+      support: "先尝试获得支持",
+      rehome: "可能需要寻找新主人",
+      urgent: "请谨慎处理",
+    },
+
+    categories: {
+      care: {
+        title: "照顾变得困难",
+        description: "时间、费用、清洁工作或宠物体型变得难以管理。",
+      },
+      life: {
+        title: "我的居住情况改变了",
+        description: "搬家、长期迁移、房东规定或家庭决定。",
+      },
+      space: {
+        title: "我无法提供合适的空间",
+        description: "宠物需要更多空间、更好的设备或更安全的饲养环境。",
+      },
+      safety: {
+        title: "安全、法律或紧急问题",
+        description: "宠物可能具有危险性、受法律管制、生病，或需要紧急处理。",
+      },
+    },
+
+    reasons: {
+      notEnoughTime: {
+        label: "我没有足够的时间",
+        description: "宠物的日常照顾变得难以持续。",
+      },
+      tooExpensive: {
+        label: "费用变得太高",
+        description: "食物、设备、电费或治疗费用变得昂贵。",
+      },
+      maintenanceHard: {
+        label: "清洁或水质维护太困难",
+        description: "鱼缸很快变脏，或维护工作让人感到负担很重。",
+      },
+      lostInterest: {
+        label: "我失去兴趣或变得太忙",
+        description: "我担心自己无法继续稳定地照顾这只宠物。",
+      },
+      movingNoPets: {
+        label: "我要搬到不允许养宠物的地方",
+        description: "新住处不允许饲养宠物或摆放水族箱。",
+      },
+      relocation: {
+        label: "我将长期搬迁",
+        description: "我在很长一段时间内无法把宠物带在身边。",
+      },
+      familyIssue: {
+        label: "我的家人或室友不想继续养这只宠物",
+        description: "可能有关于空间、气味、噪音、费用或安全方面的投诉。",
+      },
+      petTooBig: {
+        label: "我的宠物长得比预期更大",
+        description: "目前的鱼缸或饲养空间已经不再合适。",
+      },
+      cannotProvideCare: {
+        label: "我无法再提供合适的空间或照顾",
+        description: "宠物的长期基本福利需求无法被满足。",
+      },
+      tooManyPets: {
+        label: "我有太多宠物或出现意外繁殖",
+        description: "动物数量太多，已经难以妥善照顾。",
+      },
+      dangerousOrRestricted: {
+        label: "这只宠物有危险性、受管制或不合法",
+        description: "该动物可能需要专家或相关部门处理。",
+      },
+      sickUrgent: {
+        label: "宠物需要紧急照顾，但我无法提供",
+        description: "宠物可能生病、受伤，或状况正在快速恶化。",
+      },
+    },
+
+    guidance: {
+      urgent: {
+        title: "这需要紧急或专业指导",
+        description:
+          "因为这涉及安全、法律状态或紧急动物福利问题，请不要放生、出售，或把宠物交给没有准备好的人。",
+        tips: {
+          keepContained: "请确保宠物被安全安置。",
+          avoidHandling: "避免不必要的接触或搬动。",
+          doNotRelease: "不要把宠物放生到沟渠、池塘、湖泊或河流中。",
+          prepareDetails: "准备好宠物的物种名称、体型、照片和当前状态。",
+        },
+        nextSteps: {
+          contactExpert:
+            "联系有经验的饲养者、救援组织、宠物店或相关部门寻求指导。",
+          askBeforeTransporting:
+            "在移动动物前请先询问，特别是当它可能具有危险性或受管制时。",
+          continueBasicCare: "在等待帮助期间继续提供基本照顾。",
+        },
+      },
+      rehome: {
+        title: "安全寻找新主人可能是负责任的选择",
+        description:
+          "根据你的原因，为宠物寻找新主人可能比让它继续处在不合适的环境中更好。最重要的是安全转让，而不是放生。",
+        tips: {
+          doNotWait: "不要等到最后一刻才处理。",
+          takePhotos: "为宠物和目前的饲养环境拍摄清晰照片。",
+          beHonest: "诚实说明宠物的体型、行为、饮食和照顾需求。",
+          doNotGiveUnprepared: "不要把宠物交给无法提供合适空间或照顾的人。",
+        },
+        nextSteps: {
+          askGroups: "先询问可信赖的水族或爬行动物爱好者群组。",
+          contactStores: "联系本地宠物店，询问他们是否接受宠物转交个案。",
+          prepareCareNote: "为新饲养者准备一份简单的照顾说明。",
+        },
+      },
+      support: {
+        title: "在寻找新主人前，先尝试获得支持",
+        description:
+          "你的情况可能可以通过更简单的照顾流程、较低成本的设置，或他人的帮助来改善。如果仍无法维持宠物的基本照顾，再考虑安全转让。",
+        tips: {
+          weeklyRoutine: "建立一个简单的每周照顾流程。",
+          prioritiseEssentials:
+            "优先确保基本需求：食物、干净水质、过滤器和安全住所。",
+          askForHelp: "向家人或有经验的爱好者寻求帮助。",
+          simplifySetup: "减少不必要的装饰或过于复杂的设置任务。",
+        },
+        nextSteps: {
+          tryRoutine: "尝试改善后的流程 1 到 2 周。",
+          startRehomingEarly:
+            "如果宠物仍然得不到足够照顾，请尽早开始安全寻找新主人。",
+          doNotRelease: "即使照顾让你感到压力很大，也不要放生宠物。",
+        },
+      },
+    },
+  },
+
   footer: {
     description:
       "帮助马来西亚人安全、负责任地选择宠物鱼及宠物龟。一次一个宠物，共同保护我们的生物多样性。",
