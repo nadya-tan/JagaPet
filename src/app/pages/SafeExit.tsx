@@ -831,19 +831,31 @@ export function SafeExit() {
                     </div>
 
                     <h3 className="text-xl font-bold text-stone-900 mb-2">
-                      Rehome via local groups
+                      Contact PERHILITAN or Department of Fisheries for guidance
                     </h3>
 
                     <p className="text-stone-600 leading-relaxed mb-5">
-                      Share clear photos, species name, size, care needs, and
-                      your location. Choose adopters who understand the pet.
+                      If the pet is wildlife, restricted, dangerous, or you are
+                      unsure what to do, contact PERHILITAN for proper guidance.
                     </p>
 
                     <a
-                      href="#"
+                      href="https://www.wildlife.gov.my"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center font-bold text-emerald-700 hover:text-emerald-800 mb-2"
+                    >
+                      Visit PERHILITAN website
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+
+                    <a
+                      href="https://www.dof.gov.my/en/"
+                      target="_blank"
+                      rel="noreferrer"
                       className="inline-flex items-center font-bold text-emerald-700 hover:text-emerald-800"
                     >
-                      Find local hobbyist groups
+                      Visit Department of Fisheries website
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </a>
                   </div>
@@ -854,21 +866,24 @@ export function SafeExit() {
                     </div>
 
                     <h3 className="text-xl font-bold text-stone-900 mb-2">
-                      Contact pet stores or experienced keepers
+                      List your pet for adoption
                     </h3>
 
                     <p className="text-stone-600 leading-relaxed mb-5">
-                      Some aquarium shops or experienced keepers may accept
-                      healthy surrendered pets. Always call ahead first.
+                      Use a pet adoption platform to look for responsible
+                      adopters. Include clear photos, species details, size, and
+                      care requirements.
                     </p>
 
-                    <Link
-                      to="/"
+                    <a
+                      href="https://www.petfinder.my/listings.htm"
+                      target="_blank"
+                      rel="noreferrer"
                       className="inline-flex items-center font-bold text-sky-700 hover:text-sky-800"
                     >
-                      Search nearby stores
+                      Visit PetFinder adoption listings
                       <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
+                    </a>
                   </div>
                 </div>
 
