@@ -97,10 +97,17 @@ export function AiChatbot() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden">
+    <section
+      className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="assistant-title"
+    >
       <div className="bg-emerald-700 text-white px-4 py-3 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold">Shell & Fin MY Assistant</h3>
+          <h3 id="assistant-title" className="font-semibold">
+            Shell & Fin MY Assistant
+          </h3>
           <p className="text-xs text-emerald-100">
             Aquatic pet care helper
           </p>
@@ -115,7 +122,11 @@ export function AiChatbot() {
         </button>
       </div>
 
-      <div className="h-80 overflow-y-auto p-4 space-y-3 bg-stone-50">
+      <div
+        className="h-80 overflow-y-auto p-4 space-y-3 bg-stone-50"
+        aria-live="polite"
+        aria-label="Assistant conversation"
+      >
         {messages.map((chatMessage, index) => (
           <div
             key={index}
@@ -205,7 +216,10 @@ export function AiChatbot() {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-white text-stone-500 border border-stone-200 rounded-2xl px-4 py-2 text-sm">
+            <div
+              className="bg-white text-stone-500 border border-stone-200 rounded-2xl px-4 py-2 text-sm"
+              role="status"
+            >
               Thinking...
             </div>
           </div>
@@ -214,7 +228,11 @@ export function AiChatbot() {
 
       <form onSubmit={handleSend} className="p-3 border-t bg-white">
         <div className="flex gap-2">
+          <label htmlFor="assistant-message" className="sr-only">
+            Message for Shell & Fin MY Assistant
+          </label>
           <textarea
+            id="assistant-message"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             onKeyDown={(event) => {
@@ -227,6 +245,7 @@ export function AiChatbot() {
             className="flex-1 resize-none rounded-xl border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             rows={2}
             disabled={loading}
+            aria-label="Message for Shell & Fin MY Assistant"
           />
 
           <button
@@ -239,6 +258,6 @@ export function AiChatbot() {
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }

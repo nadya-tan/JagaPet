@@ -5,17 +5,20 @@ import { CompareProvider } from "./context/CompareContext";
 import { UserProvider } from "./context/UserContext";
 import { HealthScreeningProvider } from "./context/HealthScreeningContext";
 import { LanguageProvider } from "./context/LanguageContext";
+import { AccessibilityProvider } from "./context/AccessibilityContext";
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <UserProvider>
-        <CompareProvider>
-          <HealthScreeningProvider>
-            <RouterProvider router={router} />
-          </HealthScreeningProvider>
-        </CompareProvider>
-      </UserProvider>
-    </LanguageProvider>
+    <AccessibilityProvider>
+      <LanguageProvider>
+        <UserProvider>
+          <CompareProvider>
+            <HealthScreeningProvider>
+              <RouterProvider router={router} />
+            </HealthScreeningProvider>
+          </CompareProvider>
+        </UserProvider>
+      </LanguageProvider>
+    </AccessibilityProvider>
   );
 }

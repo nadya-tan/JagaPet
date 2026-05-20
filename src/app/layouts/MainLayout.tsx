@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router";
 import {
-  Fish,
+  Languages,
   Menu,
+  Type,
   X,
   Scale,
 } from "lucide-react";
 import { useCompare } from "../context/CompareContext";
 import logoImage from "../../imports/image-0.jpg";
 import { AiChatbot } from "../components/chatbot";
-import { Languages } from "lucide-react";
 import { useLanguage, type Language } from "../context/LanguageContext";
+import { useAccessibility } from "../context/AccessibilityContext";
 
 export function MainLayout() {
   // Control mobile navigation menu visibility
@@ -24,6 +25,7 @@ export function MainLayout() {
 
   // Get language context for translations
   const { language, setLanguage, t, languageLabels } = useLanguage();
+  const { textSize, setTextSize, textSizeOptions } = useAccessibility();
 
   // Main navigation links used in desktop + mobile menus
   // const navLinks = [
@@ -45,6 +47,13 @@ export function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-stone-50 text-stone-800">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-emerald-800 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-600"
+      >
+        Skip to main content
+      </a>
+
       {/* ===================== Navigation Header ===================== */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,6 +62,7 @@ export function MainLayout() {
             <Link
               to="/"
               className="flex shrink-0 items-center gap-3 hover:opacity-80 transition"
+              aria-label="Shell & Fin MY home"
             >
               <img
                 src={logoImage}
@@ -65,11 +75,15 @@ export function MainLayout() {
             </Link>
 
             {/* ===================== Desktop Navigation ===================== */}
-            <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-end gap-3 xl:gap-6">
+            <nav
+              className="hidden lg:flex flex-1 min-w-0 items-center justify-end gap-3 xl:gap-6"
+              aria-label="Primary navigation"
+            >
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
+                  aria-current={location.pathname === link.path ? "page" : undefined}
                   className={`shrink-0 whitespace-nowrap border-b-2 px-1 text-sm font-medium transition ${
                     location.pathname === link.path
                       ? "border-emerald-700 text-emerald-700"
@@ -83,6 +97,7 @@ export function MainLayout() {
               {/* Compare Wishlist Button */}
               <Link
                 to="/compare"
+                aria-label={`${t("nav.compare")}, ${comparePets.length} pets selected`}
                 className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 xl:px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
                   comparePets.length > 0
                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
@@ -96,7 +111,7 @@ export function MainLayout() {
 
               {/* Language Selector */}
               <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
-                <Languages className="h-4 w-4 text-emerald-700" />
+                <Languages className="h-4 w-4 text-emerald-700" aria-hidden="true" />
 
                 <select
                   value={language}
@@ -111,12 +126,37 @@ export function MainLayout() {
                   <option value="zh">{languageLabels.zh}</option>
                 </select>
               </div>
+
+              <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
+                <Type className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <label htmlFor="desktop-text-size" className="sr-only">
+                  Text size
+                </label>
+                <select
+                  id="desktop-text-size"
+                  value={textSize}
+                  onChange={(event) =>
+                    setTextSize(event.target.value as typeof textSize)
+                  }
+                  className="bg-transparent outline-none cursor-pointer"
+                  aria-label="Text size"
+                >
+                  {textSizeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </nav>
 
             {/* ===================== Mobile Menu Button ===================== */}
             <button
               className="lg:hidden p-2 text-stone-600 hover:text-emerald-700 focus:outline-none"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -129,11 +169,16 @@ export function MainLayout() {
 
         {/* ===================== Mobile Navigation Panel ===================== */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col">
+          <nav
+            id="mobile-navigation"
+            className="lg:hidden bg-white border-t border-stone-100 px-4 pt-2 pb-4 space-y-1 shadow-lg flex flex-col"
+            aria-label="Mobile navigation"
+          >
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
+                aria-current={location.pathname === link.path ? "page" : undefined}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   location.pathname === link.path
                     ? "bg-emerald-50 text-emerald-700"
@@ -148,7 +193,7 @@ export function MainLayout() {
             {/* language selector */}
             <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
               <span className="flex items-center gap-2">
-                <Languages className="h-4 w-4 text-emerald-700" />
+                <Languages className="h-4 w-4 text-emerald-700" aria-hidden="true" />
                 {t("language.label")}
               </span>
 
@@ -166,10 +211,33 @@ export function MainLayout() {
               </select>
             </div>
 
+            <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
+              <span className="flex items-center gap-2">
+                <Type className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                Text size
+              </span>
+
+              <select
+                value={textSize}
+                onChange={(event) =>
+                  setTextSize(event.target.value as typeof textSize)
+                }
+                className="bg-transparent outline-none cursor-pointer"
+                aria-label="Text size"
+              >
+                {textSizeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Mobile Compare Button */}
             <Link
               to="/compare"
               onClick={() => setIsMenuOpen(false)}
+              aria-label={`${t("nav.compare")}, ${comparePets.length} pets selected`}
               className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-emerald-50 text-emerald-800"
             >
               <span>Compare Wishlist</span>
@@ -177,12 +245,12 @@ export function MainLayout() {
                 {comparePets.length}
               </span>
             </Link>
-          </div>
+          </nav>
         )}
       </header>
 
       {/* ===================== Main Routed Content ===================== */}
-      <main className="flex-1 w-full">
+      <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
         {/* Nested route content renders here */}
         <Outlet />
       </main>
