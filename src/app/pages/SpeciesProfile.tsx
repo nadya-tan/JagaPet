@@ -346,7 +346,10 @@ export function SpeciesProfile() {
   const hasPetPrice = pet.pet_cost != null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50">
+    <div
+      className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-stone-50"
+      data-species-profile="true"
+    >
       {/* =========================
           High Danger Warning Banner
           ========================= */}
@@ -505,7 +508,7 @@ export function SpeciesProfile() {
               )}
             </motion.div>
 
-            {/* Title block */}
+            {/* Title fields are tagged so Read page can summarize dynamic species profiles. */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-3xl">
                 {/* Common name */}
@@ -515,6 +518,7 @@ export function SpeciesProfile() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                   className="text-4xl md:text-6xl font-extrabold text-white mb-2 drop-shadow-xl"
+                  data-species-name="true"
                 >
                   {primaryCommonName}
                 </motion.h1>
@@ -525,6 +529,7 @@ export function SpeciesProfile() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
+                  data-species-scientific-name="true"
                   className={`text-xl md:text-2xl text-stone-300 italic font-serif ${
                     otherCommonNames.length > 0 ? "mb-2" : ""
                   }`}
@@ -736,7 +741,7 @@ export function SpeciesProfile() {
                 </h2>
               </div>
 
-              {/* Grid of biological attributes */}
+              {/* Key facts are tagged for concise read-aloud summaries. */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
@@ -749,7 +754,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
                     {t("speciesProfile.scientificName")}
                   </p>
-                  <p className="mt-1 text-stone-800">
+                  <p className="mt-1 text-stone-800" data-species-fact="Scientific name">
                     {displayText(pet.pet_scientific_name)}
                   </p>
                 </div>
@@ -758,7 +763,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
                     {t("speciesProfile.genus")}
                   </p>
-                  <p className="mt-1 text-stone-800">
+                  <p className="mt-1 text-stone-800" data-species-fact="Genus">
                     {displayText(pet.pet_genus)}
                   </p>
                 </div>
@@ -767,7 +772,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
                     {t("speciesProfile.family")}
                   </p>
-                  <p className="mt-1 text-stone-800">
+                  <p className="mt-1 text-stone-800" data-species-fact="Family">
                     {displayText(pet.pet_family)}
                   </p>
                 </div>
@@ -885,7 +890,8 @@ export function SpeciesProfile() {
                 </h2>
               </div>
 
-              <p className="leading-7 text-stone-700">
+              {/* Notes are included in species profile speech output. */}
+              <p className="leading-7 text-stone-700" data-species-notes="true">
                 {displayText(
                   localizedComments,
                   t("speciesProfile.noAdditionalComments"),
@@ -913,7 +919,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     {t("speciesProfile.danger")}
                   </p>
-                  <p className="mt-1 text-rose-50">
+                  <p className="mt-1 text-rose-50" data-species-fact="Danger">
                     <TranslatedText
                       text={displayText(pet.pet_danger)}
                       language={language}
@@ -926,7 +932,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     {t("speciesProfile.nativeStatus")}
                   </p>
-                  <p className="mt-1 text-rose-50">
+                  <p className="mt-1 text-rose-50" data-species-fact="Native status">
                     {getLocalizedPetLabel(
                       nativeStatusLabels,
                       pet.pet_is_native,
@@ -940,7 +946,7 @@ export function SpeciesProfile() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">
                     {t("speciesProfile.legalStatus")}
                   </p>
-                  <p className="mt-1 text-rose-50">
+                  <p className="mt-1 text-rose-50" data-species-fact="Legal status">
                     {pet.pet_banned
                       ? t("speciesProfile.banned")
                       : t("speciesProfile.notBanned")}
@@ -989,7 +995,7 @@ export function SpeciesProfile() {
                           {t("speciesProfile.maxLength")}
                         </h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="Maximum length">
                         {pet.pet_max_length}
                       </p>
                       <p className="mt-1 text-sm text-emerald-300">
@@ -1006,7 +1012,7 @@ export function SpeciesProfile() {
                           {t("speciesProfile.maxWeight")}
                         </h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="Maximum weight">
                         {pet.pet_max_weight}
                       </p>
                       <p className="mt-1 text-sm text-emerald-300">
@@ -1023,7 +1029,7 @@ export function SpeciesProfile() {
                           {t("speciesProfile.longevity")}
                         </h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="Longevity">
                         {pet.pet_longevity}
                       </p>
                       <p className="mt-1 text-sm text-emerald-300">
@@ -1040,7 +1046,7 @@ export function SpeciesProfile() {
                           {t("speciesProfile.temperature")}
                         </h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="Temperature">
                         {displayText(pet.pet_temperature)}
                       </p>
                     </div>
@@ -1052,7 +1058,7 @@ export function SpeciesProfile() {
                         <TestTubeDiagonal className="h-4 w-4" />
                         <h4 className="text-sm font-semibold">pH</h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="pH range">
                         {displayText(pet.pet_ph_range)}
                       </p>
                     </div>
@@ -1066,7 +1072,7 @@ export function SpeciesProfile() {
                           {t("speciesProfile.waterHardness")}
                         </h4>
                       </div>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-2xl font-bold text-white" data-species-fact="Water hardness">
                         {displayText(pet.pet_water_hardness)}
                       </p>
                     </div>

@@ -1,2 +1,5 @@
+# Local dependencies and generated artifacts should not be committed.
 node_modules
 .env
+.DS_Store
+dist
