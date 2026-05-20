@@ -166,7 +166,10 @@ export function Quiz() {
 
   // ===================== UI Rendering =====================
   return (
-    <div className="bg-stone-50 min-h-screen flex flex-col font-sans text-stone-900 relative">
+    <div
+      className="bg-stone-50 min-h-screen flex flex-col font-sans text-stone-900 relative"
+      data-quiz-screen="true"
+    >
       <div className="max-w-3xl w-full mx-auto px-4 py-8 md:py-16 flex-1 flex flex-col">
         {/* ===================== Header Section ===================== */}
         <div className="mb-12">
@@ -183,7 +186,10 @@ export function Quiz() {
             </div>
 
             {/* Step indicator */}
-            <div className="text-emerald-600 font-bold text-lg">
+            <div
+              className="text-emerald-600 font-bold text-lg"
+              data-quiz-progress="true"
+            >
               {currentStep + 1} / {questions.length}
             </div>
           </div>
@@ -211,7 +217,10 @@ export function Quiz() {
               className="w-full max-w-2xl mx-auto"
             >
               {/* Current question title */}
-              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-stone-900 leading-tight">
+              <h2
+                className="text-3xl md:text-4xl font-bold mb-8 text-stone-900 leading-tight"
+                data-quiz-question="true"
+              >
                 {t(currentQuestion.titleKey)}
               </h2>
 
@@ -227,6 +236,9 @@ export function Quiz() {
                     <button
                       key={option.value}
                       onClick={() => handleSelect(option.value)}
+                      aria-pressed={isSelected}
+                      data-quiz-option="true"
+                      data-selected={isSelected}
                       className={`w-full text-left p-6 rounded-2xl border-2 transition-all text-xl font-medium ${
                         isSelected
                           ? "border-emerald-500 bg-emerald-50 text-emerald-900 shadow-md"

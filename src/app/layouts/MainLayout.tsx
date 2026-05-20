@@ -12,6 +12,7 @@ import logoImage from "../../imports/image-0.jpg";
 import { AiChatbot } from "../components/chatbot";
 import { useLanguage, type Language } from "../context/LanguageContext";
 import { useAccessibility } from "../context/AccessibilityContext";
+import { SpeechButton } from "../components/SpeechButton";
 
 export function MainLayout() {
   // Control mobile navigation menu visibility
@@ -45,6 +46,61 @@ export function MainLayout() {
     { name: t("nav.profile"), path: "/profile" },
   ];
 
+  const pageSpeechSummaries: Record<string, string> = {
+    "/":
+      "Welcome to Shell and Fin MY. This page helps you identify aquatic pets, compare species, start a compatibility quiz, check health concerns, and find safe rehoming guidance.",
+    "/identify":
+      "Identify Pet helps you upload a pet photo and get guidance about possible aquatic species and responsible care.",
+    "/health-screening":
+      "Health Screening helps you review visible illness signs in aquatic pets and decide when expert care may be needed.",
+    "/safe-exit":
+      "Safe rehoming explains responsible options if you can no longer care for a non-native aquatic pet.",
+    "/profile":
+      "Profile keeps your saved pets, care tasks, and account details in one place.",
+    "/compare":
+      "Compare Species shows your selected pets side by side, including care needs, suitability, and risk information.",
+    "/search":
+      "Search Results lists aquatic pet species that match your search and filters.",
+    "/login":
+      "Login or register to save your pets, quiz results, and care information.",
+    "/quiz-results":
+      "Quiz Results shows your recommended aquatic pet matches based on your lifestyle answers.",
+  };
+
+  const getQuizSpeechText = (mainContent: HTMLElement) => {
+    const progress = mainContent.querySelector<HTMLElement>("[data-quiz-progress]")?.innerText.trim();
+    const question = mainContent.querySelector<HTMLElement>("[data-quiz-question]")?.innerText.trim();
+    const options = Array.from(
+      mainContent.querySelectorAll<HTMLElement>("[data-quiz-option]"),
+    )
+      .map((option, index) => {
+        const label = option.innerText.trim();
+        const selected = option.dataset.selected === "true";
+        return selected
+          ? `Option ${index + 1}: ${label}. Currently selected.`
+          : `Option ${index + 1}: ${label}.`;
+      })
+      .join(" ");
+
+    return [progress ? `Question ${progress}.` : "", question, options]
+      .filter(Boolean)
+      .join(" ");
+  };
+
+  const getCurrentPageSpeechText = () => {
+    const mainContent = document.getElementById("main-content");
+    if (!mainContent) return "";
+
+    if (location.pathname === "/quiz") {
+      return getQuizSpeechText(mainContent);
+    }
+
+    return (
+      pageSpeechSummaries[location.pathname] ||
+      "This Shell and Fin MY page provides aquatic pet information, care guidance, and responsible ownership support."
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-stone-50 text-stone-800">
       <a
@@ -56,27 +112,27 @@ export function MainLayout() {
 
       {/* ===================== Navigation Header ===================== */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-16 min-w-0">
+        <div className="w-full px-[16px] sm:px-[24px] lg:px-[32px]">
+          <div className="flex min-w-0 items-center justify-between gap-[16px] py-[8px] min-h-[64px]">
             {/* Website Logo + Home Link */}
             <Link
               to="/"
-              className="flex shrink-0 items-center gap-3 hover:opacity-80 transition"
+              className="flex shrink-0 items-center gap-[8px] hover:opacity-80 transition"
               aria-label="Shell & Fin MY home"
             >
               <img
                 src={logoImage}
                 alt="Shell & Fin MY Logo"
-                className="h-12 w-12 object-cover rounded-full mix-blend-multiply"
+                className="h-[40px] w-[40px] object-cover rounded-full mix-blend-multiply xl:h-[48px] xl:w-[48px]"
               />
-              <span className="whitespace-nowrap text-xl font-bold tracking-tight text-emerald-700">
+              <span className="hidden whitespace-nowrap text-[18px] font-bold tracking-tight text-emerald-700 xl:inline 2xl:text-[20px]">
                 Shell & Fin MY
               </span>
             </Link>
 
             {/* ===================== Desktop Navigation ===================== */}
             <nav
-              className="hidden lg:flex flex-1 min-w-0 items-center justify-end gap-3 xl:gap-6"
+              className="hidden lg:flex flex-1 min-w-0 flex-wrap items-center justify-end gap-x-[8px] gap-y-[8px] xl:gap-x-[12px]"
               aria-label="Primary navigation"
             >
               {navLinks.map((link) => (
@@ -84,7 +140,7 @@ export function MainLayout() {
                   key={link.name}
                   to={link.path}
                   aria-current={location.pathname === link.path ? "page" : undefined}
-                  className={`shrink-0 whitespace-nowrap border-b-2 px-1 text-sm font-medium transition ${
+                  className={`shrink-0 whitespace-nowrap border-b-2 px-[4px] text-[13px] font-medium transition xl:text-[14px] ${
                     location.pathname === link.path
                       ? "border-emerald-700 text-emerald-700"
                       : "border-transparent text-stone-600 hover:text-emerald-600"
@@ -98,20 +154,20 @@ export function MainLayout() {
               <Link
                 to="/compare"
                 aria-label={`${t("nav.compare")}, ${comparePets.length} pets selected`}
-                className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 xl:px-4 py-2 rounded-full text-sm font-bold transition shadow-sm ${
+                className={`flex shrink-0 items-center gap-[6px] whitespace-nowrap px-[12px] py-[8px] rounded-full text-[13px] font-bold transition shadow-sm xl:text-[14px] ${
                   comparePets.length > 0
                     ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
                     : "bg-stone-100 text-stone-400 hover:bg-stone-200 hover:text-stone-600"
                 }`}
               >
-                <Scale className="w-4 h-4" />
+                <Scale className="h-[16px] w-[16px]" />
                 {/* Compare ({comparePets.length}) */}
                 {t("nav.compare")} ({comparePets.length})
               </Link>
 
               {/* Language Selector */}
-              <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
-                <Languages className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+              <div className="flex shrink-0 items-center gap-[6px] whitespace-nowrap rounded-full border border-stone-200 bg-white px-[12px] py-[8px] text-[13px] font-semibold text-stone-700 shadow-sm xl:text-[14px]">
+                <Languages className="h-[16px] w-[16px] text-emerald-700" aria-hidden="true" />
 
                 <select
                   value={language}
@@ -127,8 +183,14 @@ export function MainLayout() {
                 </select>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm">
-                <Type className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+              <SpeechButton
+                text={getCurrentPageSpeechText}
+                label="Read page"
+                options={{ lang: language === "ms" ? "ms-MY" : language === "zh" ? "zh-CN" : "en-MY" }}
+              />
+
+              <div className="flex shrink-0 items-center gap-[6px] whitespace-nowrap rounded-full border border-stone-200 bg-white px-[12px] py-[8px] text-[13px] font-semibold text-stone-700 shadow-sm xl:text-[14px]">
+                <Type className="h-[16px] w-[16px] text-emerald-700" aria-hidden="true" />
                 <label htmlFor="desktop-text-size" className="sr-only">
                   Text size
                 </label>
@@ -193,7 +255,7 @@ export function MainLayout() {
             {/* language selector */}
             <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
               <span className="flex items-center gap-2">
-                <Languages className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <Languages className="h-[16px] w-[16px] text-emerald-700" aria-hidden="true" />
                 {t("language.label")}
               </span>
 
@@ -211,9 +273,17 @@ export function MainLayout() {
               </select>
             </div>
 
+            <SpeechButton
+              text={getCurrentPageSpeechText}
+              label="Read page"
+              variant="mobile"
+              options={{ lang: language === "ms" ? "ms-MY" : language === "zh" ? "zh-CN" : "en-MY" }}
+              className="mt-2"
+            />
+
             <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-md text-base font-medium bg-stone-50 text-stone-700">
               <span className="flex items-center gap-2">
-                <Type className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <Type className="h-[16px] w-[16px] text-emerald-700" aria-hidden="true" />
                 Text size
               </span>
 
