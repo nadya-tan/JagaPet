@@ -2,6 +2,7 @@ import React from "react";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useSpeech, type SpeechOptions } from "../hooks/useSpeech";
 
+// Normalize symbols and ranges so browser voices read them naturally.
 function prepareSpeechText(text: string, lang = "en-MY") {
   const normalizedText = text.replace(/\s+/g, " ").trim();
 
@@ -61,6 +62,7 @@ export function SpeechButton({
       return;
     }
 
+    // Dynamic callbacks let the button read the currently visible route state.
     const speechText = typeof text === "function" ? text() : text;
     speak(prepareSpeechText(speechText, options.lang), options);
   };

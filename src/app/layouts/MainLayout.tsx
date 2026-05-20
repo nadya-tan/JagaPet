@@ -46,6 +46,7 @@ export function MainLayout() {
     { name: t("nav.profile"), path: "/profile" },
   ];
 
+  // Regular routes use concise localized summaries instead of reading all page chrome.
   const pageSpeechSummaries: Record<Language, Record<string, string>> = {
     en: {
       "/":
@@ -109,6 +110,7 @@ export function MainLayout() {
     },
   };
 
+  // Helper phrases keep generated read-aloud text in the selected language.
   const speechLabels = {
     en: {
       speciesProfile: "Species profile for",
@@ -145,6 +147,7 @@ export function MainLayout() {
     },
   }[language];
 
+  // Species pages expose English data keys; this maps them for speech output.
   const speciesFactLabels: Record<Language, Record<string, string>> = {
     en: {},
     ms: {
@@ -177,6 +180,7 @@ export function MainLayout() {
     },
   };
 
+  // Species profiles are dynamic, so build speech from tagged page fields.
   const getSpeciesProfileSpeechText = (mainContent: HTMLElement) => {
     const name = mainContent.querySelector<HTMLElement>("[data-species-name]")?.innerText.trim();
     const scientificName = mainContent.querySelector<HTMLElement>("[data-species-scientific-name]")?.innerText.trim();
@@ -210,6 +214,7 @@ export function MainLayout() {
       .join(" ");
   };
 
+  // Quiz speech reads the current question and visible answer choices only.
   const getQuizSpeechText = (mainContent: HTMLElement) => {
     const progress = mainContent.querySelector<HTMLElement>("[data-quiz-progress]")?.innerText.trim();
     const question = mainContent.querySelector<HTMLElement>("[data-quiz-question]")?.innerText.trim();
@@ -233,6 +238,7 @@ export function MainLayout() {
     return [progressText, question, options].filter(Boolean).join(" ");
   };
 
+  // Route-aware speech source used by the shared Read page button.
   const getCurrentPageSpeechText = () => {
     const mainContent = document.getElementById("main-content");
     if (!mainContent) return "";

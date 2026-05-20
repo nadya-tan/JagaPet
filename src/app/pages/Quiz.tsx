@@ -185,7 +185,7 @@ export function Quiz() {
               </p>
             </div>
 
-            {/* Step indicator */}
+            {/* Step indicator exposed for the shared read-aloud control. */}
             <div
               className="text-emerald-600 font-bold text-lg"
               data-quiz-progress="true"
@@ -216,7 +216,7 @@ export function Quiz() {
               transition={{ duration: 0.3 }}
               className="w-full max-w-2xl mx-auto"
             >
-              {/* Current question title */}
+              {/* Current question title exposed for the shared read-aloud control. */}
               <h2
                 className="text-3xl md:text-4xl font-bold mb-8 text-stone-900 leading-tight"
                 data-quiz-question="true"

@@ -31,6 +31,8 @@ const fontSizeByTextSize: Record<TextSize, string> = {
 
 const storageKey = "jagapet-text-size";
 
+// Text-size choices are persisted so the preference survives page refreshes.
+
 const AccessibilityContext = createContext<AccessibilityContextValue | null>(
   null,
 );
@@ -52,6 +54,7 @@ export function AccessibilityProvider({
   });
 
   useEffect(() => {
+    // The global CSS variable keeps text scaling consistent across the app.
     document.documentElement.style.setProperty(
       "--font-size",
       fontSizeByTextSize[textSize],

@@ -8,6 +8,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AccessibilityProvider } from "./context/AccessibilityContext";
 
 export default function App() {
+  // Provides shared text-size preferences across every routed page.
   return (
     <AccessibilityProvider>
       <LanguageProvider>

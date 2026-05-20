@@ -7,6 +7,7 @@ export interface SpeechOptions {
   lang?: string;
 }
 
+// Pick the closest installed browser voice for the selected app language.
 function getPreferredVoice(lang: string) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return null;
@@ -73,6 +74,7 @@ export function useSpeech() {
       utterance.volume = options.volume || 1.0;
       utterance.lang = lang;
 
+      // Assigning a concrete voice avoids browsers choosing the wrong accent.
       const preferredVoice = getPreferredVoice(lang);
       if (preferredVoice) {
         utterance.voice = preferredVoice;

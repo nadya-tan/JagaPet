@@ -508,7 +508,7 @@ export function SpeciesProfile() {
               )}
             </motion.div>
 
-            {/* Title block */}
+            {/* Title fields are tagged so Read page can summarize dynamic species profiles. */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-3xl">
                 {/* Common name */}
@@ -741,7 +741,7 @@ export function SpeciesProfile() {
                 </h2>
               </div>
 
-              {/* Grid of biological attributes */}
+              {/* Key facts are tagged for concise read-aloud summaries. */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-stone-500">
@@ -890,6 +890,7 @@ export function SpeciesProfile() {
                 </h2>
               </div>
 
+              {/* Notes are included in species profile speech output. */}
               <p className="leading-7 text-stone-700" data-species-notes="true">
                 {displayText(
                   localizedComments,

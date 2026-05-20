@@ -122,6 +122,7 @@ export function AiChatbot() {
         </button>
       </div>
 
+      {/* New assistant messages are announced politely to screen readers. */}
       <div
         className="h-80 overflow-y-auto p-4 space-y-3 bg-stone-50"
         aria-live="polite"
