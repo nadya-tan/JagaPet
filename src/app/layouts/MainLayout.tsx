@@ -46,25 +46,168 @@ export function MainLayout() {
     { name: t("nav.profile"), path: "/profile" },
   ];
 
-  const pageSpeechSummaries: Record<string, string> = {
-    "/":
-      "Welcome to Shell and Fin MY. This page helps you identify aquatic pets, compare species, start a compatibility quiz, check health concerns, and find safe rehoming guidance.",
-    "/identify":
-      "Identify Pet helps you upload a pet photo and get guidance about possible aquatic species and responsible care.",
-    "/health-screening":
-      "Health Screening helps you review visible illness signs in aquatic pets and decide when expert care may be needed.",
-    "/safe-exit":
-      "Safe rehoming explains responsible options if you can no longer care for a non-native aquatic pet.",
-    "/profile":
-      "Profile keeps your saved pets, care tasks, and account details in one place.",
-    "/compare":
-      "Compare Species shows your selected pets side by side, including care needs, suitability, and risk information.",
-    "/search":
-      "Search Results lists aquatic pet species that match your search and filters.",
-    "/login":
-      "Login or register to save your pets, quiz results, and care information.",
-    "/quiz-results":
-      "Quiz Results shows your recommended aquatic pet matches based on your lifestyle answers.",
+  const pageSpeechSummaries: Record<Language, Record<string, string>> = {
+    en: {
+      "/":
+        "Welcome to Shell and Fin MY. This page helps you identify aquatic pets, compare species, start a compatibility quiz, check health concerns, and find safe rehoming guidance.",
+      "/identify":
+        "Identify Pet helps you upload a pet photo and get guidance about possible aquatic species and responsible care.",
+      "/health-screening":
+        "Health Screening helps you review visible illness signs in aquatic pets and decide when expert care may be needed.",
+      "/safe-exit":
+        "Safe rehoming explains responsible options if you can no longer care for a non-native aquatic pet.",
+      "/profile":
+        "Profile keeps your saved pets, care tasks, and account details in one place.",
+      "/compare":
+        "Compare Species shows your selected pets side by side, including care needs, suitability, and risk information.",
+      "/search":
+        "Search Results lists aquatic pet species that match your search and filters.",
+      "/login":
+        "Login or register to save your pets, quiz results, and care information.",
+      "/quiz-results":
+        "Quiz Results shows your recommended aquatic pet matches based on your lifestyle answers.",
+    },
+    ms: {
+      "/":
+        "Selamat datang ke Shell and Fin MY. Halaman ini membantu anda mengenal pasti haiwan akuatik, membandingkan spesies, memulakan kuiz keserasian, menyemak kesihatan, dan mencari panduan penyerahan semula yang selamat.",
+      "/identify":
+        "Kenal pasti haiwan peliharaan membantu anda memuat naik gambar dan mendapatkan panduan tentang spesies akuatik serta penjagaan yang bertanggungjawab.",
+      "/health-screening":
+        "Saringan kesihatan membantu anda menyemak tanda penyakit yang boleh dilihat pada haiwan akuatik dan menentukan bila penjagaan pakar mungkin diperlukan.",
+      "/safe-exit":
+        "Penyerahan semula selamat menerangkan pilihan yang bertanggungjawab jika anda tidak lagi dapat menjaga haiwan akuatik bukan natif.",
+      "/profile":
+        "Profil menyimpan haiwan tersimpan, tugasan penjagaan, dan maklumat akaun anda di satu tempat.",
+      "/compare":
+        "Bandingkan spesies memaparkan haiwan pilihan anda bersebelahan, termasuk keperluan penjagaan, kesesuaian, dan maklumat risiko.",
+      "/search":
+        "Keputusan carian memaparkan spesies haiwan akuatik yang sepadan dengan carian dan penapis anda.",
+      "/login":
+        "Log masuk atau daftar untuk menyimpan haiwan peliharaan, keputusan kuiz, dan maklumat penjagaan anda.",
+      "/quiz-results":
+        "Keputusan kuiz memaparkan padanan haiwan akuatik yang disyorkan berdasarkan jawapan gaya hidup anda.",
+    },
+    zh: {
+      "/":
+        "欢迎来到 Shell and Fin MY。本页面可以帮助你识别水生宠物、比较物种、开始适配度测验、检查健康问题，并寻找安全转让宠物的指南。",
+      "/identify":
+        "识别宠物页面可以让你上传宠物照片，并获得可能的水生物种和负责任饲养建议。",
+      "/health-screening":
+        "健康筛查页面帮助你查看水生宠物可见的疾病迹象，并判断什么时候可能需要专业护理。",
+      "/safe-exit":
+        "安全转让页面说明如果你无法继续照顾非本地水生宠物，可以选择哪些负责任的方法。",
+      "/profile":
+        "个人资料页面集中保存你收藏的宠物、护理任务和账户资料。",
+      "/compare":
+        "比较物种页面会并排显示你选择的宠物，包括护理需求、适合程度和风险信息。",
+      "/search":
+        "搜索结果页面会显示符合搜索和筛选条件的水生宠物物种。",
+      "/login":
+        "登录或注册后，你可以保存宠物、测验结果和护理资料。",
+      "/quiz-results":
+        "测验结果页面会根据你的生活方式答案，显示推荐的水生宠物匹配。",
+    },
+  };
+
+  const speechLabels = {
+    en: {
+      speciesProfile: "Species profile for",
+      speciesProfileFallback: "Species profile.",
+      scientificName: "Scientific name",
+      notes: "Notes",
+      question: "Question",
+      option: "Option",
+      selected: "Currently selected",
+      fallback:
+        "This Shell and Fin MY page provides aquatic pet information, care guidance, and responsible ownership support.",
+    },
+    ms: {
+      speciesProfile: "Profil spesies untuk",
+      speciesProfileFallback: "Profil spesies.",
+      scientificName: "Nama saintifik",
+      notes: "Nota",
+      question: "Soalan",
+      option: "Pilihan",
+      selected: "Sedang dipilih",
+      fallback:
+        "Halaman Shell and Fin MY ini menyediakan maklumat haiwan akuatik, panduan penjagaan, dan sokongan pemilikan yang bertanggungjawab.",
+    },
+    zh: {
+      speciesProfile: "物种资料",
+      speciesProfileFallback: "物种资料。",
+      scientificName: "学名",
+      notes: "备注",
+      question: "第",
+      option: "选项",
+      selected: "当前已选择",
+      fallback:
+        "这个 Shell and Fin MY 页面提供水生宠物资料、护理指南和负责任饲养支持。",
+    },
+  }[language];
+
+  const speciesFactLabels: Record<Language, Record<string, string>> = {
+    en: {},
+    ms: {
+      "Scientific name": "Nama saintifik",
+      Genus: "Genus",
+      Family: "Famili",
+      Danger: "Bahaya",
+      "Native status": "Status natif",
+      "Legal status": "Status undang-undang",
+      "Maximum length": "Panjang maksimum",
+      "Maximum weight": "Berat maksimum",
+      Longevity: "Jangka hayat",
+      Temperature: "Suhu",
+      "pH range": "Julat pH",
+      "Water hardness": "Kekerasan air",
+    },
+    zh: {
+      "Scientific name": "学名",
+      Genus: "属",
+      Family: "科",
+      Danger: "危险等级",
+      "Native status": "本地状态",
+      "Legal status": "法律状态",
+      "Maximum length": "最大长度",
+      "Maximum weight": "最大重量",
+      Longevity: "寿命",
+      Temperature: "温度",
+      "pH range": "pH范围",
+      "Water hardness": "水硬度",
+    },
+  };
+
+  const getSpeciesProfileSpeechText = (mainContent: HTMLElement) => {
+    const name = mainContent.querySelector<HTMLElement>("[data-species-name]")?.innerText.trim();
+    const scientificName = mainContent.querySelector<HTMLElement>("[data-species-scientific-name]")?.innerText.trim();
+    const notes = mainContent.querySelector<HTMLElement>("[data-species-notes]")?.innerText.trim();
+    const facts = Array.from(
+      mainContent.querySelectorAll<HTMLElement>("[data-species-fact]"),
+    )
+      .map((fact) => {
+        const label = fact.dataset.speciesFact;
+        const translatedLabel = label
+          ? speciesFactLabels[language][label] || label
+          : "";
+        const value = fact.innerText.trim();
+        return translatedLabel && value ? `${translatedLabel}: ${value}.` : "";
+      })
+      .filter(Boolean)
+      .slice(0, 8)
+      .join(" ");
+
+    return [
+      name
+        ? language === "zh"
+          ? `${speechLabels.speciesProfile}: ${name}.`
+          : `${speechLabels.speciesProfile} ${name}.`
+        : speechLabels.speciesProfileFallback,
+      scientificName ? `${speechLabels.scientificName}: ${scientificName}.` : "",
+      facts,
+      notes ? `${speechLabels.notes}: ${notes}` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
   };
 
   const getQuizSpeechText = (mainContent: HTMLElement) => {
@@ -76,15 +219,18 @@ export function MainLayout() {
       .map((option, index) => {
         const label = option.innerText.trim();
         const selected = option.dataset.selected === "true";
-        return selected
-          ? `Option ${index + 1}: ${label}. Currently selected.`
-          : `Option ${index + 1}: ${label}.`;
+        const selectedText = selected ? `. ${speechLabels.selected}.` : ".";
+        return `${speechLabels.option} ${index + 1}: ${label}${selectedText}`;
       })
       .join(" ");
 
-    return [progress ? `Question ${progress}.` : "", question, options]
-      .filter(Boolean)
-      .join(" ");
+    const progressText = progress
+      ? language === "zh"
+        ? `第${progress}题。`
+        : `${speechLabels.question} ${progress}.`
+      : "";
+
+    return [progressText, question, options].filter(Boolean).join(" ");
   };
 
   const getCurrentPageSpeechText = () => {
@@ -95,9 +241,13 @@ export function MainLayout() {
       return getQuizSpeechText(mainContent);
     }
 
+    if (location.pathname.startsWith("/species/")) {
+      return getSpeciesProfileSpeechText(mainContent);
+    }
+
     return (
-      pageSpeechSummaries[location.pathname] ||
-      "This Shell and Fin MY page provides aquatic pet information, care guidance, and responsible ownership support."
+      pageSpeechSummaries[language][location.pathname] ||
+      speechLabels.fallback
     );
   };
 
