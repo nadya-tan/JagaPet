@@ -444,33 +444,36 @@ export function SpeciesProfile() {
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-900/40 to-transparent z-10"></div>
 
         {/* Hero image */}
-        <div className="absolute inset-0 overflow-hidden bg-black">
-        {/* Blurred background fill */}
-        <motion.img
-          key={`${pet?.pet_id}-bg`}
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1.12 }}
-          transition={{ duration: 0.8 }}
-          src={imageSrc}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-50"
-        />
+        <div className="absolute inset-0 overflow-hidden bg-black flex items-center justify-center">
+          {/* Blurred background fill */}
+          <motion.img
+            key={`${pet?.pet_id}-bg`}
+            initial={{ scale: 1.08 }}
+            animate={{ scale: 1.12 }}
+            transition={{ duration: 0.8 }}
+            src={imageSrc}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40"
+          />
 
-        {/* Dark edge gradient */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_35%,rgba(0,0,0,0.85)_100%)]" />
-
-        {/* Main natural image */}
-        <motion.img
-          key={pet?.pet_id}
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.8 }}
-          src={imageSrc}
-          alt={primaryCommonName}
-          className="absolute inset-0 w-full h-full object-contain object-center"
-        />
-      </div>
+          {/* Main natural image with masked left/right edges */}
+          <motion.img
+            key={pet?.pet_id}
+            initial={{ scale: 1.05 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.8 }}
+            src={imageSrc}
+            alt={primaryCommonName}
+            className="
+              relative z-10
+              h-full max-w-full
+              object-contain object-center
+              [mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)]
+              [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)]
+            "
+          />
+        </div>
 
         {/* Title + badges overlay */}
         <div className="absolute bottom-0 inset-x-0 z-20">
