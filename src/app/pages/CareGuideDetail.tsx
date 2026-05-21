@@ -162,14 +162,14 @@ export function CareGuideDetail() {
 
   /* ===================== Process Common Names ===================== */
 
-  const petDisplaySource = getPetCommonNames({
+  const commonNames = getPetCommonNames({
     pet_vernacular_name: careGuide.vernacularName,
     pet_vernacular_name_cn: careGuide.vernacularNameCn,
     pet_vernacular_name_ms: careGuide.vernacularNameMs,
     pet_scientific_name: careGuide.scientificName,
-  } as any);
+  } as any, language);
 
-  const commonNames = getPetCommonNames(petDisplaySource as any, language);
+  // const commonNames = getPetCommonNames(petDisplaySource as any, language);
 
   const primaryDisplayName =
     commonNames.primaryCommonName === "Unknown Pet"
